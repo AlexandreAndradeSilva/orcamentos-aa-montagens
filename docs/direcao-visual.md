@@ -102,7 +102,14 @@ Usada em: tudo o mais. Células da tabela, formulários, botões, rótulos, obse
 
 **Os algarismos da tabela são dela**, sempre com `font-variant-numeric: tabular-nums`. Quantidade, valor unitário e total têm que alinhar coluna abaixo; é o que faz a tabela ser lida como planilha e não como formulário.
 
-> **A verificar na Fase 3:** se a Barlow Condensed ship `tnum` de verdade. O bloco de totais empilha SUB-TOTAL / ENTRADA / A PAGAR e precisa alinhar. Se não tiver, o bloco de totais migra para IBM Plex Sans e a Barlow fica só no texto. Não vou afirmar que tem antes de instalar e olhar.
+> **Verificado na Fase 3** (inspeção das tabelas `GSUB`/`hmtx` das duas fontes):
+>
+> | Fonte | Larguras dos dígitos | `tnum` | Conclusão |
+> |---|---|---|---|
+> | IBM Plex Sans | todas 600 — **tabular por padrão** | ausente | não precisa da feature; alinha sozinha |
+> | Barlow Condensed | 9 larguras distintas (`1`=284, `4`=484) — proporcional | **presente** | `tabular-nums` é **obrigatório** |
+>
+> Ou seja, o oposto do que o nome das features sugeria: a Plex não expõe `tnum` justamente porque já é tabular, e a Barlow só alinha com a feature ligada. As duas servem, e o CSS aplica `font-variant-numeric: tabular-nums` em `.num` e no total em destaque. O bloco de totais **fica na Barlow Condensed**, como desenhado.
 
 ### Escala
 
@@ -262,6 +269,6 @@ Gradiente violeta/índigo/ciano · glassmorphism, blur, orbe de fundo · `rounde
 
 ## 6. Pendências desta fase
 
-1. **`tnum` da Barlow Condensed** — verificar ao instalar, na Fase 3. Se não tiver, o bloco de totais vai para IBM Plex Sans.
+1. ~~`tnum` da Barlow Condensed~~ — **resolvido na Fase 3**, ver a seção de tipografia.
 2. **Status** (`P12`) — se não for usado, sai da barra do documento e da lista.
 3. **Desconto** — `D4` fixou *onde* ele entra, mas ainda falta saber se é digitado em **%** ou em **reais**, e se há teto. No desenho ele aparece como valor; vira campo duplo (%/R$) se a resposta for essa.

@@ -1,0 +1,183 @@
+/* A grade densa de itens. Nada de zebra: a separacao e a regua. */
+
+.grade-envolve {
+  overflow-x: auto;
+  background: var(--cor-papel);
+  border: var(--borda) solid var(--cor-linha-sutil);
+  border-radius: var(--raio-lg);
+}
+
+.grade {
+  width: 100%;
+  min-width: 880px;
+  border-collapse: collapse;
+  font-size: var(--txt-md);
+}
+
+.grade thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--cor-papel);
+  font-family: var(--fonte-display);
+  font-weight: 600;
+  font-size: var(--dsp-xs);
+  line-height: var(--lh-dsp-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cor-tinta-media);
+  text-align: left;
+  padding: var(--e-2) var(--celula-pad-x);
+  border-bottom: 2px solid var(--cor-linha-forte);
+  white-space: nowrap;
+}
+
+.grade thead th.num {
+  text-align: right;
+}
+
+.grade td {
+  padding: 0;
+  border-bottom: var(--borda) solid var(--cor-linha-sutil);
+  vertical-align: top;
+}
+
+.grade tbody tr:hover td {
+  background: color-mix(in srgb, var(--cor-acao-fraca) 45%, transparent);
+}
+
+.cel-item {
+  padding: var(--celula-pad-y) var(--celula-pad-x);
+  font-variant-numeric: tabular-nums;
+  color: var(--cor-tinta-fraca);
+  font-size: var(--txt-sm);
+  white-space: nowrap;
+}
+
+.cel-total {
+  padding: var(--celula-pad-y) var(--celula-pad-x);
+  font-variant-numeric: tabular-nums;
+  min-height: var(--linha-altura-min);
+}
+
+.cel-total--forte {
+  font-weight: 600;
+}
+
+.cel-vazia {
+  color: var(--cor-tinta-fraca);
+}
+
+/* ---- celula editavel: sem borda em repouso, borda no hover, anel no foco ---- */
+.cel-editavel {
+  display: block;
+  width: 100%;
+  min-height: var(--linha-altura-min);
+  padding: var(--celula-pad-y) var(--celula-pad-x);
+  border: var(--borda) solid transparent;
+  border-radius: 0;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  resize: none;
+}
+
+.cel-editavel::placeholder {
+  color: var(--cor-tinta-fraca);
+}
+
+.grade td:hover > .cel-editavel {
+  border-color: var(--cor-linha);
+  background: var(--cor-papel);
+}
+
+.cel-editavel:focus,
+.cel-editavel:focus-visible {
+  outline: 2px solid var(--cor-acao);
+  outline-offset: -2px;
+  background: var(--cor-acao-fraca);
+}
+
+.cel-descricao {
+  min-height: var(--linha-altura-min);
+  line-height: var(--lh-md);
+  field-sizing: content;
+  overflow: hidden;
+}
+
+/* Navegadores sem `field-sizing` ficam com 2 linhas, que cobre a maioria
+   das descricoes da AA Montagens sem cortar. */
+@supports not (field-sizing: content) {
+  .cel-descricao {
+    min-height: calc(var(--linha-altura-min) * 2);
+  }
+}
+
+.cel-esmaecida {
+  color: var(--cor-tinta-fraca);
+}
+
+/* ---- linha de secao ---- */
+.linha-secao td {
+  background: var(--cor-fundo);
+  border-top: var(--borda) solid var(--cor-linha-forte);
+  border-bottom: var(--borda) solid var(--cor-linha-forte);
+}
+
+.cel-titulo {
+  font-family: var(--fonte-display);
+  font-weight: 600;
+  font-size: var(--dsp-sm);
+  line-height: var(--lh-dsp-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.linha-secao__controles {
+  padding: var(--celula-pad-y) var(--celula-pad-x);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.preco-fechado {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e-1);
+  font-size: var(--txt-xs);
+  color: var(--cor-tinta-media);
+  margin-right: var(--e-2);
+}
+
+.botao--mini {
+  height: 24px;
+  padding: 0 var(--e-2);
+  font-size: var(--txt-xs);
+  color: var(--cor-tinta-media);
+}
+
+/* ---- bloco com preco fechado ---- */
+.secao--fechada .cel-total {
+  color: var(--cor-tinta-fraca);
+}
+
+.linha-preco-fechado td {
+  background: color-mix(in srgb, var(--cor-acao-fraca) 55%, var(--cor-papel));
+  border-bottom: var(--borda) solid var(--cor-linha-forte);
+}
+
+.dica {
+  display: block;
+  padding: var(--celula-pad-y) var(--celula-pad-x);
+  font-size: var(--txt-xs);
+  color: var(--cor-tinta-media);
+}
+
+.linha-acao td {
+  border-bottom: none;
+  padding: var(--e-1) var(--celula-pad-x);
+}
+
+.grade__acoes {
+  padding: var(--e-2) var(--celula-pad-x);
+  border-top: var(--borda) solid var(--cor-linha-sutil);
+}
