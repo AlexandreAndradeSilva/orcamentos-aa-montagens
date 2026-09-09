@@ -169,6 +169,42 @@ export function linhasIncompletas(
   return achados;
 }
 
+export type AvisoTotais =
+  | { tipo: 'desconto-maior-que-total'; desconto: Centavos; total: Centavos }
+  | { tipo: 'entrada-maior-que-subtotal'; entrada: Centavos; subTotal: Centavos }
+  | { tipo: 'total-negativo'; aPagar: Centavos };
+
+/**
+ * Avisos sobre a cadeia de totais.
+ *
+ * A planilha nao tem desconto e, portanto, nao tem teto de desconto — a
+ * pergunta continua aberta em `PERGUNTAS.md`. Enquanto nao houver regra, o
+ * calculo **nao limita nada**: ele avisa. Truncar em silencio seria inventar
+ * uma regra de negocio, e o desconto acima do total pode ser um erro de
+ * digitacao tanto quanto uma decisao comercial.
+ */
+export function avisosDosTotais(totais: Totais): AvisoTotais[] {
+  const avisos: AvisoTotais[] = [];
+  if (totais.desconto > totais.total) {
+    avisos.push({
+      tipo: 'desconto-maior-que-total',
+      desconto: totais.desconto,
+      total: totais.total,
+    });
+  }
+  if (totais.entrada > totais.subTotal) {
+    avisos.push({
+      tipo: 'entrada-maior-que-subtotal',
+      entrada: totais.entrada,
+      subTotal: totais.subTotal,
+    });
+  }
+  if (totais.aPagar < 0) {
+    avisos.push({ tipo: 'total-negativo', aPagar: totais.aPagar });
+  }
+  return avisos;
+}
+
 /** Data de validade a partir da emissao, quando ha prazo padrao em dias. */
 export function calcularValidade(dataEmissaoISO: string, dias: number): string {
   const [ano, mes, dia] = dataEmissaoISO.split('-').map(Number) as [number, number, number];

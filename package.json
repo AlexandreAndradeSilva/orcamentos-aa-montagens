@@ -10,7 +10,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "casos:extrair": "python tools/extrair_casos.py"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
