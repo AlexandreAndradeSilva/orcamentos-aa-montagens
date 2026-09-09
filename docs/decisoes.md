@@ -39,7 +39,15 @@ Comparado à planilha, a única inserção é `− desconto`; o resto do encadea
 
 > Nota: com o desconto depois do acréscimo, o acréscimo incide sobre o valor cheio. Se um dia a AA Montagens quiser o contrário, é a troca de uma linha em `src/domain/`.
 
-**Ainda em aberto:** o desconto é digitado em **%** ou em **reais**? Há teto? — ver `PERGUNTAS.md`. Até haver resposta, implemento os dois modos (% e valor), com o valor em reais como padrão, e sem teto.
+### D4.1 · Em reais, sem teto _(confirmado em 09/09/2026)_
+
+O desconto é digitado **em reais** — o modo percentual foi removido do domínio, da tela e do PDF — e **não tem teto**.
+
+Sem teto significa que o cálculo **não trunca**: um desconto acima do total produz sub-total negativo e o valor entra inteiro. Truncar em silêncio seria inventar uma regra que a AA Montagens não tem, e desconto acima do total é tão provável ser dedo errado quanto decisão comercial.
+
+Mas também não passa calado: `avisosDosTotais()` sinaliza desconto acima do total, entrada acima do sub-total e "a pagar" negativo, e o bloco de totais mostra isso numa faixa vermelha com `aria-live`. Quem decide é quem está orçando.
+
+Consequência técnica: o campo saiu de `{ modo, centavos | percentual }` para `Centavos` puro. A **migration v2** do IndexedDB converte o que já estiver gravado — um desconto percentual é resolvido contra o total daquele orçamento, para o valor não mudar.
 
 ## D5 · Entrada: sugere 30%, permite editar _(fecha L3 / P3)_
 

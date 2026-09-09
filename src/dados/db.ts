@@ -30,7 +30,62 @@ export class BancoOrcamentos extends Dexie {
       servicos: 'id, descricao, usos, usadoEm',
       orcamentos: 'id, numero, clienteId, dataEmissao, status, arquivado, alteradoEm',
     });
+
+    // v2 — o desconto virou centavos simples.
+    //
+    // Antes existiam dois modos, `{ modo: 'reais', centavos }` e
+    // `{ modo: 'percentual', percentual }`, porque a regra estava em aberto.
+    // Confirmado que e em reais e sem teto, o objeto perdeu a razao de ser.
+    // Orcamentos gravados na v1 sao convertidos aqui: o percentual e resolvido
+    // contra o total daquele orcamento, para o valor nao mudar.
+    this.version(2)
+      .stores({})
+      .upgrade((tx) =>
+        tx
+          .table('orcamentos')
+          .toCollection()
+          .modify((orcamento: Record<string, unknown>) => {
+            orcamento['desconto'] = descontoEmCentavos(orcamento);
+          }),
+      );
   }
+}
+
+/**
+ * Converte o desconto da v1 para centavos.
+ *
+ * Fica fora da classe para poder ser testado sem subir o banco.
+ */
+export function descontoEmCentavos(orcamento: Record<string, unknown>): number {
+  const bruto = orcamento['desconto'];
+  if (typeof bruto === 'number') return Math.max(0, Math.round(bruto));
+  if (bruto === null || typeof bruto !== 'object') return 0;
+
+  const antigo = bruto as { modo?: string; centavos?: number; percentual?: number };
+  if (antigo.modo === 'reais') return Math.max(0, Math.round(antigo.centavos ?? 0));
+  if (antigo.modo === 'percentual') {
+    // resolve contra o total do proprio orcamento, para o valor nao mudar
+    const secoes = (orcamento['secoes'] ?? []) as {
+      precoFechado?: number;
+      linhas?: { quantidade?: number; valorUnitario?: number }[];
+    }[];
+    let servicos = 0;
+    for (const secao of secoes) {
+      if (typeof secao.precoFechado === 'number') {
+        servicos += secao.precoFechado;
+        continue;
+      }
+      for (const linha of secao.linhas ?? []) {
+        if (linha.quantidade !== undefined && linha.valorUnitario !== undefined) {
+          servicos += Math.round(linha.quantidade * linha.valorUnitario);
+        }
+      }
+    }
+    const acrescimo = (orcamento['acrescimoNotaFiscal'] as number | undefined) ?? 0;
+    const total = servicos + acrescimo;
+    return Math.max(0, Math.round((total * (antigo.percentual ?? 0)) / 10_000));
+  }
+  return 0;
 }
 
 export const db = new BancoOrcamentos();

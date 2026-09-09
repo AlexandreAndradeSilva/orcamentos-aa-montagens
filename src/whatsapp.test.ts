@@ -26,7 +26,7 @@ const orcamento: Orcamento = {
     },
   ],
   acrescimoNotaFiscal: 0,
-  desconto: { modo: 'reais', centavos: 0 },
+  desconto: 0,
   entrada: { modo: 'sugerida' },
   condicoesPagamento: '30% ENTRADA, RESTANTE A COMBINAR',
   status: 'enviado',

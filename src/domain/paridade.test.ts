@@ -75,7 +75,7 @@ function montar(caso: CasoExtraido): Orcamento {
     dataEmissao: caso.dataEmissao,
     secoes,
     acrescimoNotaFiscal: caso.esperados.acrescimoNotaFiscal,
-    desconto: { modo: 'reais', centavos: 0 }, // a planilha nao tem desconto
+    desconto: 0, // a planilha nao tem desconto
     // F35 e um valor digitado a mao; na planilha vale 0.
     entrada: { modo: 'manual', centavos: caso.esperados.entrada },
     condicoesPagamento: caso.condicoesPagamento,

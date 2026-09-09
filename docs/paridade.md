@@ -102,9 +102,9 @@ Os que o escopo pediu, mais os que a auditoria sugeriu:
 
 ### Desconto máximo
 
-**A planilha não tem desconto e, portanto, não tem teto.** A pergunta continua aberta em `PERGUNTAS.md`.
+**A planilha não tem desconto. Confirmado depois: em reais e sem teto** (`decisoes.md` D4.1).
 
-Enquanto não houver regra, o cálculo **não limita nada — ele avisa**. `avisosDosTotais()` sinaliza desconto maior que o total, entrada maior que o sub-total e "a pagar" negativo. Truncar em silêncio seria inventar uma regra de negócio, e desconto acima do total é tão provável ser erro de digitação quanto decisão comercial.
+Sem teto, o cálculo **não limita nada — ele avisa**. `avisosDosTotais()` sinaliza desconto maior que o total, entrada maior que o sub-total e "a pagar" negativo. Truncar em silêncio seria inventar uma regra de negócio, e desconto acima do total é tão provável ser erro de digitação quanto decisão comercial.
 
 Desconto de 100% zera o sub-total **sem** aviso: é um valor limite legítimo.
 

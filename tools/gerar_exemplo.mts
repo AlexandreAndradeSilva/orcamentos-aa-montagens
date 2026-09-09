@@ -63,7 +63,7 @@ const orcamento: Orcamento = {
   prazoEntrega: '45 dias após aprovação',
   secoes,
   acrescimoNotaFiscal: caso.esperados.acrescimoNotaFiscal,
-  desconto: { modo: 'reais', centavos: 0 },
+  desconto: 0,
   // a planilha traz ENTRADA = 0 digitado à mão (ver docs/paridade.md §4.1)
   entrada: { modo: 'manual', centavos: caso.esperados.entrada },
   condicoesPagamento: '30% ENTRADA, RESTANTE A COMBINAR',
@@ -86,6 +86,13 @@ const destino = resolve(
 );
 mkdirSync(dirname(destino), { recursive: true });
 
-await renderToFile(createElement(DocumentoOrcamento, { orcamento, configuracao }), destino);
+// `renderToFile` espera DocumentProps; o componente devolve um <Document>,
+// mas o React nao carrega essa informacao pelo createElement.
+const elemento = createElement(DocumentoOrcamento, {
+  orcamento,
+  configuracao,
+}) as unknown as Parameters<typeof renderToFile>[0];
+
+await renderToFile(elemento, destino);
 
 console.log('->', destino.replace(RAIZ, '.'));

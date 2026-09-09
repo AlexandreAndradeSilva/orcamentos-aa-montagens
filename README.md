@@ -121,11 +121,13 @@ Na ordem exata da planilha, com o desconto acrescentado:
 TOTAL DOS SERVIÇOS  = soma dos itens e dos blocos fechados
       + ACRÉSCIMO NOTA FISCAL
 TOTAL
-      − DESCONTO
+      − DESCONTO         (em reais, sem teto)
 SUB-TOTAL
       − ENTRADA          (sugerida em 30% do sub-total; pode ser digitada)
 A PAGAR
 ```
+
+O desconto **não tem limite**: se passar do total, o app não corta o valor — mostra um aviso em vermelho e deixa a decisão com você.
 
 Dinheiro é sempre inteiro em centavos, nunca número quebrado, e o arredondamento é HALF_UP no total de cada linha — o mesmo resultado que aparece na tela do Excel.
 
@@ -183,5 +185,4 @@ docs/         a auditoria da planilha e as decisões, fase por fase
 - **O PDF não vai anexado no WhatsApp** — o link `wa.me` só carrega texto.
 - **A paridade tem um caso só.** Só existia um orçamento preenchido na planilha, e o mais simples possível. Ver [`docs/paridade.md`](docs/paridade.md) §6.
 - **Sem frete.** Confirmado que a AA Montagens não cobra à parte.
-- **Desconto** está com dois modos (% e R$) porque a regra ainda não foi definida.
 - **Trocar a logo** pela tela ainda não existe; o PDF usa a logo vetorial fixa.

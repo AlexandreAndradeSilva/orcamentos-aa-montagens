@@ -6,7 +6,12 @@
  */
 import { useEditor } from '../estado/editor';
 import { lerCentavos } from '../domain/dinheiro';
-import { percentualDaEntrada } from '../domain/orcamento';
+import {
+  avisosDosTotais,
+  percentualDaEntrada,
+  type AvisoTotais,
+  type Totais,
+} from '../domain/orcamento';
 import * as fmt from '../formato';
 
 export function BlocoTotais() {
@@ -26,58 +31,24 @@ export function BlocoTotais() {
       <hr className="totais__regua" />
       <Linha rotulo="Total" valor={totais.total} />
 
+      {/* Desconto em reais, sem teto — confirmado. Valor acima do total não é
+          truncado: aparece o aviso abaixo e a pessoa decide. */}
       <div className="totais__linha">
-        <span className="totais__rotulo">
-          Desconto
-          <button
-            type="button"
-            className="botao botao--texto botao--mini totais__modo"
-            onClick={() =>
-              alterar({
-                desconto:
-                  orcamento.desconto.modo === 'reais'
-                    ? { modo: 'percentual', percentual: 0 }
-                    : { modo: 'reais', centavos: 0 },
-              })
+        <span className="totais__rotulo">Desconto</span>
+        <input
+          className="campo num totais__campo"
+          key={orcamento.desconto}
+          defaultValue={fmt.valor(orcamento.desconto)}
+          inputMode="decimal"
+          aria-label="Desconto em reais"
+          onBlur={(ev) => {
+            try {
+              alterar({ desconto: Math.max(0, lerCentavos(ev.target.value) ?? 0) });
+            } catch {
+              alterar({ desconto: 0 });
             }
-          >
-            {orcamento.desconto.modo === 'reais' ? 'em R$' : 'em %'}
-          </button>
-        </span>
-        {orcamento.desconto.modo === 'reais' ? (
-          <input
-            className="campo num totais__campo"
-            key={`r${orcamento.desconto.centavos}`}
-            defaultValue={fmt.valor(orcamento.desconto.centavos)}
-            inputMode="decimal"
-            aria-label="Desconto em reais"
-            onBlur={(ev) => {
-              try {
-                alterar({
-                  desconto: { modo: 'reais', centavos: lerCentavos(ev.target.value) ?? 0 },
-                });
-              } catch {
-                alterar({ desconto: { modo: 'reais', centavos: 0 } });
-              }
-            }}
-          />
-        ) : (
-          <input
-            className="campo num totais__campo"
-            key={`p${orcamento.desconto.percentual}`}
-            defaultValue={(orcamento.desconto.percentual / 100).toFixed(2)}
-            inputMode="decimal"
-            aria-label="Desconto em percentual"
-            onBlur={(ev) => {
-              try {
-                const centesimos = lerCentavos(ev.target.value) ?? 0;
-                alterar({ desconto: { modo: 'percentual', percentual: Math.max(0, centesimos) } });
-              } catch {
-                alterar({ desconto: { modo: 'percentual', percentual: 0 } });
-              }
-            }}
-          />
-        )}
+          }}
+        />
       </div>
 
       <hr className="totais__regua" />
@@ -125,8 +96,39 @@ export function BlocoTotais() {
           {fmt.valorComSimbolo(totais.aPagar)}
         </output>
       </div>
+
+      <Avisos totais={totais} />
     </section>
   );
+}
+
+/**
+ * Nada aqui bloqueia nem trunca: o desconto é sem teto, confirmado. O aviso
+ * existe porque valor acima do total costuma ser dedo errado, e um "a pagar"
+ * negativo passando batido para o PDF seria pior.
+ */
+function Avisos({ totais }: { totais: Totais }) {
+  const avisos = avisosDosTotais(totais);
+  if (avisos.length === 0) return null;
+
+  return (
+    <ul className="totais__avisos" aria-live="polite">
+      {avisos.map((aviso) => (
+        <li key={aviso.tipo}>{textoDoAviso(aviso)}</li>
+      ))}
+    </ul>
+  );
+}
+
+function textoDoAviso(aviso: AvisoTotais): string {
+  switch (aviso.tipo) {
+    case 'desconto-maior-que-total':
+      return `O desconto (${fmt.valor(aviso.desconto)}) passa do total (${fmt.valor(aviso.total)}).`;
+    case 'entrada-maior-que-subtotal':
+      return `A entrada (${fmt.valor(aviso.entrada)}) passa do sub-total (${fmt.valor(aviso.subTotal)}).`;
+    case 'total-negativo':
+      return 'O valor a pagar ficou negativo. Confira o desconto e a entrada.';
+  }
 }
 
 function Linha({ rotulo, valor }: { rotulo: string; valor: number }) {

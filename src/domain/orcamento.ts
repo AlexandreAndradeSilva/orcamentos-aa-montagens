@@ -18,7 +18,7 @@ import {
   type Centavos,
   type PercentualCentesimos,
 } from './dinheiro';
-import type { Desconto, Entrada, Linha, Orcamento, Secao } from './esquemas';
+import type { Entrada, Linha, Orcamento, Secao } from './esquemas';
 
 export interface Totais {
   totalDosServicos: Centavos;
@@ -68,13 +68,6 @@ export function totalDosServicos(secoes: readonly Secao[]): Centavos {
   return assegurarCentavos(soma, 'total dos servicos');
 }
 
-/** Desconto em centavos, seja ele digitado em reais ou em percentual. */
-export function valorDoDesconto(desconto: Desconto, base: Centavos): Centavos {
-  return desconto.modo === 'reais'
-    ? assegurarCentavos(desconto.centavos, 'desconto')
-    : aplicarPercentual(base, desconto.percentual);
-}
-
 /** Entrada em centavos: a digitada, ou o percentual padrao do sub-total. */
 export function valorDaEntrada(
   entrada: Entrada,
@@ -99,7 +92,7 @@ export function calcularTotais(
   const servicos = totalDosServicos(orcamento.secoes);
   const acrescimo = assegurarCentavos(orcamento.acrescimoNotaFiscal, 'acrescimo');
   const total = assegurarCentavos(servicos + acrescimo, 'total');
-  const desconto = valorDoDesconto(orcamento.desconto, total);
+  const desconto = assegurarCentavos(orcamento.desconto, 'desconto');
   const subTotal = assegurarCentavos(total - desconto, 'sub-total');
   const entrada = valorDaEntrada(orcamento.entrada, subTotal, opcoes.percentualEntradaPadrao);
   const aPagar = assegurarCentavos(subTotal - entrada, 'a pagar');
@@ -177,11 +170,10 @@ export type AvisoTotais =
 /**
  * Avisos sobre a cadeia de totais.
  *
- * A planilha nao tem desconto e, portanto, nao tem teto de desconto — a
- * pergunta continua aberta em `PERGUNTAS.md`. Enquanto nao houver regra, o
- * calculo **nao limita nada**: ele avisa. Truncar em silencio seria inventar
- * uma regra de negocio, e o desconto acima do total pode ser um erro de
- * digitacao tanto quanto uma decisao comercial.
+ * O desconto e em reais e **sem teto** (confirmado). Entao o calculo nao
+ * limita nada: ele avisa. Truncar em silencio seria inventar uma regra que a
+ * AA Montagens nao tem, e desconto acima do total pode ser dedo errado tanto
+ * quanto decisao comercial — quem decide e quem esta orcando.
  */
 export function avisosDosTotais(totais: Totais): AvisoTotais[] {
   const avisos: AvisoTotais[] = [];

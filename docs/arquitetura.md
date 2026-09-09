@@ -126,4 +126,4 @@ Nenhum dos dois apareceria no `tsc`.
 - **Enviar no WhatsApp** — Fase 5.
 - **Duplicar / revisar / arquivar** — as funções puras existem e estão testadas em `fabrica.ts`; falta ligar nos botões.
 - **Edição de cliente** — a tela lista; o cadastro completo entra com `react-hook-form`.
-- **Desconto em % ou em R$** — os dois modos estão implementados e alternam num clique, porque a pergunta ainda está aberta. Quando você responder, o modo que não servir sai.
+- ~~Desconto em % ou em R$~~ — **respondido**: em reais e sem teto. O modo percentual foi removido e a migration v2 converte o que estivesse gravado.

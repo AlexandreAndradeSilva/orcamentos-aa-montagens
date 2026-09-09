@@ -277,4 +277,4 @@ Gradiente violeta/índigo/ciano · glassmorphism, blur, orbe de fundo · `rounde
 
 1. ~~`tnum` da Barlow Condensed~~ — **resolvido na Fase 3**, ver a seção de tipografia.
 2. **Status** (`P12`) — se não for usado, sai da barra do documento e da lista.
-3. **Desconto** — `D4` fixou _onde_ ele entra, mas ainda falta saber se é digitado em **%** ou em **reais**, e se há teto. No desenho ele aparece como valor; vira campo duplo (%/R$) se a resposta for essa.
+3. ~~Desconto~~ — **respondido**: em reais e sem teto. Campo único, sem alternância de modo, com faixa de aviso quando passa do total (`decisoes.md` D4.1).

@@ -35,16 +35,11 @@ A condição de pagamento diz **"30% ENTRADA, RESTANTE A COMBINAR"**, mas o camp
 
 E: quando ENTRADA fica em `0`, é porque **ainda não foi negociada** ou porque **não há entrada**? Isso muda o que o PDF deve mostrar.
 
-### P4 · Desconto — existe no negócio?
+### ~~P4 · Desconto — existe no negócio?~~ · **RESPONDIDA**
 
-**A planilha não tem desconto em lugar nenhum.** O escopo do app pede. Antes de eu inventar:
+**A planilha não tem desconto em lugar nenhum.** O escopo do app pedia.
 
-- Existe desconto na prática? Se sim: por item ou sobre o total?
-- Percentual, valor, ou os dois?
-- Entra **antes** ou **depois** do acréscimo de nota fiscal?
-- Tem desconto máximo? Quem autoriza?
-
-Se a resposta for "não usamos desconto", eu **não implemento** — melhor do que um campo que ninguém preenche.
+**Respondido:** existe, é **único sobre o total**, entra **depois** do acréscimo de nota fiscal, é digitado **em reais** e **não tem teto**. Ver `decisoes.md` D4 e D4.1.
 
 ### P5 · Frete — existe?
 

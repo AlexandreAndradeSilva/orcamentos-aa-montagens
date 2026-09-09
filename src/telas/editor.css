@@ -154,6 +154,18 @@
   align-items: baseline;
 }
 
+.totais__avisos {
+  margin: var(--e-3) 0 0;
+  padding: var(--e-2) var(--e-3);
+  list-style: none;
+  background: var(--cor-alerta-fraca);
+  border: var(--borda) solid var(--cor-alerta);
+  border-radius: var(--raio);
+  color: var(--cor-alerta);
+  font-size: var(--txt-xs);
+  line-height: var(--lh-sm);
+}
+
 .totais__hero {
   font-family: var(--fonte-display);
   font-weight: 700;

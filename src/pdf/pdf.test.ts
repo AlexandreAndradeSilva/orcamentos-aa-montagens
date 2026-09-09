@@ -28,7 +28,7 @@ function orcamento(secoes: Secao[], extra: Partial<Orcamento> = {}): Orcamento {
     prazoEntrega: '45 dias após aprovação',
     secoes,
     acrescimoNotaFiscal: 0,
-    desconto: { modo: 'reais', centavos: 0 },
+    desconto: 0,
     entrada: { modo: 'manual', centavos: 0 },
     condicoesPagamento: '30% ENTRADA, RESTANTE A COMBINAR',
     status: 'enviado',

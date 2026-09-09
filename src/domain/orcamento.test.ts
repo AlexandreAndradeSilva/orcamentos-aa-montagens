@@ -34,7 +34,7 @@ function orcamento(secoes: Secao[], extra: Partial<Orcamento> = {}): Orcamento {
     dataEmissao: '2026-08-14',
     secoes,
     acrescimoNotaFiscal: 0,
-    desconto: { modo: 'reais', centavos: 0 },
+    desconto: 0,
     entrada: { modo: 'manual', centavos: 0 },
     condicoesPagamento: '30% ENTRADA, RESTANTE A COMBINAR',
     status: 'rascunho',
@@ -186,7 +186,7 @@ describe('cadeia de totais (R4 + D4)', () => {
     const t = calcularTotais(
       orcamento([base], {
         acrescimoNotaFiscal: 100_000,
-        desconto: { modo: 'reais', centavos: 50_000 },
+        desconto: 50_000,
       }),
       OPCOES,
     );
@@ -196,26 +196,9 @@ describe('cadeia de totais (R4 + D4)', () => {
     expect(t.subTotal).toBe(1_050_000); // total − desconto
   });
 
-  it('desconto percentual incide sobre o total já com acréscimo', () => {
-    const t = calcularTotais(
-      orcamento([base], {
-        acrescimoNotaFiscal: 100_000,
-        desconto: { modo: 'percentual', percentual: 1000 }, // 10,00%
-      }),
-      OPCOES,
-    );
-    expect(t.desconto).toBe(110_000); // 10% de 1.100.000
-    expect(t.subTotal).toBe(990_000);
-  });
-
-  it('desconto percentual arredonda HALF_UP', () => {
-    const t = calcularTotais(
-      orcamento([secao([{ quantidade: 1, valorUnitario: 1005 }])], {
-        desconto: { modo: 'percentual', percentual: 1000 },
-      }),
-      OPCOES,
-    );
-    expect(t.desconto).toBe(101); // 10% de 1005 = 100,5 -> 101
+  it('o esquema recusa desconto negativo', () => {
+    const r = zOrcamento.safeParse(orcamento([base], { desconto: -1 }));
+    expect(r.success).toBe(false);
   });
 
   it('entrada sugerida é 30% do sub-total', () => {
@@ -255,10 +238,7 @@ describe('desconto máximo', () => {
   const base = secao([{ quantidade: 1, valorUnitario: 1_000_000 }]);
 
   it('desconto maior que o total não é truncado — é sinalizado', () => {
-    const t = calcularTotais(
-      orcamento([base], { desconto: { modo: 'reais', centavos: 1_500_000 } }),
-      OPCOES,
-    );
+    const t = calcularTotais(orcamento([base], { desconto: 1_500_000 }), OPCOES);
     expect(t.subTotal).toBe(-500_000);
     expect(avisosDosTotais(t)).toContainEqual({
       tipo: 'desconto-maior-que-total',
@@ -268,18 +248,12 @@ describe('desconto máximo', () => {
   });
 
   it('avisa quando o a pagar fica negativo', () => {
-    const t = calcularTotais(
-      orcamento([base], { desconto: { modo: 'reais', centavos: 1_500_000 } }),
-      OPCOES,
-    );
+    const t = calcularTotais(orcamento([base], { desconto: 1_500_000 }), OPCOES);
     expect(avisosDosTotais(t).some((a) => a.tipo === 'total-negativo')).toBe(true);
   });
 
-  it('desconto de 100% zera o sub-total sem aviso', () => {
-    const t = calcularTotais(
-      orcamento([base], { desconto: { modo: 'percentual', percentual: 10_000 } }),
-      OPCOES,
-    );
+  it('desconto igual ao total zera o sub-total, sem aviso', () => {
+    const t = calcularTotais(orcamento([base], { desconto: 1_000_000 }), OPCOES);
     expect(t.subTotal).toBe(0);
     expect(avisosDosTotais(t)).toHaveLength(0);
   });
@@ -296,7 +270,7 @@ describe('desconto máximo', () => {
     const t = calcularTotais(
       orcamento([base], {
         acrescimoNotaFiscal: 50_000,
-        desconto: { modo: 'reais', centavos: 20_000 },
+        desconto: 20_000,
         entrada: { modo: 'sugerida' },
       }),
       OPCOES,

@@ -8,6 +8,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import {
   db,
   configuracaoPadrao,
+  descontoEmCentavos,
   lerConfiguracao,
   registrarUso,
   reservarNumero,
@@ -176,5 +177,49 @@ describe('backup', () => {
     const ruim = JSON.stringify({ versao: 1, exportadoEm: 'ontem', configuracao: {} });
     await expect(importarBackup(ruim)).rejects.toThrow(/backup inválido|backup invalido/i);
     expect(await db.orcamentos.count()).toBe(0);
+  });
+});
+
+describe('migração v2 do desconto', () => {
+  /*
+   * Até a v1 o desconto era um objeto com dois modos, porque a regra estava em
+   * aberto. Confirmado que é em reais e sem teto, virou centavos simples — e
+   * quem já tiver orçamento gravado não pode perder o valor.
+   */
+  it('mantém o valor de um desconto já em reais', () => {
+    expect(descontoEmCentavos({ desconto: { modo: 'reais', centavos: 50_000 } })).toBe(50_000);
+  });
+
+  it('resolve o percentual contra o total daquele orçamento', () => {
+    const antigo = {
+      desconto: { modo: 'percentual', percentual: 1000 }, // 10,00%
+      acrescimoNotaFiscal: 100_000,
+      secoes: [{ linhas: [{ quantidade: 1, valorUnitario: 1_000_000 }] }],
+    };
+    // 10% de (1.000.000 + 100.000)
+    expect(descontoEmCentavos(antigo)).toBe(110_000);
+  });
+
+  it('resolve o percentual sobre bloco com preço fechado', () => {
+    const antigo = {
+      desconto: { modo: 'percentual', percentual: 500 }, // 5,00%
+      secoes: [{ precoFechado: 2_560_000, linhas: [{ quantidade: 1 }] }],
+    };
+    expect(descontoEmCentavos(antigo)).toBe(128_000);
+  });
+
+  it('já em centavos, passa direto', () => {
+    expect(descontoEmCentavos({ desconto: 12_345 })).toBe(12_345);
+  });
+
+  it('ausente ou estranho vira zero, sem estourar', () => {
+    expect(descontoEmCentavos({})).toBe(0);
+    expect(descontoEmCentavos({ desconto: null })).toBe(0);
+    expect(descontoEmCentavos({ desconto: { modo: 'sei-la' } })).toBe(0);
+  });
+
+  it('nunca devolve negativo', () => {
+    expect(descontoEmCentavos({ desconto: -500 })).toBe(0);
+    expect(descontoEmCentavos({ desconto: { modo: 'reais', centavos: -500 } })).toBe(0);
   });
 });

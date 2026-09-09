@@ -53,7 +53,7 @@ export function orcamentoNovo(amb: Ambiente, dados: DadosNovoOrcamento): Orcamen
     ...(dados.prazoEntrega !== undefined ? { prazoEntrega: dados.prazoEntrega } : {}),
     secoes: [secaoVazia(amb, 'DOS SERVIÇOS A SEREM PRESTADOS')],
     acrescimoNotaFiscal: 0,
-    desconto: { modo: 'reais', centavos: 0 },
+    desconto: 0,
     entrada: { modo: 'sugerida' },
     condicoesPagamento: dados.condicoesPagamento,
     status: 'rascunho',

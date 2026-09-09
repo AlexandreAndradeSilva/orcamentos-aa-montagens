@@ -121,11 +121,14 @@ export const zSecao = z.object({
 });
 export type Secao = z.infer<typeof zSecao>;
 
-/** Desconto unico sobre o total, depois do acrescimo de NF (D4). */
-export const zDesconto = z.discriminatedUnion('modo', [
-  z.object({ modo: z.literal('reais'), centavos: zCentavos.nonnegative() }),
-  z.object({ modo: z.literal('percentual'), percentual: zPercentual }),
-]);
+/**
+ * Desconto unico em reais sobre o total, depois do acrescimo de NF (D4).
+ *
+ * Em reais e **sem teto**, confirmado. Valor acima do total nao e truncado:
+ * `avisosDosTotais` sinaliza e a pessoa decide. Truncar em silencio seria
+ * inventar uma regra que a AA Montagens nao tem.
+ */
+export const zDesconto = zCentavos.nonnegative('desconto nao pode ser negativo');
 export type Desconto = z.infer<typeof zDesconto>;
 
 /**

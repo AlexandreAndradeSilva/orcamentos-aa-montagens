@@ -284,10 +284,6 @@ function Totais({
   configuracao: Configuracao;
 }) {
   const temDesconto = totais.desconto !== 0;
-  const rotuloDesconto =
-    orcamento.desconto.modo === 'percentual'
-      ? `DESCONTO ${fmt.percentual(orcamento.desconto.percentual)}`
-      : 'DESCONTO';
 
   return (
     <View>
@@ -297,7 +293,7 @@ function Totais({
       )}
       <View style={estilos.reguaFina} />
       <Linha rotulo="TOTAL" valor={totais.total} />
-      {temDesconto && <Linha rotulo={rotuloDesconto} valor={-totais.desconto} />}
+      {temDesconto && <Linha rotulo="DESCONTO" valor={-totais.desconto} />}
       {temDesconto && <View style={estilos.reguaFina} />}
       <Linha rotulo="SUB-TOTAL" valor={totais.subTotal} />
       <Linha
