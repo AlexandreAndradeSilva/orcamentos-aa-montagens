@@ -7,6 +7,7 @@ import { BlocoTotais } from './BlocoTotais';
 import { lerCentavos } from '../domain/dinheiro';
 import { linhasIncompletas, numeroCompleto, numeroDoItem } from '../domain/orcamento';
 import { STATUS, type Status } from '../domain/esquemas';
+import { linkWhatsApp } from '../whatsapp';
 import * as fmt from '../formato';
 import './editor.css';
 
@@ -28,6 +29,8 @@ export function EditorOrcamento() {
   const alterar = useEditor((e) => e.alterar);
   const salvar = useEditor((e) => e.salvar);
   const [naoEncontrado, setNaoEncontrado] = useState(false);
+  const [gerando, setGerando] = useState(false);
+  const [falha, setFalha] = useState<string | null>(null);
 
   useEffect(() => {
     let ativo = true;
@@ -92,9 +95,32 @@ export function EditorOrcamento() {
               </option>
             ))}
           </select>
-          <button type="button" className="botao" disabled>
-            Exportar PDF
+          <button
+            type="button"
+            className="botao"
+            disabled={gerando}
+            onClick={() => {
+              setGerando(true);
+              setFalha(null);
+              // import dinâmico: o @react-pdf só entra quando alguém exporta
+              void import('../pdf/exportar')
+                .then((m) => m.baixarPdf(orcamento, config))
+                .catch((e: unknown) =>
+                  setFalha(e instanceof Error ? e.message : 'não foi possível gerar o PDF'),
+                )
+                .finally(() => setGerando(false));
+            }}
+          >
+            {gerando ? 'Gerando…' : 'Exportar PDF'}
           </button>
+          <a
+            className="botao"
+            href={linkWhatsApp(orcamento, config, config.empresa.whatsapp[0])}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Enviar no WhatsApp
+          </a>
           <button
             type="button"
             className="botao botao--primario"
@@ -115,6 +141,7 @@ export function EditorOrcamento() {
       </header>
 
       {erro && <p className="faixa-erro">{erro}</p>}
+      {falha && <p className="faixa-erro">{falha}</p>}
 
       <section className="painel doc-bloco" aria-label="Dados do orçamento">
         <div className="campos">

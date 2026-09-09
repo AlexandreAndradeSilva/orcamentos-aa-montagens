@@ -48,14 +48,25 @@ const mesAno = new Intl.DateTimeFormat(LOCALE, {
 
 const hora = new Intl.DateTimeFormat(LOCALE, { hour: '2-digit', minute: '2-digit' });
 
+/**
+ * Zero negativo vira zero.
+ *
+ * `-0` chega quando o total inverte o sinal de um valor zerado (ENTRADA, por
+ * exemplo). O Intl formata `-0` como "-0,00", e um sinal de menos num zero
+ * parece erro de cálculo no documento impresso.
+ */
+function semZeroNegativo(reais: number): number {
+  return reais === 0 ? 0 : reais;
+}
+
 /** "25.600,00" — sem simbolo, para alinhar na coluna da tabela. */
 export function valor(centavos: Centavos): string {
-  return numero2.format(centavos / 100);
+  return numero2.format(semZeroNegativo(centavos / 100));
 }
 
 /** "R$ 25.600,00" — para o total em destaque e o texto do WhatsApp. */
 export function valorComSimbolo(centavos: Centavos): string {
-  return moeda.format(centavos / 100);
+  return moeda.format(semZeroNegativo(centavos / 100));
 }
 
 /** "3,5" / "1.250" — quantidade, ate 3 casas, sem zero a direita. */

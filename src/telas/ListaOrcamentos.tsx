@@ -4,7 +4,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../dados/db';
 import { useEditor } from '../estado/editor';
 import { calcularTotais, numeroCompleto } from '../domain/orcamento';
-import { STATUS, type Status } from '../domain/esquemas';
+import { STATUS, type Orcamento, type Status } from '../domain/esquemas';
 import * as fmt from '../formato';
 import './lista.css';
 
@@ -115,6 +115,9 @@ export function ListaOrcamentos() {
                 <th scope="col" className="num">
                   A pagar
                 </th>
+                <th scope="col">
+                  <span className="so-leitor">Ações</span>
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -135,6 +138,9 @@ export function ListaOrcamentos() {
                       <span className={`status status--${o.status}`}>{o.status}</span>
                     </td>
                     <td className="num">{fmt.valor(totais.aPagar)}</td>
+                    <td>
+                      <BotaoPdf orcamento={o} percentualEntradaPadrao={config} />
+                    </td>
                   </tr>
                 );
               })}
@@ -143,6 +149,31 @@ export function ListaOrcamentos() {
         </div>
       )}
     </div>
+  );
+}
+
+function BotaoPdf({
+  orcamento,
+  percentualEntradaPadrao,
+}: {
+  orcamento: Orcamento;
+  percentualEntradaPadrao: NonNullable<ReturnType<typeof useEditor.getState>['config']>;
+}) {
+  const [gerando, setGerando] = useState(false);
+  return (
+    <button
+      type="button"
+      className="botao botao--texto botao--mini"
+      disabled={gerando}
+      onClick={() => {
+        setGerando(true);
+        void import('../pdf/exportar')
+          .then((m) => m.baixarPdf(orcamento, percentualEntradaPadrao))
+          .finally(() => setGerando(false));
+      }}
+    >
+      {gerando ? 'gerando…' : 'PDF'}
+    </button>
   );
 }
 
