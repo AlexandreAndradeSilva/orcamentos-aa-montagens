@@ -1,0 +1,84 @@
+# Decisões confirmadas
+
+Respostas dadas em 08/09/2026. Cada uma fecha uma lacuna de `regras-de-negocio.md`.
+O que ainda está aberto continua em `PERGUNTAS.md`.
+
+---
+
+## D1 · Itens: preço próprio **e** preço de pacote convivem *(fecha L2 / P7)*
+
+Um orçamento pode misturar, no mesmo documento:
+
+- **linha com preço próprio** — `total = quantidade × valor unitário` (regra R1 da planilha);
+- **bloco com preço fechado** — N linhas descritivas sob um único preço, que entra uma vez na soma (o caso 1.1–1.4 = R$ 25.600,00);
+- **linha sem preço** — texto puro, não soma (é como a planilha representa observações).
+
+A tabela de edição precisa suportar os três estados por linha. Um bloco é um agrupamento de linhas consecutivas com um preço no nível do bloco; quando existe preço de bloco, as quantidades e valores das linhas internas são **informativos** e não entram na conta.
+
+## D2 · Acréscimo de nota fiscal: valor em reais, caso a caso *(fecha L4 / P2)*
+
+Mantido exatamente como a planilha faz: campo livre em reais, digitado a cada orçamento, sem percentual e sem cálculo. Padrão `0`.
+
+## D3 · Sem frete *(fecha L5 / P5)*
+
+O frete/deslocamento **não existe** no negócio — já está embutido no preço ("INCLUSOS MATERIAL E MÃO DE OBRA"). Nenhum campo de frete será criado, nem no domínio, nem na tela, nem no PDF.
+
+## D4 · Desconto único sobre o total, **depois** do acréscimo de NF *(fecha L3 / P4)*
+
+Um desconto por orçamento (não por item), aplicado como última etapa antes do sub-total:
+
+```
+totalDosServicos = Σ totais das linhas e dos blocos
+total            = totalDosServicos + acrescimoNotaFiscal
+subTotal         = total − desconto
+entrada          = valor (sugerido 30% de subTotal, editável)
+aPagar           = subTotal − entrada
+```
+
+Comparado à planilha, a única inserção é `− desconto`; o resto do encadeamento é idêntico (`R4`).
+
+> Nota: com o desconto depois do acréscimo, o acréscimo incide sobre o valor cheio. Se um dia a AA Montagens quiser o contrário, é a troca de uma linha em `src/domain/`.
+
+**Ainda em aberto:** o desconto é digitado em **%** ou em **reais**? Há teto? — ver `PERGUNTAS.md`. Até haver resposta, implemento os dois modos (% e valor), com o valor em reais como padrão, e sem teto.
+
+## D5 · Entrada: sugere 30%, permite editar *(fecha L3 / P3)*
+
+Ao abrir um orçamento novo, o campo ENTRADA vem pré-preenchido com **30% do sub-total** (arredondado HALF_UP para centavos), acompanhando a condição de pagamento padrão. O usuário pode sobrescrever a qualquer momento; se sobrescrever, o app **para de recalcular** aquele campo — a sugestão não volta a atropelar o valor digitado.
+
+Entrada `0` explícita é um valor válido e significa "sem entrada", não "não negociada".
+
+## D6 · Numeração: `001/2026`, reiniciando a cada ano *(fecha L7 / P8)*
+
+- Formato: três dígitos, barra, ano com quatro dígitos — `001/2026`
+- Sequencial dentro do ano; volta a `001` em 01/01/2027
+- O próximo número é editável em **Configurações** (para continuar de uma numeração de papel)
+- Revisão preserva o número e acrescenta sufixo: `001/2026-R1`
+- Nome do arquivo PDF: `orcamento-001-2026-igreja-portal-perola-2.pdf`
+
+## D7 · Contato do PDF *(fecha P14 / P15)*
+
+| Campo | Valor | Observação |
+|---|---|---|
+| E-mail | `aamonstagens@hotmail.com` | **mantido como está na planilha** — confirmado que não é erro. Editável em Configurações. |
+| WhatsApp | `(18) 99823-0660` **e** `(18) 99788-2819` | os **dois** são WhatsApp |
+
+Consequência: o botão "Enviar no WhatsApp" oferece a escolha entre os dois números, com o primeiro (`99823-0660`) como padrão. Ambos aparecem no rodapé do PDF.
+
+**Todos os dados da empresa** — razão social, CNPJ, endereço, telefones, e-mail, logo — ficam editáveis na tela de **Configurações**, nenhum fixo no código.
+
+## D8 · Sem arquivos adicionais *(fecha P1 / P17)*
+
+Não há planilha original, orçamentos antigos nem logo vetorial. Consequências, assumidas explicitamente:
+
+- **Fase 1** vetoriza a partir do PNG 1024×1024 com fundo bege. Dá para fazer bem — o contraste e a resolução permitem —, mas o SVG será uma *redesenho fiel*, não uma conversão do arquivo de origem do designer.
+- **Fase 4** terá **um único caso de paridade** (Igreja Portal Pérola 2, R$ 25.600,00, acréscimo 0, entrada 0). É o caso mais simples possível: não exercita acréscimo, desconto, entrada, preço de pacote com mais de um bloco nem quantidade fracionada. Os demais testes serão de regra (derivados das fórmulas), não de paridade com documento real. **Isso vai declarado no README.**
+
+## D9 · Arredondamento *(fecha L1)*
+
+A planilha não tem `ROUND`; o Excel calcula em float e só exibe 2 casas. Adotado, conforme o escopo:
+
+- **HALF_UP para centavos**, em uma única função utilitária do domínio
+- aplicada **no total de cada linha** (ou de cada bloco), antes da soma — é o que reproduz o que o usuário enxerga na tela do Excel
+- somas, desconto, acréscimo e entrada operam sobre inteiros em centavos, sem novo arredondamento
+
+Com quantidades inteiras — o caso de todos os itens da planilha — o resultado é idêntico ao do Excel. Divergências só podem aparecer com quantidade fracionada, e aí o comportamento arredondado é o correto.
