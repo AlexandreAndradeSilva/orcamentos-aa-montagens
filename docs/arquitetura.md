@@ -34,7 +34,7 @@ Sempre `Centavos`, um inteiro. Nunca float.
 A quantidade vira milésimos inteiros antes de multiplicar, para o produto não herdar a imprecisão do float da quantidade:
 
 ```ts
-multiplicarPorQuantidade(18_733, 3.5) === 65_566   // 3,5 × R$ 187,33 = R$ 655,66
+multiplicarPorQuantidade(18_733, 3.5) === 65_566; // 3,5 × R$ 187,33 = R$ 655,66
 ```
 
 **Onde o arredondamento acontece:** no total de cada linha (ou de cada bloco), antes da soma. É o que reproduz o que a pessoa enxerga na tela do Excel (D9).
@@ -62,7 +62,7 @@ aPagar           = subTotal − entrada                // H35
 Três comportamentos vieram direto da planilha e não são detalhe:
 
 1. **`totalDaLinha` devolve `null`** quando falta quantidade ou valor — não zero. É a tradução de `=SE(OU(C18="";E18="");"";C18*E18)`, e é o que deixa observação e item dividirem a mesma grade.
-2. **Quantidade zero com preço dá zero**, não `null`. A fórmula testa célula *vazia*, não valor zero.
+2. **Quantidade zero com preço dá zero**, não `null`. A fórmula testa célula _vazia_, não valor zero.
 3. **`precoFechado` na seção** faz o bloco valer o preço do bloco, com as linhas internas não somando — as células mescladas `E18:E21`/`F18:F21` (D1).
 
 ## 4. Persistência
@@ -85,15 +85,15 @@ Migrations versionadas: cada `version()` é um degrau permanente; degrau publica
 
 ## 6. Rotas
 
-| Rota | Tela |
-|---|---|
-| `/orcamentos` | lista com busca, filtro por situação e por período |
-| `/orcamentos/novo` | escolhe ou cria o cliente e reserva o número |
-| `/orcamentos/:id` | o editor: cabeçalho, grade densa, totais |
-| `/clientes` | lista |
-| `/servicos` | catálogo construído pelo uso |
-| `/configuracoes` | empresa, padrões, numeração, backup |
-| `/produtos` | redireciona para `/servicos` |
+| Rota               | Tela                                               |
+| ------------------ | -------------------------------------------------- |
+| `/orcamentos`      | lista com busca, filtro por situação e por período |
+| `/orcamentos/novo` | escolhe ou cria o cliente e reserva o número       |
+| `/orcamentos/:id`  | o editor: cabeçalho, grade densa, totais           |
+| `/clientes`        | lista                                              |
+| `/servicos`        | catálogo construído pelo uso                       |
+| `/configuracoes`   | empresa, padrões, numeração, backup                |
+| `/produtos`        | redireciona para `/servicos`                       |
 
 ### Uma divergência do escopo, declarada
 
@@ -103,19 +103,19 @@ O escopo pedia `/produtos`. A AA Montagens vende **serviço** — fachada, pergo
 
 Tudo abaixo roda e passa neste commit:
 
-| Comando | Resultado |
-|---|---|
-| `npx tsc -b` | sem erros, com `strict` + `noUncheckedIndexedAccess` + `exactOptionalPropertyTypes` |
-| `npm run build` | sem warnings — 389 kB / 121 kB gzip |
-| `npx eslint .` | sem problemas |
-| `npx prettier --check` | formatado |
-| `npx vitest run` | **32 testes, 32 passando** |
+| Comando                | Resultado                                                                           |
+| ---------------------- | ----------------------------------------------------------------------------------- |
+| `npx tsc -b`           | sem erros, com `strict` + `noUncheckedIndexedAccess` + `exactOptionalPropertyTypes` |
+| `npm run build`        | sem warnings — 389 kB / 121 kB gzip                                                 |
+| `npx eslint .`         | sem problemas                                                                       |
+| `npx prettier --check` | formatado                                                                           |
+| `npx vitest run`       | **32 testes, 32 passando**                                                          |
 
 Os 32 testes cobrem três níveis: o dinheiro (18), a integração domínio + Dexie + backup (10) e a montagem do app em jsdom (4).
 
 ### Dois bugs que os testes pegaram
 
-1. **`useLiveQuery` com transação de escrita.** A lista chamava `lerConfiguracao()` dentro de um `liveQuery`, e essa função *grava* a configuração padrão na primeira execução. O Dexie recusa: `ReadOnlyError: Readwrite transaction in liveQuery context`. A configuração passou a vir do store, que a carrega uma vez na subida do app.
+1. **`useLiveQuery` com transação de escrita.** A lista chamava `lerConfiguracao()` dentro de um `liveQuery`, e essa função _grava_ a configuração padrão na primeira execução. O Dexie recusa: `ReadOnlyError: Readwrite transaction in liveQuery context`. A configuração passou a vir do store, que a carrega uma vez na subida do app.
 2. **`setState` dentro de `useEffect`** ao escolher um cliente já cadastrado — cascata de render sinalizada pelo `react-hooks`. Virou atribuição direta no handler do `select`.
 
 Nenhum dos dois apareceria no `tsc`.

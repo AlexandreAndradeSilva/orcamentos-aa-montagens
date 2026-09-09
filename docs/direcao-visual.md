@@ -11,33 +11,33 @@ Três cores vêm da marca (medidas no raster, ver `logo.md`), dois neutros deriv
 
 ### Da marca
 
-| Token | HEX | Função |
-|---|---|---|
-| `--cor-acao` | `#135885` | **Primário.** Botão de ação, anel de foco, linha selecionada, valor em destaque. É o azul-aço da logo, sem alteração. |
-| `--cor-acao-forte` | `#0D4166` | Hover e estado pressionado do primário. |
-| `--cor-acao-fraca` | `#E4EDF4` | Fundo da linha/célula selecionada. |
-| `--cor-tinta` | `#1C1A17` | Texto principal. É o preto quente da logo. |
-| `--cor-tinta-media` | `#57514A` | Texto secundário, valores desativados. |
-| `--cor-tinta-fraca` | `#736B63` | Rótulos de campo, placeholder, unidades. |
+| Token               | HEX       | Função                                                                                                                |
+| ------------------- | --------- | --------------------------------------------------------------------------------------------------------------------- |
+| `--cor-acao`        | `#135885` | **Primário.** Botão de ação, anel de foco, linha selecionada, valor em destaque. É o azul-aço da logo, sem alteração. |
+| `--cor-acao-forte`  | `#0D4166` | Hover e estado pressionado do primário.                                                                               |
+| `--cor-acao-fraca`  | `#E4EDF4` | Fundo da linha/célula selecionada.                                                                                    |
+| `--cor-tinta`       | `#1C1A17` | Texto principal. É o preto quente da logo.                                                                            |
+| `--cor-tinta-media` | `#57514A` | Texto secundário, valores desativados.                                                                                |
+| `--cor-tinta-fraca` | `#736B63` | Rótulos de campo, placeholder, unidades.                                                                              |
 
 ### Neutros (derivados do bege osso `#E8E4DF`)
 
-| Token | HEX | Função |
-|---|---|---|
-| `--cor-papel` | `#FCFBF9` | Superfície de trabalho: a tabela, os cartões, os campos. |
-| `--cor-fundo` | `#F1EEE9` | O fundo atrás da superfície. Dá o degrau sem precisar de sombra. |
-| `--cor-linha-sutil` | `#E2DCD3` | Grade interna da tabela. Estrutural. |
-| `--cor-linha` | `#948B81` | Borda de campo editável, borda no hover. |
-| `--cor-linha-forte` | `#8E877D` | Divisores estruturais, régua sob o cabeçalho da tabela. |
+| Token               | HEX       | Função                                                           |
+| ------------------- | --------- | ---------------------------------------------------------------- |
+| `--cor-papel`       | `#FCFBF9` | Superfície de trabalho: a tabela, os cartões, os campos.         |
+| `--cor-fundo`       | `#F1EEE9` | O fundo atrás da superfície. Dá o degrau sem precisar de sombra. |
+| `--cor-linha-sutil` | `#E2DCD3` | Grade interna da tabela. Estrutural.                             |
+| `--cor-linha`       | `#948B81` | Borda de campo editável, borda no hover.                         |
+| `--cor-linha-forte` | `#8E877D` | Divisores estruturais, régua sob o cabeçalho da tabela.          |
 
 O bege chapado do PNG **não** virou cor de marca — era papel simulado dentro da imagem. Virou a origem dos neutros, que é o papel dele.
 
 ### Alerta
 
-| Token | HEX | Função |
-|---|---|---|
-| `--cor-alerta` | `#A33520` | Vermelho-óxido. Ação destrutiva, erro de validação, status `perdido`, e o aviso de reajuste que a planilha já traz em vermelho. |
-| `--cor-alerta-fraca` | `#F7E7E2` | Fundo de faixa de erro. |
+| Token                | HEX       | Função                                                                                                                          |
+| -------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `--cor-alerta`       | `#A33520` | Vermelho-óxido. Ação destrutiva, erro de validação, status `perdido`, e o aviso de reajuste que a planilha já traz em vermelho. |
+| `--cor-alerta-fraca` | `#F7E7E2` | Fundo de faixa de erro.                                                                                                         |
 
 ### O amarelo que ficou de fora
 
@@ -47,30 +47,30 @@ A planilha marca o bloco de totais com amarelo `#FFF200`. É uma convenção rea
 
 Nada de pílula colorida. Um marcador quadrado de 8 px + o rótulo em texto. A progressão é codificada por **preenchimento**, não por matiz nova:
 
-| Status | Marcador | Cor |
-|---|---|---|
-| `rascunho` | contorno | `--cor-tinta-fraca` |
-| `enviado` | contorno | `--cor-acao` |
-| `aprovado` | preenchido | `--cor-acao` |
-| `perdido` | contorno | `--cor-alerta` |
+| Status     | Marcador   | Cor                 |
+| ---------- | ---------- | ------------------- |
+| `rascunho` | contorno   | `--cor-tinta-fraca` |
+| `enviado`  | contorno   | `--cor-acao`        |
+| `aprovado` | preenchido | `--cor-acao`        |
+| `perdido`  | contorno   | `--cor-alerta`      |
 
 > Pendente: `P12` ainda não foi respondida — se a AA Montagens não for usar status, isso sai inteiro e a lista fica só com busca e período.
 
 ### Contraste — medido, não estimado
 
-| Par | Razão | Nível |
-|---|---|---|
-| tinta sobre papel — texto da tabela | 16,79:1 | AAA |
-| tinta-media sobre papel — texto secundário | 7,57:1 | AAA |
-| tinta-fraca sobre papel — rótulo | 5,06:1 | AA |
-| tinta-fraca sobre fundo — rótulo | 4,52:1 | AA |
-| ação sobre papel — valor em destaque, anel de foco | 7,35:1 | AAA |
-| branco sobre ação — botão primário | 7,60:1 | AAA |
-| tinta sobre ação-fraca — célula selecionada | 14,65:1 | AAA |
-| alerta sobre papel — aviso e erro | 6,58:1 | AA |
-| branco sobre alerta — botão destrutivo | 6,80:1 | AA |
-| linha sobre papel — borda de campo | 3,24:1 | AA (não-texto) |
-| linha-forte sobre papel — divisor | 3,43:1 | AA (não-texto) |
+| Par                                                | Razão   | Nível          |
+| -------------------------------------------------- | ------- | -------------- |
+| tinta sobre papel — texto da tabela                | 16,79:1 | AAA            |
+| tinta-media sobre papel — texto secundário         | 7,57:1  | AAA            |
+| tinta-fraca sobre papel — rótulo                   | 5,06:1  | AA             |
+| tinta-fraca sobre fundo — rótulo                   | 4,52:1  | AA             |
+| ação sobre papel — valor em destaque, anel de foco | 7,35:1  | AAA            |
+| branco sobre ação — botão primário                 | 7,60:1  | AAA            |
+| tinta sobre ação-fraca — célula selecionada        | 14,65:1 | AAA            |
+| alerta sobre papel — aviso e erro                  | 6,58:1  | AA             |
+| branco sobre alerta — botão destrutivo             | 6,80:1  | AA             |
+| linha sobre papel — borda de campo                 | 3,24:1  | AA (não-texto) |
+| linha-forte sobre papel — divisor                  | 3,43:1  | AA (não-texto) |
 
 Nenhuma reprovação. Dois tons foram **ajustados durante a fase** justamente porque reprovaram na primeira medição: `--cor-tinta-fraca` saiu de `#857D73` (3,92:1 — falha) para `#736B63`, e as bordas saíram de `#DBD5CC` (1,41:1) para os tons atuais.
 
@@ -104,10 +104,10 @@ Usada em: tudo o mais. Células da tabela, formulários, botões, rótulos, obse
 
 > **Verificado na Fase 3** (inspeção das tabelas `GSUB`/`hmtx` das duas fontes):
 >
-> | Fonte | Larguras dos dígitos | `tnum` | Conclusão |
-> |---|---|---|---|
-> | IBM Plex Sans | todas 600 — **tabular por padrão** | ausente | não precisa da feature; alinha sozinha |
-> | Barlow Condensed | 9 larguras distintas (`1`=284, `4`=484) — proporcional | **presente** | `tabular-nums` é **obrigatório** |
+> | Fonte            | Larguras dos dígitos                                   | `tnum`       | Conclusão                              |
+> | ---------------- | ------------------------------------------------------ | ------------ | -------------------------------------- |
+> | IBM Plex Sans    | todas 600 — **tabular por padrão**                     | ausente      | não precisa da feature; alinha sozinha |
+> | Barlow Condensed | 9 larguras distintas (`1`=284, `4`=484) — proporcional | **presente** | `tabular-nums` é **obrigatório**       |
 >
 > Ou seja, o oposto do que o nome das features sugeria: a Plex não expõe `tnum` justamente porque já é tabular, e a Barlow só alinha com a feature ligada. As duas servem, e o CSS aplica `font-variant-numeric: tabular-nums` em `.num` e no total em destaque. O bloco de totais **fica na Barlow Condensed**, como desenhado.
 
@@ -117,18 +117,18 @@ Base **14px**, não 16 — é ferramenta de trabalho densa. Entrelinhas caem em 
 
 ```css
 /* texto — IBM Plex Sans */
---txt-2xs: 11px/16px;   /* unidade, legenda de tabela */
---txt-xs:  12px/16px;   /* rótulo de campo, texto de ajuda */
---txt-sm:  13px/20px;   /* célula secundária */
---txt-md:  14px/20px;   /* BASE: célula, formulário, botão */
---txt-lg:  16px/24px;   /* nome do cliente */
+--txt-2xs: 11px/16px; /* unidade, legenda de tabela */
+--txt-xs: 12px/16px; /* rótulo de campo, texto de ajuda */
+--txt-sm: 13px/20px; /* célula secundária */
+--txt-md: 14px/20px; /* BASE: célula, formulário, botão */
+--txt-lg: 16px/24px; /* nome do cliente */
 
 /* display — Barlow Condensed */
---dsp-xs:  14px/16px;   /* cabeçalho de coluna, versalete + tracking .06em */
---dsp-sm:  18px/20px;   /* título de seção da tabela */
---dsp-md:  24px/28px;   /* título de página */
---dsp-lg:  32px/36px;   /* número do orçamento */
---dsp-xl:  44px/44px;   /* A PAGAR */
+--dsp-xs: 14px/16px; /* cabeçalho de coluna, versalete + tracking .06em */
+--dsp-sm: 18px/20px; /* título de seção da tabela */
+--dsp-md: 24px/28px; /* título de página */
+--dsp-lg: 32px/36px; /* número do orçamento */
+--dsp-xl: 44px/44px; /* A PAGAR */
 ```
 
 Pesos: texto 400 / 500 / 600. Display 500 / 600 / 700.
@@ -138,17 +138,23 @@ Pesos: texto 400 / 500 / 600. Display 500 / 600 / 700.
 ## 3. Grade, espaço e forma
 
 ```css
---e-1:  4px;   --e-2:  8px;   --e-3: 12px;   --e-4: 16px;
---e-5: 24px;   --e-6: 32px;   --e-7: 48px;   --e-8: 64px;
+--e-1: 4px;
+--e-2: 8px;
+--e-3: 12px;
+--e-4: 16px;
+--e-5: 24px;
+--e-6: 32px;
+--e-7: 48px;
+--e-8: 64px;
 
---linha-altura-min: 32px;   /* 8 × 4 */
+--linha-altura-min: 32px; /* 8 × 4 */
 --celula-pad-x: 8px;
 --celula-pad-y: 6px;
 --barra-altura: 48px;
 
---raio:    3px;   /* campo, botão */
---raio-lg: 4px;   /* cartão, menu */
---borda:   1px;
+--raio: 3px; /* campo, botão */
+--raio-lg: 4px; /* cartão, menu */
+--borda: 1px;
 ```
 
 **Raio pequeno de propósito.** Nada de `rounded-2xl`. Ferramenta de precisão tem canto quase reto.
@@ -231,16 +237,16 @@ Três coisas no desenho merecem nota:
 
 A pessoa que vai usar isso passou anos no Excel. A tabela obedece o teclado dela:
 
-| Tecla | O que faz |
-|---|---|
-| `Tab` / `Shift+Tab` | Próximo campo / anterior. No fim da linha, salta para a próxima. |
-| `Enter` | Confirma e **cria nova linha** abaixo, com o cursor na descrição. |
-| `↑` `↓` | Sobe e desce mantendo a coluna. |
-| `Ctrl+D` | Duplica a linha de cima. |
-| `Alt+↑` / `Alt+↓` | Move a linha. |
-| `Esc` | Cancela a edição da célula e devolve o valor anterior. |
-| `Ctrl+V` | **Cola da planilha.** Múltiplas linhas separadas por quebra, colunas por tabulação, distribuídas nas colunas certas. |
-| `Ctrl+Enter` | Nova seção. |
+| Tecla               | O que faz                                                                                                            |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `Tab` / `Shift+Tab` | Próximo campo / anterior. No fim da linha, salta para a próxima.                                                     |
+| `Enter`             | Confirma e **cria nova linha** abaixo, com o cursor na descrição.                                                    |
+| `↑` `↓`             | Sobe e desce mantendo a coluna.                                                                                      |
+| `Ctrl+D`            | Duplica a linha de cima.                                                                                             |
+| `Alt+↑` / `Alt+↓`   | Move a linha.                                                                                                        |
+| `Esc`               | Cancela a edição da célula e devolve o valor anterior.                                                               |
+| `Ctrl+V`            | **Cola da planilha.** Múltiplas linhas separadas por quebra, colunas por tabulação, distribuídas nas colunas certas. |
+| `Ctrl+Enter`        | Nova seção.                                                                                                          |
 
 Edição é **inline na célula**. Nada de abrir modal para digitar uma quantidade.
 
@@ -248,16 +254,16 @@ Edição é **inline na célula**. Nada de abrir modal para digitar uma quantida
 
 Português do setor, escrito por gente. Nada de "Vamos começar!" nem de "Nenhum item encontrado ✨".
 
-| Onde | Texto |
-|---|---|
-| Lista vazia com filtro | "Nenhum orçamento em agosto de 2026." + ação **Novo orçamento** |
-| Tabela vazia | "Sem itens. Comece pela descrição do serviço." |
-| Placeholder de descrição | "Ex.: pergolado garagem com dobras em chapa 16 (1,5 mm)" |
-| Placeholder de unidade | "UNID." |
-| Item sem preço | "Item 1.2 sem valor — não entra no total." |
-| Salvamento | "salvo às 14:32" |
-| Confirmação de exclusão | "Excluir o orçamento 001/2026? Não dá para desfazer." |
-| Revisão | "Gera a revisão 001/2026-R1 e mantém este arquivado." |
+| Onde                     | Texto                                                           |
+| ------------------------ | --------------------------------------------------------------- |
+| Lista vazia com filtro   | "Nenhum orçamento em agosto de 2026." + ação **Novo orçamento** |
+| Tabela vazia             | "Sem itens. Comece pela descrição do serviço."                  |
+| Placeholder de descrição | "Ex.: pergolado garagem com dobras em chapa 16 (1,5 mm)"        |
+| Placeholder de unidade   | "UNID."                                                         |
+| Item sem preço           | "Item 1.2 sem valor — não entra no total."                      |
+| Salvamento               | "salvo às 14:32"                                                |
+| Confirmação de exclusão  | "Excluir o orçamento 001/2026? Não dá para desfazer."           |
+| Revisão                  | "Gera a revisão 001/2026-R1 e mantém este arquivado."           |
 
 ---
 
@@ -271,4 +277,4 @@ Gradiente violeta/índigo/ciano · glassmorphism, blur, orbe de fundo · `rounde
 
 1. ~~`tnum` da Barlow Condensed~~ — **resolvido na Fase 3**, ver a seção de tipografia.
 2. **Status** (`P12`) — se não for usado, sai da barra do documento e da lista.
-3. **Desconto** — `D4` fixou *onde* ele entra, mas ainda falta saber se é digitado em **%** ou em **reais**, e se há teto. No desenho ele aparece como valor; vira campo duplo (%/R$) se a resposta for essa.
+3. **Desconto** — `D4` fixou _onde_ ele entra, mas ainda falta saber se é digitado em **%** ou em **reais**, e se há teto. No desenho ele aparece como valor; vira campo duplo (%/R$) se a resposta for essa.

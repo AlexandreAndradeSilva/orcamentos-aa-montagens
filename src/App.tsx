@@ -17,6 +17,9 @@ export function App() {
 
   return (
     <>
+      <a className="pular" href="#conteudo">
+        Pular para o conteúdo
+      </a>
       <header className="barra">
         <span className="barra__marca">
           <img src="/logo-simbolo.svg" alt="" />
@@ -29,7 +32,7 @@ export function App() {
           <NavLink to="/configuracoes">Configurações</NavLink>
         </nav>
       </header>
-      <main>
+      <main id="conteudo" tabIndex={-1}>
         <Routes>
           <Route path="/" element={<Navigate to="/orcamentos" replace />} />
           <Route path="/orcamentos" element={<ListaOrcamentos />} />

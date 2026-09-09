@@ -6,17 +6,17 @@ Entregável: [`exemplos/orcamento-001-2026-igreja-portal-perola-2.pdf`](../exemp
 
 ## 1. O que foi verificado, não suposto
 
-| Exigência | Como conferi | Resultado |
-|---|---|---|
-| Texto vetorial selecionável | extração com `pypdf` | ✅ todo o conteúdo sai como texto |
-| Sem raster / `html2canvas` | contagem de `/Subtype /Image` | **0 imagens** — a logo é vetor |
-| Fontes embutidas | `/DescendantFonts[0]/FontDescriptor/FontFile2` | ✅ 3 subconjuntos |
-| Arquivo leve | `stat` | **32,2 KB** numa página |
-| Cabeçalho repete na quebra | render de 55 itens, texto página a página | ✅ nas 3 páginas com itens |
-| "Página X de Y" | idem | ✅ correto nas 4 páginas |
-| Totais conferem | comparação com a paridade da Fase 4 | ✅ R$ 25.600,00 |
+| Exigência                   | Como conferi                                   | Resultado                         |
+| --------------------------- | ---------------------------------------------- | --------------------------------- |
+| Texto vetorial selecionável | extração com `pypdf`                           | ✅ todo o conteúdo sai como texto |
+| Sem raster / `html2canvas`  | contagem de `/Subtype /Image`                  | **0 imagens** — a logo é vetor    |
+| Fontes embutidas            | `/DescendantFonts[0]/FontDescriptor/FontFile2` | ✅ 3 subconjuntos                 |
+| Arquivo leve                | `stat`                                         | **32,2 KB** numa página           |
+| Cabeçalho repete na quebra  | render de 55 itens, texto página a página      | ✅ nas 3 páginas com itens        |
+| "Página X de Y"             | idem                                           | ✅ correto nas 4 páginas          |
+| Totais conferem             | comparação com a paridade da Fase 4            | ✅ R$ 25.600,00                   |
 
-> Sobre fontes embutidas: a primeira conferência deu `embutida=False` e estava **errada** — em fonte `Type0` o `FontDescriptor` mora no *descendente*, não no objeto de topo. Corrigido o local, as três aparecem embutidas, e os prefixos de subconjunto (`CZZZZZ+`) confirmam.
+> Sobre fontes embutidas: a primeira conferência deu `embutida=False` e estava **errada** — em fonte `Type0` o `FontDescriptor` mora no _descendente_, não no objeto de topo. Corrigido o local, as três aparecem embutidas, e os prefixos de subconjunto (`CZZZZZ+`) confirmam.
 
 ## 2. Fontes
 
@@ -92,9 +92,9 @@ Resumo, não a tabela inteira: no máximo 6 itens, descrição cortada em 70 car
 
 O módulo de PDF entra por **import dinâmico**. Sem isso o `@react-pdf` (1,2 MB) ia para o bundle principal e o app abria em 1,6 MB. Agora:
 
-| Chunk | Tamanho | Gzip | Quando carrega |
-|---|---|---|---|
-| app | 393 kB | 122 kB | sempre |
+| Chunk                | Tamanho  | Gzip   | Quando carrega                         |
+| -------------------- | -------- | ------ | -------------------------------------- |
+| app                  | 393 kB   | 122 kB | sempre                                 |
 | exportar (react-pdf) | 1.218 kB | 450 kB | ao clicar em exportar, e fica em cache |
 
 O `chunkSizeWarningLimit` foi ajustado para 1300 com comentário explicando — o chunk grande é uma decisão consciente, não um descuido, e preferi documentar a esconder.

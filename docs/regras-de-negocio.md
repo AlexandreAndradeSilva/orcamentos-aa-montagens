@@ -18,7 +18,7 @@ Este documento traduz **apenas o que está escrito no arquivo**. Onde a planilha
 
 **Consequência de projeto:** linhas puramente descritivas (as observações, os títulos de seção) são exatamente as linhas sem quantidade ou sem valor. A planilha não distingue "item" de "observação" por tipo — distingue por preenchimento. O app deve preservar esse comportamento: **uma linha sem quantidade ou sem preço não contribui e não exibe total.**
 
-**Não há arredondamento explícito.** Não existe `ARRED`/`ROUND` em nenhuma célula do arquivo. O Excel multiplica em ponto flutuante binário e a máscara `#,##0.00` apenas *exibe* 2 casas. → **LACUNA L1**
+**Não há arredondamento explícito.** Não existe `ARRED`/`ROUND` em nenhuma célula do arquivo. O Excel multiplica em ponto flutuante binário e a máscara `#,##0.00` apenas _exibe_ 2 casas. → **LACUNA L1**
 
 ## R2 — Preço de pacote (bloco mesclado)
 
@@ -54,7 +54,7 @@ Em prosa:
 
 1. **TOTAL** repete o total dos serviços. É uma célula redundante — existe só para posicionar o valor dentro do bloco amarelo.
 2. **ACRÉSCIMO NOTA FISCAL** é somado ao total. É um acréscimo, não um imposto destacado, e no orçamento existente vale `0`.
-3. **SUB-TOTAL** = total + acréscimo. (O nome está invertido em relação ao uso comum: aqui o "sub-total" vem *depois* do total.)
+3. **SUB-TOTAL** = total + acréscimo. (O nome está invertido em relação ao uso comum: aqui o "sub-total" vem _depois_ do total.)
 4. **ENTRADA** é subtraída do sub-total.
 5. **A PAGAR** = o saldo restante após a entrada.
 
@@ -97,16 +97,16 @@ São **strings**, não números — `1.1` está armazenado como texto. Não há 
 
 ## R9 — Numeração do orçamento
 
-**Não existe.** O documento não tem número, código, série nem referência. O arquivo é identificado apenas pelo nome (`IGREJA SAO MIGUEL ARCANJO PORTA PEROLA 2.xlsx`) e o processo de "novo orçamento" descrito na aba oculta é *salvar uma cópia do arquivo*. → **LACUNA L7**
+**Não existe.** O documento não tem número, código, série nem referência. O arquivo é identificado apenas pelo nome (`IGREJA SAO MIGUEL ARCANJO PORTA PEROLA 2.xlsx`) e o processo de "novo orçamento" descrito na aba oculta é _salvar uma cópia do arquivo_. → **LACUNA L7**
 
 ## R10 — Formatação de saída
 
-| O quê | Como está na planilha |
-|---|---|
-| Moeda | máscara `#,##0.00` — **sem `R$`**, separador de milhar por ponto e decimal por vírgula (locale pt-BR do Excel) |
-| Data | máscara `mm-dd-yy` — **americana**, sobre um valor de data real |
-| Impressão | A4 retrato, escala 72%, margens 0,25", linhas 1:16 repetidas no topo de cada página |
-| Grade | linhas de grade desligadas na tela |
+| O quê     | Como está na planilha                                                                                          |
+| --------- | -------------------------------------------------------------------------------------------------------------- |
+| Moeda     | máscara `#,##0.00` — **sem `R$`**, separador de milhar por ponto e decimal por vírgula (locale pt-BR do Excel) |
+| Data      | máscara `mm-dd-yy` — **americana**, sobre um valor de data real                                                |
+| Impressão | A4 retrato, escala 72%, margens 0,25", linhas 1:16 repetidas no topo de cada página                            |
+| Grade     | linhas de grade desligadas na tela                                                                             |
 
 A máscara de data americana é quase certamente acidental (é o default do openpyxl para datas). → **LACUNA L8**
 
@@ -118,23 +118,23 @@ Duas linhas de assinatura lado a lado no rodapé: `AA MONTAGENS` (esquerda) e `C
 
 ## Quadro-resumo do que a planilha define vs. o que o escopo pede
 
-| Conceito | Planilha | Escopo do app | Situação |
-|---|---|---|---|
-| Total do item = qtd × valor | ✅ `R1` | ✅ | definido |
-| Preço de pacote por bloco | ✅ `R2` | — | **definido na planilha, ausente do escopo** |
-| Soma dos itens | ✅ `R3` | ✅ | definido |
-| Acréscimo (nota fiscal) | ✅ valor manual | "acréscimo" | regra do valor é **LACUNA L4** |
-| Entrada / a pagar | ✅ `R4` | — | **definido na planilha, ausente do escopo** |
-| Condições de pagamento | ✅ texto fixo | ✅ | definido |
-| Validade | rótulo vazio | ✅ | **LACUNA L6** |
-| Prazo de entrega | rótulo vazio | ✅ | **LACUNA L6** |
-| Aviso de reajuste | ✅ `R7` | — | **definido na planilha, ausente do escopo** |
-| **Desconto** | ❌ inexistente | ✅ pedido | **LACUNA L3** |
-| **Frete** | ❌ inexistente | ✅ pedido | **LACUNA L5** |
-| **Arredondamento** | ❌ inexistente | ✅ HALF_UP | **LACUNA L1** |
-| **Número sequencial** | ❌ inexistente | ✅ pedido | **LACUNA L7** |
-| **Vendedor** | ❌ inexistente | ✅ pedido | **LACUNA L9** |
-| **Status** | ❌ inexistente | ✅ pedido | **LACUNA L9** |
-| **Catálogo de produtos** | ❌ inexistente | ✅ importador pedido | **LACUNA L10** |
+| Conceito                    | Planilha        | Escopo do app        | Situação                                    |
+| --------------------------- | --------------- | -------------------- | ------------------------------------------- |
+| Total do item = qtd × valor | ✅ `R1`         | ✅                   | definido                                    |
+| Preço de pacote por bloco   | ✅ `R2`         | —                    | **definido na planilha, ausente do escopo** |
+| Soma dos itens              | ✅ `R3`         | ✅                   | definido                                    |
+| Acréscimo (nota fiscal)     | ✅ valor manual | "acréscimo"          | regra do valor é **LACUNA L4**              |
+| Entrada / a pagar           | ✅ `R4`         | —                    | **definido na planilha, ausente do escopo** |
+| Condições de pagamento      | ✅ texto fixo   | ✅                   | definido                                    |
+| Validade                    | rótulo vazio    | ✅                   | **LACUNA L6**                               |
+| Prazo de entrega            | rótulo vazio    | ✅                   | **LACUNA L6**                               |
+| Aviso de reajuste           | ✅ `R7`         | —                    | **definido na planilha, ausente do escopo** |
+| **Desconto**                | ❌ inexistente  | ✅ pedido            | **LACUNA L3**                               |
+| **Frete**                   | ❌ inexistente  | ✅ pedido            | **LACUNA L5**                               |
+| **Arredondamento**          | ❌ inexistente  | ✅ HALF_UP           | **LACUNA L1**                               |
+| **Número sequencial**       | ❌ inexistente  | ✅ pedido            | **LACUNA L7**                               |
+| **Vendedor**                | ❌ inexistente  | ✅ pedido            | **LACUNA L9**                               |
+| **Status**                  | ❌ inexistente  | ✅ pedido            | **LACUNA L9**                               |
+| **Catálogo de produtos**    | ❌ inexistente  | ✅ importador pedido | **LACUNA L10**                              |
 
 Sete conceitos que o escopo pede **não têm nenhuma contrapartida na planilha** — e três coisas que a planilha faz **não estão no escopo**. Por isso a Fase 0 termina aqui, em `PERGUNTAS.md`.

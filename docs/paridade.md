@@ -2,7 +2,7 @@
 
 **Resultado: nenhuma divergência de cálculo.** As seis células do bloco de totais e o total de cada linha batem centavo a centavo.
 
-Duas diferenças de *comportamento* existem, são deliberadas e estão testadas como tais — não foram descobertas depois, estão na seção 4.
+Duas diferenças de _comportamento_ existem, são deliberadas e estão testadas como tais — não foram descobertas depois, estão na seção 4.
 
 ---
 
@@ -30,31 +30,31 @@ Vale registrar porque a versão errada teria produzido um caso de teste falso qu
 
 Único orçamento preenchido do arquivo: **Igreja Portal Pérola 2**, emitido em 14/08/2026.
 
-| Item | Descrição | Quant. | Unid. | Valor | Total |
-|---|---|---|---|---|---|
-| **1** | **DOS SERVIÇOS A SEREM PRESTADOS** — *preço fechado de R$ 25.600,00 sobre 4 linhas (âncora `E18`)* | | | | |
-| 1.1 | (Fachada alta) estrutura metálica com viga G chapa 14… | 1 | UNID. | — | — |
-| 1.2 | (Fachada baixa) estrutura metálica com viga G chapa 14… | 1 | UNID. | — | — |
-| 1.3 | Pergolado garagem com dobras em chapa 16 (1,5 mm) | 1 | UNID. | — | — |
-| 1.4 | Pergolado piscina tubos 100×350 chapa 14… | 1 | UNID. | — | — |
-| **2** | **DAS OBSERVAÇÕES** | | | | |
-| 2.1 | Inclusos material e mão de obra | — | — | — | — |
-| 2.2 | Cond. pagtº: 30% entrada, restante a combinar | — | — | — | — |
+| Item  | Descrição                                                                                          | Quant. | Unid. | Valor | Total |
+| ----- | -------------------------------------------------------------------------------------------------- | ------ | ----- | ----- | ----- |
+| **1** | **DOS SERVIÇOS A SEREM PRESTADOS** — _preço fechado de R$ 25.600,00 sobre 4 linhas (âncora `E18`)_ |        |       |       |       |
+| 1.1   | (Fachada alta) estrutura metálica com viga G chapa 14…                                             | 1      | UNID. | —     | —     |
+| 1.2   | (Fachada baixa) estrutura metálica com viga G chapa 14…                                            | 1      | UNID. | —     | —     |
+| 1.3   | Pergolado garagem com dobras em chapa 16 (1,5 mm)                                                  | 1      | UNID. | —     | —     |
+| 1.4   | Pergolado piscina tubos 100×350 chapa 14…                                                          | 1      | UNID. | —     | —     |
+| **2** | **DAS OBSERVAÇÕES**                                                                                |        |       |       |       |
+| 2.1   | Inclusos material e mão de obra                                                                    | —      | —     | —     | —     |
+| 2.2   | Cond. pagtº: 30% entrada, restante a combinar                                                      | —      | —     | —     | —     |
 
 O `—` nas linhas 1.1–1.4 não é ausência de dado: é a consequência de a célula estar **coberta pela mesclagem**. O preço pertence ao bloco.
 
 ## 3. Conferência célula a célula
 
-Atenção ao mapeamento: **a nomenclatura da planilha é invertida** — o "SUB-TOTAL" vem *depois* do "TOTAL" (anomalia R4).
+Atenção ao mapeamento: **a nomenclatura da planilha é invertida** — o "SUB-TOTAL" vem _depois_ do "TOTAL" (anomalia R4).
 
-| Célula | Fórmula na planilha | Esperado | No domínio | Bate |
-|---|---|---|---|---|
-| `F28` TOTAL DOS SERVIÇOS | `=SUM(F18:F27)` | 25.600,00 | `totalDosServicos` | ✅ |
-| `F32` TOTAL | `=F28` | 25.600,00 | `totalDosServicos` | ✅ |
-| `F33` ACRÉSC. NOTA FISCAL | digitado | 0,00 | `acrescimoNotaFiscal` | ✅ |
-| `F34` SUB-TOTAL | `=F32+F33` | 25.600,00 | `total` (e `subTotal`, sem desconto) | ✅ |
-| `F35` ENTRADA | digitado | 0,00 | `entrada` | ✅ |
-| `H35` A PAGAR | `=F34-F35` | 25.600,00 | `aPagar` | ✅ |
+| Célula                    | Fórmula na planilha | Esperado  | No domínio                           | Bate |
+| ------------------------- | ------------------- | --------- | ------------------------------------ | ---- |
+| `F28` TOTAL DOS SERVIÇOS  | `=SUM(F18:F27)`     | 25.600,00 | `totalDosServicos`                   | ✅   |
+| `F32` TOTAL               | `=F28`              | 25.600,00 | `totalDosServicos`                   | ✅   |
+| `F33` ACRÉSC. NOTA FISCAL | digitado            | 0,00      | `acrescimoNotaFiscal`                | ✅   |
+| `F34` SUB-TOTAL           | `=F32+F33`          | 25.600,00 | `total` (e `subTotal`, sem desconto) | ✅   |
+| `F35` ENTRADA             | digitado            | 0,00      | `entrada`                            | ✅   |
+| `H35` A PAGAR             | `=F34-F35`          | 25.600,00 | `aPagar`                             | ✅   |
 
 Mais duas asserções por caso: **o total de cada linha** bate com o que a planilha mostra (incluindo os `null` das linhas cobertas por mesclagem e das observações), e **o bloco fechado entra uma vez só** na soma.
 
@@ -64,11 +64,11 @@ Nenhuma é erro de cálculo. As duas estão em `src/domain/paridade.test.ts`, co
 
 ### 4.1 A entrada sugerida muda o "A PAGAR"
 
-A planilha traz `ENTRADA = 0` digitado à mão, apesar de a condição de pagamento dizer "30% ENTRADA". A decisão **D5** mandou o app *sugerir* 30%.
+A planilha traz `ENTRADA = 0` digitado à mão, apesar de a condição de pagamento dizer "30% ENTRADA". A decisão **D5** mandou o app _sugerir_ 30%.
 
-| | Entrada | A pagar |
-|---|---|---|
-| Documento original | 0,00 | **25.600,00** |
+|                                     | Entrada  | A pagar       |
+| ----------------------------------- | -------- | ------------- |
+| Documento original                  | 0,00     | **25.600,00** |
 | Orçamento novo no app, mesmos itens | 7.680,00 | **17.920,00** |
 
 Reproduzir o documento original exige entrada digitada como 0 — e é assim que o caso de paridade é montado. Mas **um orçamento novo com os mesmos itens vai mostrar R$ 17.920,00**, porque a sugestão de 30% age. É a regra nova funcionando, não um erro. Se isso não for o desejado, o ajuste é em D5.
@@ -83,22 +83,22 @@ O app não reproduz o defeito: toda linha com quantidade e valor soma. Há teste
 
 Os que o escopo pediu, mais os que a auditoria sugeriu:
 
-| Caso | Comportamento | Onde |
-|---|---|---|
-| Item sem preço | não contribui; total da linha é `null` | `orcamento.test.ts` |
-| Item sem quantidade | idem | idem |
-| Linha puramente descritiva | `null` — é como a planilha guarda observação | idem |
-| **Quantidade zero** com preço | dá **0**, não `null` — a fórmula testa célula *vazia*, não valor zero | idem |
-| **Quantidade negativa** | recusada pelo esquema zod | idem |
-| Valor unitário negativo | recusado pelo esquema | idem |
-| **3,5 m² × R$ 187,33** | R$ 655,66 (HALF_UP sobre 655,655) | idem |
-| 0,75 × R$ 33,33 | R$ 25,00 (2.499,75 → 2.500) | idem |
-| Soma de fracionadas | arredonda **por linha**, não no bruto — diferença real de 1 centavo em 3 linhas, e é o lado que D9 escolheu | idem |
-| Bloco fechado com valor preenchido dentro | o valor da linha é ignorado | idem |
-| Bloco fechado de preço zero | válido, soma zero | idem |
-| Bloco fechado + seção normal juntos | somam corretamente | idem |
-| Numeração `001/2026`, revisão `-R1` | formatada e validada pelo esquema | idem |
-| Validade sobre virada de ano e ano bissexto | `2026-12-20 + 30 = 2027-01-19`; `2028-02-28 + 1 = 2028-02-29` | idem |
+| Caso                                        | Comportamento                                                                                               | Onde                |
+| ------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ------------------- |
+| Item sem preço                              | não contribui; total da linha é `null`                                                                      | `orcamento.test.ts` |
+| Item sem quantidade                         | idem                                                                                                        | idem                |
+| Linha puramente descritiva                  | `null` — é como a planilha guarda observação                                                                | idem                |
+| **Quantidade zero** com preço               | dá **0**, não `null` — a fórmula testa célula _vazia_, não valor zero                                       | idem                |
+| **Quantidade negativa**                     | recusada pelo esquema zod                                                                                   | idem                |
+| Valor unitário negativo                     | recusado pelo esquema                                                                                       | idem                |
+| **3,5 m² × R$ 187,33**                      | R$ 655,66 (HALF_UP sobre 655,655)                                                                           | idem                |
+| 0,75 × R$ 33,33                             | R$ 25,00 (2.499,75 → 2.500)                                                                                 | idem                |
+| Soma de fracionadas                         | arredonda **por linha**, não no bruto — diferença real de 1 centavo em 3 linhas, e é o lado que D9 escolheu | idem                |
+| Bloco fechado com valor preenchido dentro   | o valor da linha é ignorado                                                                                 | idem                |
+| Bloco fechado de preço zero                 | válido, soma zero                                                                                           | idem                |
+| Bloco fechado + seção normal juntos         | somam corretamente                                                                                          | idem                |
+| Numeração `001/2026`, revisão `-R1`         | formatada e validada pelo esquema                                                                           | idem                |
+| Validade sobre virada de ano e ano bissexto | `2026-12-20 + 30 = 2027-01-19`; `2028-02-28 + 1 = 2028-02-29`                                               | idem                |
 
 ### Desconto máximo
 
@@ -125,12 +125,12 @@ Test Files  5 passed (5)
 Tests      80 passed (80)
 ```
 
-| Arquivo | Testes | O que cobre |
-|---|---|---|
-| `domain/dinheiro.test.ts` | 18 | centavos, HALF_UP, leitura de pt-BR |
-| `domain/orcamento.test.ts` | 36 | regras R1/R4, blocos, borda, desconto máximo, numeração |
-| `domain/paridade.test.ts` | 12 | o documento real, célula a célula |
-| `dados/db.test.ts` | 10 | Dexie, numeração transacional, catálogo, backup |
-| `App.test.tsx` | 4 | montagem do app em jsdom |
+| Arquivo                    | Testes | O que cobre                                             |
+| -------------------------- | ------ | ------------------------------------------------------- |
+| `domain/dinheiro.test.ts`  | 18     | centavos, HALF_UP, leitura de pt-BR                     |
+| `domain/orcamento.test.ts` | 36     | regras R1/R4, blocos, borda, desconto máximo, numeração |
+| `domain/paridade.test.ts`  | 12     | o documento real, célula a célula                       |
+| `dados/db.test.ts`         | 10     | Dexie, numeração transacional, catálogo, backup         |
+| `App.test.tsx`             | 4      | montagem do app em jsdom                                |
 
 `tsc -b`, `eslint` e `npm run build` limpos.

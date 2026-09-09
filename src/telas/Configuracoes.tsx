@@ -39,12 +39,16 @@ export function Configuracoes() {
       <h1>Configurações</h1>
 
       {aviso && (
-        <p className="painel" style={{ padding: 'var(--e-2) var(--e-3)', marginTop: 'var(--e-3)' }}>
+        <p
+          className="painel"
+          role="status"
+          style={{ padding: 'var(--e-2) var(--e-3)', marginTop: 'var(--e-3)' }}
+        >
           {aviso}
         </p>
       )}
       {erro && (
-        <p className="faixa-erro" style={{ marginTop: 'var(--e-3)' }}>
+        <p className="faixa-erro" role="alert" style={{ marginTop: 'var(--e-3)' }}>
           {erro}
         </p>
       )}
@@ -247,6 +251,10 @@ export function Configuracoes() {
             type="file"
             accept="application/json,.json"
             className="so-leitor"
+            aria-label="Arquivo de backup para importar"
+            // o botao visivel e quem dispara; tirar da ordem de tabulacao
+            // evita um alvo de foco invisivel
+            tabIndex={-1}
             onChange={(ev) => {
               const f = ev.target.files?.[0];
               if (!f) return;

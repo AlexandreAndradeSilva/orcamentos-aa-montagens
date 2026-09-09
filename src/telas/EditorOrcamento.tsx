@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useEditor } from '../estado/editor';
 import { db } from '../dados/db';
 import { GradeItens } from './GradeItens';
@@ -51,9 +51,9 @@ export function EditorOrcamento() {
       <div className="pagina">
         <div className="painel vazio">
           <p>Esse orçamento não está mais aqui. Pode ter sido excluído.</p>
-          <a className="botao" href="/orcamentos">
+          <Link className="botao" to="/orcamentos">
             Ver todos os orçamentos
-          </a>
+          </Link>
         </div>
       </div>
     );
@@ -140,8 +140,16 @@ export function EditorOrcamento() {
         </p>
       </header>
 
-      {erro && <p className="faixa-erro">{erro}</p>}
-      {falha && <p className="faixa-erro">{falha}</p>}
+      {erro && (
+        <p className="faixa-erro" role="alert">
+          {erro}
+        </p>
+      )}
+      {falha && (
+        <p className="faixa-erro" role="alert">
+          {falha}
+        </p>
+      )}
 
       <section className="painel doc-bloco" aria-label="Dados do orçamento">
         <div className="campos">

@@ -106,6 +106,7 @@ export function ListaOrcamentos() {
       ) : (
         <div className="painel">
           <table className="lista">
+            <caption className="so-leitor">Orçamentos, do mais recente para o mais antigo.</caption>
             <thead>
               <tr>
                 <th scope="col">Número</th>
@@ -164,6 +165,7 @@ function BotaoPdf({
     <button
       type="button"
       className="botao botao--texto botao--mini"
+      aria-label={`Exportar o orçamento ${numeroCompleto(orcamento.numero, orcamento.revisao)} em PDF`}
       disabled={gerando}
       onClick={() => {
         setGerando(true);

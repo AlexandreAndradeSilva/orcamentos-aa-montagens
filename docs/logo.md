@@ -15,11 +15,11 @@ Detalhe de construção que o traçado preservou: **o contra-forma do segundo "A
 
 Amostragem por frequência sobre os pixels opacos, com os tons médios descartados (antialiasing):
 
-| Cor | HEX | Onde aparece | Participação da tinta |
-|---|---|---|---|
-| **Azul-aço** | `#135885` | monograma "AA" e a palavra "AA" | 47,6% |
-| **Preto quente** | `#1C1A17` | soldador, tocha, faíscas, "MONTAGENS" | 52,4% |
-| Bege osso | `#E8E4DF` | fundo chapado da imagem de origem | — |
+| Cor              | HEX       | Onde aparece                          | Participação da tinta |
+| ---------------- | --------- | ------------------------------------- | --------------------- |
+| **Azul-aço**     | `#135885` | monograma "AA" e a palavra "AA"       | 47,6%                 |
+| **Preto quente** | `#1C1A17` | soldador, tocha, faíscas, "MONTAGENS" | 52,4%                 |
+| Bege osso        | `#E8E4DF` | fundo chapado da imagem de origem     | —                     |
 
 O bege **não é cor de marca** — é o papel simulado no PNG. Entra na Fase 2 como candidato a neutro de superfície, não como cor da logo. Os SVGs são transparentes.
 
@@ -37,7 +37,7 @@ Sem `potrace` e sem `vtracer` na máquina (só Node e ImageMagick), o traçado f
 
 - **Suavização Catmull-Rom** — piorou a fidelidade em 0,02 de IoU: inchava as formas. A arte é geometria reta, não curva.
 - **Ajuste de cúbicas por mínimos quadrados (Schneider)** — numericamente instável neste caso, chegando a IoU 0,12 em algumas configurações.
-- **Ajuste por arcos de círculo (Kåsa)** — o ajuste do *círculo* funciona (erro sub-pixel em teste unitário), mas o *arco entre as pontas* percorria o caminho errado em trechos que atravessam vãos: o fecho do "A", que cruza o vão entre as pernas, virava uma bolha englobando a letra. Uma validação de cobertura angular reduziu o problema sem eliminá-lo.
+- **Ajuste por arcos de círculo (Kåsa)** — o ajuste do _círculo_ funciona (erro sub-pixel em teste unitário), mas o _arco entre as pontas_ percorria o caminho errado em trechos que atravessam vãos: o fecho do "A", que cruza o vão entre as pernas, virava uma bolha englobando a letra. Uma validação de cobertura angular reduziu o problema sem eliminá-lo.
 
 **Conclusão medida:** as linhas retas já reproduzem a arte no teto de fidelidade do próprio raster. As curvas não tinham o que ganhar aqui. Ficou o caminho simples, que é o verificável.
 
@@ -45,11 +45,11 @@ Sem `potrace` e sem `vtracer` na máquina (só Node e ImageMagick), o traçado f
 
 Fidelidade medida por IoU entre o SVG rasterizado e a máscara de cor do PNG original, a 1024 px:
 
-| Camada | Teto (contorno de pixel, sem simplificar) | SVG final | Perda |
-|---|---|---|---|
-| Azul | 0,9694 | **0,9729** | 0,0000 |
-| Preto | 0,9433 | **0,9433** | 0,0000 |
-| Marca inteira | — | **0,9572** | — |
+| Camada        | Teto (contorno de pixel, sem simplificar) | SVG final  | Perda  |
+| ------------- | ----------------------------------------- | ---------- | ------ |
+| Azul          | 0,9694                                    | **0,9729** | 0,0000 |
+| Preto         | 0,9433                                    | **0,9433** | 0,0000 |
+| Marca inteira | —                                         | **0,9572** | —      |
 
 A perda da vetorização é **zero**: o SVG final está no teto do que o contorno de pixel alcança. O azul fica ligeiramente acima do teto porque o RDP remove a escada de pixels que o contorno cru carrega.
 
@@ -59,11 +59,11 @@ Depois do `svgo`, **IoU entre otimizado e bruto = 1,00000** nos três arquivos, 
 
 ## 5. Os arquivos
 
-| Arquivo | viewBox | Paths | Tamanho |
-|---|---|---|---|
-| `logo-full.svg` | `0 0 1000 651.2` | 15 nomeados | 6,0 KB |
-| `logo-mono.svg` | `0 0 1000 651.2` | 15, `fill="currentColor"` no `<svg>` | 5,8 KB |
-| `logo-simbolo.svg` | `0 0 512 512` (quadrado) | 4 nomeados | 3,4 KB |
+| Arquivo            | viewBox                  | Paths                                | Tamanho |
+| ------------------ | ------------------------ | ------------------------------------ | ------- |
+| `logo-full.svg`    | `0 0 1000 651.2`         | 15 nomeados                          | 6,0 KB  |
+| `logo-mono.svg`    | `0 0 1000 651.2`         | 15, `fill="currentColor"` no `<svg>` | 5,8 KB  |
+| `logo-simbolo.svg` | `0 0 512 512` (quadrado) | 4 nomeados                           | 3,4 KB  |
 
 **489 nós no total.** Nomes: `monograma-aa`, `soldador`, `tocha`, `faiscas`, e `letra-a1`, `letra-a2`, `letra-m`, `letra-o`, `letra-n`, `letra-t`, `letra-a`, `letra-g`, `letra-e`, `letra-n2`, `letra-s`.
 

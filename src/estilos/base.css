@@ -1,6 +1,48 @@
 /* Base do app. Sem framework de UI. */
 
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+/* Fontes servidas pelo próprio app, iguais às do PDF.
+   O app é local-first: buscar no Google quebraria offline e deixaria o texto
+   piscando na primeira renderização. Os arquivos vêm de `npm run fontes:copiar`. */
+
+@font-face {
+  font-family: 'IBM Plex Sans';
+  src: url('/fontes/ibm-plex-sans-400.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IBM Plex Sans';
+  src: url('/fontes/ibm-plex-sans-500.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IBM Plex Sans';
+  src: url('/fontes/ibm-plex-sans-600.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Barlow Condensed';
+  src: url('/fontes/barlow-condensed-600.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Barlow Condensed';
+  src: url('/fontes/barlow-condensed-700.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
 *,
 *::before,
@@ -51,6 +93,28 @@ h2 {
 
 a {
   color: var(--cor-acao);
+}
+
+/* Pular para o conteudo: invisivel ate receber foco pelo teclado. */
+.pular {
+  position: absolute;
+  left: var(--e-2);
+  top: var(--e-2);
+  z-index: 10;
+  transform: translateY(-200%);
+  padding: var(--e-2) var(--e-3);
+  background: var(--cor-acao);
+  color: var(--cor-branco);
+  border-radius: var(--raio);
+  text-decoration: none;
+}
+
+.pular:focus {
+  transform: translateY(0);
+}
+
+#conteudo:focus {
+  outline: none;
 }
 
 /* ---- foco: sempre visivel, 7,35:1 sobre o papel ---- */
