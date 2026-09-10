@@ -125,7 +125,16 @@ A planilha traz `aamonstagens@hotmail.com` — com **"monstagens"**. Parece erro
 
 Aparecem dois números: `(18) 99823-0660` e `(18) 99788-2819`. Qual deles é o WhatsApp do botão "Enviar no WhatsApp"? Os dois vão no rodapé do PDF?
 
-### P16 · Faltam no arquivo
+### P16 · Faltam no arquivo · **PARCIALMENTE RESPONDIDA**
+
+> **Descoberto na consulta à Receita (10/09/2026):** o CNPJ 66.612.836/0001-55 é um **MEI**.
+> Razão social: **`66.612.836 ANDRE LUIS DE ABREU`**. Nome fantasia: **vazio** no cadastro.
+> Atividade: _Serviços de usinagem, tornearia e solda_. Situação: **ATIVA**.
+>
+> Ou seja: "AA MONTAGENS" não consta na Receita — é o nome comercial que a empresa usa.
+> **Isso não foi alterado no app**: o PDF continua saindo com "AA MONTAGENS", que é o que
+> a planilha trazia e o que o cliente reconhece. Mas orçamento formal costuma mostrar a
+> razão social junto do CNPJ. **Decisão sua** — em Configurações há campo para os dois.
 
 - **Inscrição Estadual** da AA Montagens (o campo I.E. existe para o _cliente_, mas não para a empresa) — tem? Precisa sair no PDF?
 - **Site / Instagram** — existe? Vai no rodapé?

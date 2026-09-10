@@ -31,7 +31,19 @@ A pasta `dist/` é o app inteiro. Pode ser copiada para um pendrive, para uma pa
 
 ### Criar um orçamento
 
-**Orçamentos → Novo orçamento**. Escolha um cliente já cadastrado ou digite um nome novo — o cliente é criado junto. O número é reservado na hora, no formato `001/2026`, e reinicia a cada ano.
+**Orçamentos → Novo orçamento**. Escolha um cliente já cadastrado ou preencha um novo. O número é reservado na hora, no formato `001/2026`, e reinicia a cada ano.
+
+Só o **nome** é obrigatório; o resto (CNPJ/CPF, inscrição estadual, endereço, cidade, CEP, telefone, e-mail, contato) sai no PDF e pode ser completado depois em **Clientes → Editar**.
+
+### Buscar o CNPJ na Receita
+
+Digitando um CNPJ completo, o botão **Buscar** puxa razão social, endereço, cidade, CEP e telefone da Receita Federal (via BrasilAPI). Preenche só o que está em branco — não atropela o que você já digitou.
+
+Há o mesmo botão no **CEP**, que traz rua, bairro e cidade.
+
+**CPF não tem busca**, e não é limitação do app: não existe cadastro público de pessoa física por CPF no Brasil, e não deveria existir — é dado pessoal protegido pela LGPD. Cliente pessoa física se preenche à mão; o app valida os dígitos para pegar erro de digitação.
+
+Sem internet, as buscas avisam e você preenche à mão. **Nada mais no app depende da internet.**
 
 ### A tabela de itens funciona como planilha
 

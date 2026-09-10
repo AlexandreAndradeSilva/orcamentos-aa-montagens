@@ -1,11 +1,14 @@
+import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db, excluirCliente } from '../dados/db';
 import { BotaoExcluir } from './BotaoExcluir';
+import { FormularioCliente } from './FormularioCliente';
 import * as fmt from '../formato';
 
 export function Clientes() {
   const clientes = useLiveQuery(() => db.clientes.orderBy('nome').toArray(), []);
   const orcamentos = useLiveQuery(() => db.orcamentos.toArray(), []);
+  const [editando, setEditando] = useState<string | null>(null);
 
   if (!clientes || !orcamentos) return <p className="vazio">Carregando…</p>;
 
@@ -55,6 +58,14 @@ export function Clientes() {
                       <td>{c.contato ?? '——'}</td>
                       <td className="num">{quantos === 0 ? '——' : quantos}</td>
                       <td className="lista__acoes">
+                        <button
+                          type="button"
+                          className="botao botao--texto botao--mini"
+                          aria-label={`Editar o cliente ${c.nome}`}
+                          onClick={() => setEditando(editando === c.id ? null : c.id)}
+                        >
+                          {editando === c.id ? 'Fechar' : 'Editar'}
+                        </button>
                         <BotaoExcluir
                           compacto
                           rotulo="Excluir"
@@ -72,6 +83,48 @@ export function Clientes() {
               </tbody>
             </table>
           </div>
+
+          {editando &&
+            (() => {
+              const c = clientes.find((x) => x.id === editando);
+              if (!c) return null;
+              return (
+                <section
+                  className="painel doc-bloco"
+                  style={{ marginTop: 'var(--e-4)', maxWidth: 760 }}
+                  aria-label={`Editar ${c.nome}`}
+                >
+                  <h2>Editar {c.nome}</h2>
+                  <div style={{ marginTop: 'var(--e-3)' }}>
+                    <FormularioCliente
+                      key={c.id}
+                      inicial={{
+                        nome: c.nome,
+                        cnpjCpf: c.cnpjCpf ?? '',
+                        ieRg: c.ieRg ?? '',
+                        endereco: c.endereco ?? '',
+                        cidade: c.cidade ?? '',
+                        cep: c.cep ?? '',
+                        telefone: c.telefone ?? '',
+                        email: c.email ?? '',
+                        contato: c.contato ?? '',
+                      }}
+                      aoSalvar={async (dados) => {
+                        const limpo = Object.fromEntries(
+                          Object.entries(dados).map(([k, v]) => [
+                            k,
+                            typeof v === 'string' && v.trim() === '' ? undefined : v,
+                          ]),
+                        );
+                        await db.clientes.update(c.id, { ...limpo, nome: dados.nome.trim() });
+                        setEditando(null);
+                      }}
+                      aoCancelar={() => setEditando(null)}
+                    />
+                  </div>
+                </section>
+              );
+            })()}
 
           <p
             style={{
