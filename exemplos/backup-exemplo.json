@@ -1,0 +1,213 @@
+{
+  "versao": 1,
+  "exportadoEm": "2026-09-09T12:00:00.000Z",
+  "configuracao": {
+    "empresa": {
+      "razaoSocial": "AA MONTAGENS",
+      "nomeFantasia": "AA MONTAGENS",
+      "cnpj": "66.612.836/0001-55",
+      "endereco": "RUA JOAO ANTONIO SANCHES, 1085",
+      "bairro": "JARDIM SÃO BRAZ",
+      "cidade": "BIRIGUI",
+      "uf": "SP",
+      "cep": "16202-044",
+      "telefones": [
+        "(18) 99823-0660",
+        "(18) 99788-2819"
+      ],
+      "whatsapp": [
+        "(18) 99823-0660",
+        "(18) 99788-2819"
+      ],
+      "email": "aamonstagens@hotmail.com"
+    },
+    "proximoNumero": 3,
+    "anoNumeracao": 2026,
+    "condicoesPagamentoPadrao": "30% ENTRADA, RESTANTE A COMBINAR",
+    "percentualEntradaPadrao": 3000,
+    "avisoReajuste": "*O MERCADO PODE SOFRER REAJUSTES DE PREÇOS. O ORÇAMENTO ESTÁ SUJEITO A ALTERAÇÃO DE VALORES.",
+    "unidades": [
+      "UNID.",
+      "M",
+      "M²",
+      "ML",
+      "KG",
+      "VB",
+      "DIA",
+      "H"
+    ]
+  },
+  "clientes": [
+    {
+      "id": "cliente-igreja",
+      "nome": "Igreja Portal Pérola 2",
+      "cidade": "Birigui",
+      "contato": "Pastor Marcelo",
+      "telefone": "(18) 99712-4455",
+      "criadoEm": "2026-09-09T12:00:00.000Z"
+    },
+    {
+      "id": "cliente-oficina",
+      "nome": "Oficina Vale Verde",
+      "cnpjCpf": "12.345.678/0001-90",
+      "endereco": "Av. Brasília, 2200",
+      "cidade": "Araçatuba",
+      "cep": "16015-000",
+      "telefone": "(18) 3607-8890",
+      "email": "contato@valeverde.com.br",
+      "contato": "Dona Regina",
+      "criadoEm": "2026-09-09T12:00:00.000Z"
+    }
+  ],
+  "servicos": [],
+  "orcamentos": [
+    {
+      "id": "orc-igreja",
+      "numero": "001/2026",
+      "revisao": 0,
+      "clienteId": "cliente-igreja",
+      "clienteNome": "Igreja Portal Pérola 2",
+      "dataEmissao": "2026-08-14",
+      "validade": "15 dias",
+      "prazoEntrega": "45 dias após aprovação",
+      "secoes": [
+        {
+          "id": "s0",
+          "titulo": "DOS SERVIÇOS A SEREM PRESTADOS",
+          "precoFechado": 2560000,
+          "linhas": [
+            {
+              "id": "s0l0",
+              "descricao": "(FACHADA ALTA ) ESTRUTURA METALICA COM VIGA G CHAPA 14 TELHA TRAPEZIO \"SANDUICHE\" DOBRAS CHAPA 14 (2mm)",
+              "quantidade": 1,
+              "unidade": "UNID."
+            },
+            {
+              "id": "s0l1",
+              "descricao": "(FACHADA BAIXA ) ESTRUTURA METALICA COM VIGA G CHAPA 14 TELHA TRAPEZIO \"SANDUICHE\" COM DOBRAS CHAPA 14 (2mm)",
+              "quantidade": 1,
+              "unidade": "UNID."
+            },
+            {
+              "id": "s0l2",
+              "descricao": "PERGOLADO GARAGEM COM DOBRAS EM CHAPA 16 (1,5MM)",
+              "quantidade": 1,
+              "unidade": "UNID."
+            },
+            {
+              "id": "s0l3",
+              "descricao": "PERGOLADO PISCINA TUBOS 100X350 CHAPA 14 (2MM) E TUBO 100X180 CHAPA 16 (1,5MM)",
+              "quantidade": 1,
+              "unidade": "UNID."
+            }
+          ]
+        },
+        {
+          "id": "s1",
+          "titulo": "DAS OBSERVAÇÕES",
+          "linhas": [
+            {
+              "id": "s1l0",
+              "descricao": "INCLUSOS MATERIAL E MÃO DE OBRA"
+            },
+            {
+              "id": "s1l1",
+              "descricao": "COND. PAGTº: 30% ENTRADA, RESTANTE A COMBINAR"
+            }
+          ]
+        }
+      ],
+      "acrescimoNotaFiscal": 0,
+      "desconto": 0,
+      "entrada": {
+        "modo": "manual",
+        "centavos": 0
+      },
+      "condicoesPagamento": "30% ENTRADA, RESTANTE A COMBINAR",
+      "observacoes": "Inclusos material e mão de obra.",
+      "status": "aprovado",
+      "arquivado": false,
+      "historico": [
+        {
+          "em": "2026-09-09T12:00:00.000Z",
+          "o_que": "importado da planilha de origem"
+        }
+      ],
+      "criadoEm": "2026-09-09T12:00:00.000Z",
+      "alteradoEm": "2026-09-09T12:00:00.000Z"
+    },
+    {
+      "id": "orc-oficina",
+      "numero": "002/2026",
+      "revisao": 0,
+      "clienteId": "cliente-oficina",
+      "clienteNome": "Oficina Vale Verde",
+      "dataEmissao": "2026-09-08",
+      "validade": "15 dias",
+      "prazoEntrega": "30 dias após aprovação",
+      "secoes": [
+        {
+          "id": "os1",
+          "titulo": "DOS SERVIÇOS A SEREM PRESTADOS",
+          "linhas": [
+            {
+              "id": "ol1",
+              "descricao": "COBERTURA EM TELHA TRAPÉZIO \"SANDUÍCHE\" SOBRE ESTRUTURA METÁLICA COM VIGA G CHAPA 14",
+              "quantidade": 48.5,
+              "unidade": "M²",
+              "valorUnitario": 18733
+            },
+            {
+              "id": "ol2",
+              "descricao": "PORTÃO DE CORRER EM CHAPA 16 (1,5 MM) COM GUIA E ROLDANAS",
+              "quantidade": 1,
+              "unidade": "UNID.",
+              "valorUnitario": 480000
+            },
+            {
+              "id": "ol3",
+              "descricao": "GRADE DE PROTEÇÃO EM TUBO 40X40 CHAPA 18",
+              "quantidade": 12.75,
+              "unidade": "M",
+              "valorUnitario": 21500
+            },
+            {
+              "id": "ol4",
+              "descricao": "PINTURA ELETROSTÁTICA — a confirmar com o cliente"
+            }
+          ]
+        },
+        {
+          "id": "os2",
+          "titulo": "DAS OBSERVAÇÕES",
+          "linhas": [
+            {
+              "id": "ol5",
+              "descricao": "INCLUSOS MATERIAL E MÃO DE OBRA"
+            },
+            {
+              "id": "ol6",
+              "descricao": "ANDAIME POR CONTA DA CONTRATANTE"
+            }
+          ]
+        }
+      ],
+      "acrescimoNotaFiscal": 145000,
+      "desconto": 200000,
+      "entrada": {
+        "modo": "sugerida"
+      },
+      "condicoesPagamento": "30% ENTRADA, RESTANTE A COMBINAR",
+      "status": "enviado",
+      "arquivado": false,
+      "historico": [
+        {
+          "em": "2026-09-09T12:00:00.000Z",
+          "o_que": "orçamento criado"
+        }
+      ],
+      "criadoEm": "2026-09-09T12:00:00.000Z",
+      "alteradoEm": "2026-09-09T12:00:00.000Z"
+    }
+  ]
+}

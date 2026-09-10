@@ -1,0 +1,21 @@
+{
+  // Os scripts de apoio importam de src/, então não cabem nos project
+  // references (src pertence ao projeto do app). Projeto próprio, avulso,
+  // rodado por `npm run typecheck`.
+  "compilerOptions": {
+    "target": "ES2023",
+    "lib": ["ES2023", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "types": ["node"],
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "skipLibCheck": true,
+    "noEmit": true
+  },
+  "include": ["tools/**/*.mts", "tools/**/*.mjs"]
+}

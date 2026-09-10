@@ -1,0 +1,84 @@
+/* Tokens da direcao visual. Ver docs/direcao-visual.md.
+   Contrastes conferidos por tools/contraste.py — nao mexa nos valores sem
+   rodar o script de novo. */
+
+:root {
+  /* ---- cor: marca ---- */
+  --cor-acao: #135885;
+  --cor-acao-forte: #0d4166;
+  --cor-acao-fraca: #e4edf4;
+  --cor-tinta: #1c1a17;
+  --cor-tinta-media: #57514a;
+  --cor-tinta-fraca: #736b63;
+
+  /* ---- cor: neutros derivados do bege da marca ---- */
+  --cor-papel: #fcfbf9;
+  --cor-fundo: #f1eee9;
+  --cor-linha-sutil: #e2dcd3;
+  --cor-linha: #948b81;
+  --cor-linha-forte: #8e877d;
+
+  /* ---- cor: alerta ---- */
+  --cor-alerta: #a33520;
+  --cor-alerta-fraca: #f7e7e2;
+
+  --cor-branco: #ffffff;
+
+  /* ---- tipografia ---- */
+  --fonte-texto: 'IBM Plex Sans', ui-sans-serif, system-ui, 'Segoe UI', sans-serif;
+  --fonte-display: 'Barlow Condensed', 'Arial Narrow', var(--fonte-texto);
+
+  --txt-2xs: 11px;
+  --txt-xs: 12px;
+  --txt-sm: 13px;
+  --txt-md: 14px;
+  --txt-lg: 16px;
+
+  --lh-2xs: 16px;
+  --lh-xs: 16px;
+  --lh-sm: 20px;
+  --lh-md: 20px;
+  --lh-lg: 24px;
+
+  --dsp-xs: 14px;
+  --dsp-sm: 18px;
+  --dsp-md: 24px;
+  --dsp-lg: 32px;
+  --dsp-xl: 44px;
+
+  --lh-dsp-xs: 16px;
+  --lh-dsp-sm: 20px;
+  --lh-dsp-md: 28px;
+  --lh-dsp-lg: 36px;
+  --lh-dsp-xl: 44px;
+
+  /* ---- espaco: multiplos de 4 ---- */
+  --e-1: 4px;
+  --e-2: 8px;
+  --e-3: 12px;
+  --e-4: 16px;
+  --e-5: 24px;
+  --e-6: 32px;
+  --e-7: 48px;
+  --e-8: 64px;
+
+  /* ---- forma ---- */
+  --linha-altura-min: 32px;
+  --celula-pad-x: 8px;
+  --celula-pad-y: 6px;
+  --barra-altura: 48px;
+  --raio: 3px;
+  --raio-lg: 4px;
+  --borda: 1px;
+
+  /* a unica sombra do app, so para o que flutua */
+  --sombra-flutuante: 0 2px 8px rgb(28 26 23 / 14%);
+
+  /* ---- larguras da grade de itens ---- */
+  --col-item: 56px;
+  --col-quant: 84px;
+  --col-unid: 84px;
+  --col-valor: 124px;
+  --col-total: 132px;
+  --col-acoes: 36px;
+}

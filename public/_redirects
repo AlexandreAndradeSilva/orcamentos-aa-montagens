@@ -1,0 +1,6 @@
+# Fallback de aplicação de página única.
+#
+# As rotas (/clientes, /orcamentos/123...) existem só no navegador. Sem esta
+# linha, recarregar a página numa rota dessas dá 404 no servidor.
+# Netlify e Cloudflare Pages leem este arquivo.
+/*  /index.html  200

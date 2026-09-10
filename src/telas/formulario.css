@@ -1,0 +1,61 @@
+.formulario {
+  display: block;
+}
+
+.formulario__acoes {
+  display: flex;
+  gap: var(--e-2);
+  margin-top: var(--e-4);
+  flex-wrap: wrap;
+}
+
+/* campo + botão de buscar, colados */
+.campo-com-botao {
+  display: flex;
+  gap: var(--e-1);
+}
+
+.campo-com-botao .campo {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.campo-erro {
+  display: block;
+  margin-top: var(--e-1);
+  font-size: var(--txt-xs);
+  color: var(--cor-alerta);
+}
+
+.campo-dica {
+  display: block;
+  margin-top: var(--e-1);
+  font-size: var(--txt-2xs);
+  line-height: var(--lh-2xs);
+  color: var(--cor-tinta-fraca);
+}
+
+.campo[aria-invalid='true'] {
+  border-color: var(--cor-alerta);
+}
+
+.recado {
+  margin: var(--e-3) 0 0;
+  padding: var(--e-2) var(--e-3);
+  border: var(--borda) solid;
+  border-radius: var(--raio);
+  font-size: var(--txt-sm);
+  line-height: var(--lh-sm);
+}
+
+.recado--ok {
+  background: var(--cor-acao-fraca);
+  border-color: var(--cor-acao);
+  color: var(--cor-acao);
+}
+
+.recado--erro {
+  background: var(--cor-alerta-fraca);
+  border-color: var(--cor-alerta);
+  color: var(--cor-alerta);
+}
