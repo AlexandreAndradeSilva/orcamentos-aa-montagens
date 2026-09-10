@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useEditor } from '../estado/editor';
-import { db } from '../dados/db';
+import { db, excluirOrcamento } from '../dados/db';
+import { BotaoExcluir } from './BotaoExcluir';
 import { GradeItens } from './GradeItens';
 import { BlocoTotais } from './BlocoTotais';
 import { lerCentavos } from '../domain/dinheiro';
@@ -20,6 +21,7 @@ const ROTULO_STATUS: Record<Status, string> = {
 
 export function EditorOrcamento() {
   const { id } = useParams();
+  const navegar = useNavigate();
   const orcamento = useEditor((e) => e.orcamento);
   const config = useEditor((e) => e.config);
   const sujo = useEditor((e) => e.sujo);
@@ -129,6 +131,14 @@ export function EditorOrcamento() {
           >
             {sujo ? 'Salvar' : 'Salvo'}
           </button>
+          <BotaoExcluir
+            rotulo="Excluir"
+            descricao={`o orçamento ${numeroCompleto(orcamento.numero, orcamento.revisao)}`}
+            aoConfirmar={async () => {
+              await excluirOrcamento(orcamento.id);
+              navegar('/orcamentos', { replace: true });
+            }}
+          />
         </div>
 
         <p className="doc-salvo" aria-live="polite">

@@ -62,3 +62,11 @@
 .lista__numero:hover {
   text-decoration: underline;
 }
+
+.lista__acoes {
+  display: flex;
+  align-items: center;
+  gap: var(--e-1);
+  justify-content: flex-end;
+  white-space: nowrap;
+}

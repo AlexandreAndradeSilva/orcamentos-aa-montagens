@@ -30,7 +30,16 @@ export interface Foco {
 interface Estado {
   orcamento: Orcamento | null;
   config: ConfiguracaoGuardada | null;
+  /** Onde o teclado está agora. Só registro — não move foco sozinho. */
   foco: Foco | null;
+  /**
+   * Pedido de foco de uso único.
+   *
+   * É comando, não espelho do DOM: a célula que corresponde puxa o foco e
+   * limpa. Sem isso, qualquer re-render enquanto `foco` apontasse para uma
+   * célula devolvia o foco para lá — era o bug de ficar preso na quantidade.
+   */
+  pedidoDeFoco: Foco | null;
   sujo: boolean;
   salvoEm: string | null;
   erro: string | null;
@@ -53,7 +62,11 @@ interface Estado {
   definirPrecoFechado: (s: number, centavos: number | undefined) => void;
 
   colar: (s: number, l: number, texto: string) => void;
+  /** Registra onde o foco está (chamado pelo onFocus da célula). */
   focar: (foco: Foco | null) => void;
+  /** Pede que o foco vá para uma célula (Enter, Ctrl+D, setas...). */
+  pedirFoco: (foco: Foco) => void;
+  consumirPedidoDeFoco: () => void;
   moverFoco: (deltaLinha: number, deltaColuna: number) => void;
 
   totais: () => Totais | null;
@@ -71,6 +84,7 @@ export const useEditor = create<Estado>((set, get) => ({
   orcamento: null,
   config: null,
   foco: null,
+  pedidoDeFoco: null,
   sujo: false,
   salvoEm: null,
   erro: null,
@@ -79,8 +93,8 @@ export const useEditor = create<Estado>((set, get) => ({
     set({ config: await lerConfiguracao() });
   },
 
-  abrir: (orcamento) => set({ orcamento, sujo: false, erro: null, foco: null }),
-  fechar: () => set({ orcamento: null, foco: null, sujo: false }),
+  abrir: (orcamento) => set({ orcamento, sujo: false, erro: null, foco: null, pedidoDeFoco: null }),
+  fechar: () => set({ orcamento: null, foco: null, pedidoDeFoco: null, sujo: false }),
 
   alterar: (patch) => {
     const { orcamento } = get();
@@ -117,6 +131,7 @@ export const useEditor = create<Estado>((set, get) => ({
       orcamento: { ...orcamento, secoes: comSecao(orcamento.secoes, s, (x) => ({ ...x, linhas })) },
       sujo: true,
       foco: { secao: s, linha: destino, coluna: 'descricao' },
+      pedidoDeFoco: { secao: s, linha: destino, coluna: 'descricao' },
     });
   },
 
@@ -130,6 +145,7 @@ export const useEditor = create<Estado>((set, get) => ({
       orcamento: { ...orcamento, secoes: comSecao(orcamento.secoes, s, (x) => ({ ...x, linhas })) },
       sujo: true,
       foco: { secao: s, linha: Math.max(0, l - 1), coluna: 'descricao' },
+      pedidoDeFoco: { secao: s, linha: Math.max(0, l - 1), coluna: 'descricao' },
     });
   },
 
@@ -146,6 +162,7 @@ export const useEditor = create<Estado>((set, get) => ({
       orcamento: { ...orcamento, secoes: comSecao(orcamento.secoes, s, (x) => ({ ...x, linhas })) },
       sujo: true,
       foco: { secao: s, linha: l + 1, coluna: 'descricao' },
+      pedidoDeFoco: { secao: s, linha: l + 1, coluna: 'descricao' },
     });
   },
 
@@ -164,6 +181,7 @@ export const useEditor = create<Estado>((set, get) => ({
       orcamento: { ...orcamento, secoes: comSecao(orcamento.secoes, s, (x) => ({ ...x, linhas })) },
       sujo: true,
       foco: { secao: s, linha: alvo, coluna: get().foco?.coluna ?? 'descricao' },
+      pedidoDeFoco: { secao: s, linha: alvo, coluna: get().foco?.coluna ?? 'descricao' },
     });
   },
 
@@ -175,6 +193,7 @@ export const useEditor = create<Estado>((set, get) => ({
       orcamento: { ...orcamento, secoes },
       sujo: true,
       foco: { secao: secoes.length - 1, linha: 0, coluna: 'descricao' },
+      pedidoDeFoco: { secao: secoes.length - 1, linha: 0, coluna: 'descricao' },
     });
   },
 
@@ -185,6 +204,7 @@ export const useEditor = create<Estado>((set, get) => ({
       orcamento: { ...orcamento, secoes: orcamento.secoes.filter((_, i) => i !== s) },
       sujo: true,
       foco: null,
+      pedidoDeFoco: null,
     });
   },
 
@@ -243,6 +263,10 @@ export const useEditor = create<Estado>((set, get) => ({
 
   focar: (foco) => set({ foco }),
 
+  pedirFoco: (foco) => set({ foco, pedidoDeFoco: foco }),
+
+  consumirPedidoDeFoco: () => set({ pedidoDeFoco: null }),
+
   moverFoco: (deltaLinha, deltaColuna) => {
     const { orcamento, foco } = get();
     if (!orcamento || !foco) return;
@@ -274,7 +298,8 @@ export const useEditor = create<Estado>((set, get) => ({
     const total = orcamento.secoes[secao]?.linhas.length ?? 0;
     if (linha < 0 || total === 0) return;
     if (linha >= total) linha = total - 1;
-    set({ foco: { secao, linha, coluna: COLUNAS[coluna] ?? 'descricao' } });
+    const destino: Foco = { secao, linha, coluna: COLUNAS[coluna] ?? 'descricao' };
+    set({ foco: destino, pedidoDeFoco: destino });
   },
 
   totais: () => {

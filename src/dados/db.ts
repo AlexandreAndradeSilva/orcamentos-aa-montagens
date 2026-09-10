@@ -160,6 +160,16 @@ export async function reservarNumero(ano: number): Promise<{ sequencial: number;
   });
 }
 
+/**
+ * Apaga um orcamento de vez.
+ *
+ * Sem lixeira: o backup e a rede de seguranca, e uma lixeira que ninguem
+ * esvazia so acumula. A tela pergunta antes.
+ */
+export async function excluirOrcamento(id: string): Promise<void> {
+  await db.orcamentos.delete(id);
+}
+
 // ---------------------------------------------------------------- catalogo
 
 /**

@@ -14,7 +14,8 @@
     "casos:extrair": "python tools/extrair_casos.py",
     "pdf:exemplo": "tsx --tsconfig tsconfig.app.json tools/gerar_exemplo.mts",
     "fontes:copiar": "node tools/copiar_fontes.mjs",
-    "typecheck": "tsc -b && tsc -p tsconfig.tools.json"
+    "typecheck": "tsc -b && tsc -p tsconfig.tools.json",
+    "backup:exemplo": "tsx --tsconfig tsconfig.app.json tools/gerar_backup_exemplo.mts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",

@@ -12,14 +12,25 @@ import type { Linha, Secao } from '../domain/esquemas';
 import * as fmt from '../formato';
 import './grade.css';
 
+/** Id do <datalist> que alimenta o autocompletar de unidade. */
+const LISTA_UNIDADES = 'unidades-cadastradas';
+
 export function GradeItens() {
   const orcamento = useEditor((e) => e.orcamento);
   const novaSecao = useEditor((e) => e.novaSecao);
+  const unidades = useEditor((e) => e.config?.unidades ?? []);
 
   if (!orcamento) return null;
 
   return (
     <div className="grade-envolve">
+      {/* As unidades vêm de Configurações. `datalist` sugere sem impedir que a
+          pessoa digite uma que ainda não está cadastrada. */}
+      <datalist id={LISTA_UNIDADES}>
+        {unidades.map((u) => (
+          <option key={u} value={u} />
+        ))}
+      </datalist>
       <table className="grade">
         <caption className="so-leitor">
           Itens do orçamento. Use Tab para avançar, Enter para criar linha, Ctrl+D para duplicar a
@@ -32,6 +43,7 @@ export function GradeItens() {
           <col style={{ width: 'var(--col-unid)' }} />
           <col style={{ width: 'var(--col-valor)' }} />
           <col style={{ width: 'var(--col-total)' }} />
+          <col style={{ width: 'var(--col-acoes)' }} />
         </colgroup>
         <thead>
           <tr>
@@ -46,6 +58,9 @@ export function GradeItens() {
             </th>
             <th scope="col" className="num">
               Total
+            </th>
+            <th scope="col">
+              <span className="so-leitor">Ações</span>
             </th>
           </tr>
         </thead>
@@ -85,7 +100,7 @@ function BlocoSecao({ secao, indice }: { secao: Secao; indice: number }) {
             onChange={(ev) => alterarSecao(indice, { titulo: ev.target.value })}
           />
         </td>
-        <td colSpan={2} className="linha-secao__controles">
+        <td colSpan={3} className="linha-secao__controles">
           <label className="preco-fechado">
             <input
               type="checkbox"
@@ -140,12 +155,13 @@ function BlocoSecao({ secao, indice }: { secao: Secao; indice: number }) {
             />
           </td>
           <td className="num cel-total cel-total--forte">{fmt.valor(totalDaSecao(secao))}</td>
+          <td />
         </tr>
       )}
 
       <tr className="linha-acao">
         <td />
-        <td colSpan={5}>
+        <td colSpan={6}>
           <button
             type="button"
             className="botao botao--texto botao--mini"
@@ -170,6 +186,8 @@ interface PropsLinha {
 
 function LinhaItem({ linha, secao, indice, blocoFechado }: PropsLinha) {
   const alterarLinha = useEditor((e) => e.alterarLinha);
+  const removerLinha = useEditor((e) => e.removerLinha);
+  const podeRemover = useEditor((e) => (e.orcamento?.secoes[secao]?.linhas.length ?? 0) > 1);
   const total = totalDaLinha(linha);
 
   return (
@@ -199,6 +217,7 @@ function LinhaItem({ linha, secao, indice, blocoFechado }: PropsLinha) {
           rotulo={`Unidade do item ${numeroDoItem(secao, indice)}`}
           posicao={{ secao, linha: indice, coluna: 'unidade' }}
           placeholder="UNID."
+          sugestoes={LISTA_UNIDADES}
           aoConfirmar={(t) => alterarLinha(secao, indice, { unidade: t || undefined })}
         />
       </td>
@@ -223,6 +242,22 @@ function LinhaItem({ linha, secao, indice, blocoFechado }: PropsLinha) {
         ) : (
           fmt.valor(total)
         )}
+      </td>
+      <td className="cel-acoes">
+        <button
+          type="button"
+          className="botao-remover"
+          disabled={!podeRemover}
+          title={
+            podeRemover
+              ? `Remover o item ${numeroDoItem(secao, indice)}`
+              : 'A seção precisa de pelo menos uma linha'
+          }
+          aria-label={`Remover o item ${numeroDoItem(secao, indice)}`}
+          onClick={() => removerLinha(secao, indice)}
+        >
+          <span aria-hidden="true">×</span>
+        </button>
       </td>
     </tr>
   );
@@ -302,20 +337,33 @@ function useTeclado(posicao: Posicao | undefined, confirmar: () => void) {
   return { aoTeclar, aoColar };
 }
 
+/**
+ * Puxa o foco quando houver um *pedido* para esta célula, e consome o pedido.
+ *
+ * Duas coisas importam aqui, e as duas foram bug:
+ *
+ * 1. Depende do `pedidoDeFoco`, que é de uso único — não do `foco`, que é só
+ *    registro. Com `foco`, qualquer re-render devolvia o foco para a célula e
+ *    prendia o cursor nela.
+ * 2. As dependências são primitivas. `posicao` é um objeto novo a cada render;
+ *    usá-lo direto fazia o efeito rodar sempre.
+ */
 function useFocoAutomatico(posicao: Posicao | undefined) {
-  const foco = useEditor((e) => e.foco);
+  const pedido = useEditor((e) => e.pedidoDeFoco);
+  const consumir = useEditor((e) => e.consumirPedidoDeFoco);
   const ref = useRef<HTMLTextAreaElement & HTMLInputElement>(null);
 
+  const secao = posicao?.secao;
+  const linha = posicao?.linha;
+  const coluna = posicao?.coluna;
+
   useEffect(() => {
-    if (!posicao || !foco) return;
-    if (
-      foco.secao === posicao.secao &&
-      foco.linha === posicao.linha &&
-      foco.coluna === posicao.coluna
-    ) {
+    if (!pedido || secao === undefined || linha === undefined || coluna === undefined) return;
+    if (pedido.secao === secao && pedido.linha === linha && pedido.coluna === coluna) {
       ref.current?.focus();
+      consumir();
     }
-  }, [foco, posicao]);
+  }, [pedido, secao, linha, coluna, consumir]);
 
   return ref;
 }
@@ -326,6 +374,7 @@ function CelulaTexto({
   placeholder,
   multilinha = false,
   posicao,
+  sugestoes,
   aoConfirmar,
 }: {
   valor: string;
@@ -333,6 +382,8 @@ function CelulaTexto({
   placeholder?: string;
   multilinha?: boolean;
   posicao?: Posicao;
+  /** Id de um <datalist> para autocompletar. */
+  sugestoes?: string;
   aoConfirmar: (texto: string) => void;
 }) {
   const { aoTeclar, aoColar } = useTeclado(posicao, () => undefined);
@@ -353,7 +404,7 @@ function CelulaTexto({
   return multilinha ? (
     <textarea {...comum} ref={ref} rows={1} className="cel-editavel cel-descricao" />
   ) : (
-    <input {...comum} ref={ref} />
+    <input {...comum} ref={ref} {...(sugestoes ? { list: sugestoes } : {})} />
   );
 }
 
@@ -380,16 +431,27 @@ function CelulaNumerica({
   const editando = useRef(false);
   const { aoTeclar, aoColar } = useTeclado(posicao, () => aoSair(rascunho.current));
 
+  /*
+   * Sincroniza o texto do campo sem `key`.
+   *
+   * Antes havia `key={textoInicial}`: ao sair da célula o valor mudava, a key
+   * mudava, e o React desmontava e remontava o input embaixo do cursor. Aqui o
+   * input é o mesmo do começo ao fim — só o texto é reescrito, e só quando
+   * ninguém está digitando nele.
+   */
   useEffect(() => {
-    if (!editando.current) rascunho.current = textoInicial;
-  }, [textoInicial]);
+    if (editando.current) return;
+    rascunho.current = textoInicial;
+    if (ref.current && ref.current.value !== textoInicial) {
+      ref.current.value = textoInicial;
+    }
+  }, [textoInicial, ref]);
 
   return (
     <input
       ref={ref}
       className={esmaecido ? 'cel-editavel num cel-esmaecida' : 'cel-editavel num'}
       defaultValue={textoInicial}
-      key={textoInicial}
       inputMode="decimal"
       aria-label={rotulo}
       onKeyDown={aoTeclar}

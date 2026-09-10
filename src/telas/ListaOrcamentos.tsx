@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { db } from '../dados/db';
+import { db, excluirOrcamento } from '../dados/db';
+import { BotaoExcluir } from './BotaoExcluir';
 import { useEditor } from '../estado/editor';
 import { calcularTotais, numeroCompleto } from '../domain/orcamento';
 import { STATUS, type Orcamento, type Status } from '../domain/esquemas';
@@ -139,8 +140,14 @@ export function ListaOrcamentos() {
                       <span className={`status status--${o.status}`}>{o.status}</span>
                     </td>
                     <td className="num">{fmt.valor(totais.aPagar)}</td>
-                    <td>
+                    <td className="lista__acoes">
                       <BotaoPdf orcamento={o} percentualEntradaPadrao={config} />
+                      <BotaoExcluir
+                        compacto
+                        rotulo="Excluir"
+                        descricao={`o orçamento ${numeroCompleto(o.numero, o.revisao)} de ${o.clienteNome}`}
+                        aoConfirmar={() => excluirOrcamento(o.id)}
+                      />
                     </td>
                   </tr>
                 );

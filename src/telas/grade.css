@@ -177,6 +177,44 @@
   padding: var(--e-1) var(--celula-pad-x);
 }
 
+.cel-acoes {
+  padding: var(--celula-pad-y) var(--e-1);
+  text-align: center;
+  vertical-align: top;
+}
+
+/* O × só aparece quando o mouse passa pela linha ou quando ele recebe foco:
+   é ação destrutiva, não precisa competir com os números o tempo todo. */
+.botao-remover {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: var(--borda) solid transparent;
+  border-radius: var(--raio);
+  background: transparent;
+  color: var(--cor-tinta-fraca);
+  font-size: var(--txt-lg);
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0;
+}
+
+.grade tbody tr:hover .botao-remover,
+.botao-remover:focus-visible {
+  opacity: 1;
+}
+
+.botao-remover:hover:not(:disabled) {
+  color: var(--cor-alerta);
+  border-color: var(--cor-alerta);
+  background: var(--cor-alerta-fraca);
+}
+
+.botao-remover:disabled {
+  cursor: not-allowed;
+  opacity: 0;
+}
+
 .grade__acoes {
   padding: var(--e-2) var(--celula-pad-x);
   border-top: var(--borda) solid var(--cor-linha-sutil);

@@ -333,6 +333,19 @@ textarea {
   font-size: var(--txt-sm);
 }
 
+.excluir-confirma {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e-2);
+  white-space: nowrap;
+}
+
+.excluir-confirma__pergunta {
+  font-size: var(--txt-xs);
+  color: var(--cor-alerta);
+  font-weight: 500;
+}
+
 .so-leitor {
   position: absolute;
   width: 1px;
