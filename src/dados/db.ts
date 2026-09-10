@@ -170,6 +170,28 @@ export async function excluirOrcamento(id: string): Promise<void> {
   await db.orcamentos.delete(id);
 }
 
+/**
+ * Apaga um cliente.
+ *
+ * Os orcamentos dele continuam existindo: o nome fica congelado em
+ * `clienteNome` desde a emissao, justamente para o documento nao mudar
+ * depois. O que se perde sao os dados extras (CNPJ, endereco) em PDFs
+ * futuros — por isso a tela avisa quantos orcamentos estao ligados.
+ */
+export async function excluirCliente(id: string): Promise<void> {
+  await db.clientes.delete(id);
+}
+
+/** Quantos orcamentos apontam para este cliente. */
+export async function contarOrcamentosDoCliente(id: string): Promise<number> {
+  return db.orcamentos.where('clienteId').equals(id).count();
+}
+
+/** Tira um servico do catalogo. Ele volta se for usado de novo. */
+export async function excluirServico(id: string): Promise<void> {
+  await db.servicos.delete(id);
+}
+
 // ---------------------------------------------------------------- catalogo
 
 /**

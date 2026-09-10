@@ -50,6 +50,12 @@ Quem vem do Excel não precisa reaprender nada:
 
 Valores podem ser digitados como você quiser: `25.600,00`, `25600,5` ou `25600.50`.
 
+Ao digitar a **descrição**, aparecem os serviços que você já orçou. Escolher um traz junto a unidade e o último valor praticado — mas **não sobrescreve** o que você já tiver digitado. Setas escolhem, `Enter` aceita, `Esc` fecha.
+
+Na **unidade**, o campo sugere as que estão em Configurações, sem impedir de digitar uma nova.
+
+O `×` no fim de cada linha remove aquela linha.
+
 ### Preço fechado de bloco
 
 Marque **preço fechado** no cabeçalho de uma seção quando várias frentes de serviço tiverem **um preço só** — como no orçamento da Igreja Portal Pérola 2, em que fachada alta, fachada baixa e os dois pergolados fecharam em R$ 25.600,00 juntos.
@@ -93,6 +99,8 @@ Por padrão o backup é **mesclado** com o que já existe (o arquivo vence em ca
 **A planilha original não tinha tabela de preços.** Por isso o catálogo se monta sozinho: toda descrição salva num orçamento entra em **Serviços**, com o último preço praticado como referência e a contagem de quantas vezes foi usada.
 
 Não há o que "atualizar" à mão — é só orçar. Para corrigir uma descrição, corrija-a no orçamento e salve; a versão nova passa a valer.
+
+**É esse catálogo que alimenta as sugestões** na coluna de descrição. Excluir um serviço da lista só o tira das sugestões: os orçamentos que já o usaram continuam iguais, e ele volta se for orçado de novo.
 
 Se um dia existir uma tabela de preços de verdade em planilha, dá para importá-la — mas isso ainda não foi construído, porque não havia o que importar.
 
@@ -186,3 +194,4 @@ docs/         a auditoria da planilha e as decisões, fase por fase
 - **A paridade tem um caso só.** Só existia um orçamento preenchido na planilha, e o mais simples possível. Ver [`docs/paridade.md`](docs/paridade.md) §6.
 - **Sem frete.** Confirmado que a AA Montagens não cobra à parte.
 - **Trocar a logo** pela tela ainda não existe; o PDF usa a logo vetorial fixa.
+- **Excluir um cliente não apaga os orçamentos dele** — o nome fica gravado no documento desde a emissão. O que se perde são os dados extras (CNPJ, endereço) em PDFs futuros.

@@ -231,9 +231,11 @@ export const estilos = StyleSheet.create({
   notaTexto: { fontSize: 8.5, marginBottom: 6 },
 
   // ---- aceite ----
-  aceite: { flexDirection: 'row', marginTop: 22, gap: 26 },
+  // Longe do bloco de totais de proposito: assinatura colada no valor fica
+  // parecendo parte da conta, e sobra papel embaixo mesmo assim.
+  aceite: { flexDirection: 'row', marginTop: 64, gap: 32 },
   aceiteColuna: { flexGrow: 1, flexBasis: 0 },
-  aceiteRisco: { borderTopWidth: 0.75, borderColor: COR.tinta, marginBottom: 3 },
+  aceiteRisco: { borderTopWidth: 0.75, borderColor: COR.tinta, marginBottom: 4 },
   aceiteRotulo: {
     fontFamily: DISPLAY,
     fontWeight: 600,

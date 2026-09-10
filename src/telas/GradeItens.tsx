@@ -7,8 +7,12 @@
 import { useEffect, useRef, type KeyboardEvent, type ClipboardEvent } from 'react';
 import { COLUNAS, useEditor, type Coluna } from '../estado/editor';
 import { lerCentavos, lerQuantidade } from '../domain/dinheiro';
+import { useLiveQuery } from 'dexie-react-hooks';
 import { numeroDaSecao, numeroDoItem, totalDaLinha, totalDaSecao } from '../domain/orcamento';
 import type { Linha, Secao } from '../domain/esquemas';
+import { db } from '../dados/db';
+import { CelulaDescricao } from './CelulaDescricao';
+import type { ServicoSugerido } from './sugestoes';
 import * as fmt from '../formato';
 import './grade.css';
 
@@ -19,6 +23,12 @@ export function GradeItens() {
   const orcamento = useEditor((e) => e.orcamento);
   const novaSecao = useEditor((e) => e.novaSecao);
   const unidades = useEditor((e) => e.config?.unidades ?? []);
+  // O catálogo alimenta as sugestões da descrição. Carrega uma vez aqui, em
+  // vez de uma consulta por célula.
+  const servicos = useLiveQuery(
+    () => db.servicos.orderBy('usos').reverse().limit(300).toArray(),
+    [],
+  );
 
   if (!orcamento) return null;
 
@@ -65,7 +75,7 @@ export function GradeItens() {
           </tr>
         </thead>
         {orcamento.secoes.map((secao, s) => (
-          <BlocoSecao key={secao.id} secao={secao} indice={s} />
+          <BlocoSecao key={secao.id} secao={secao} indice={s} servicos={servicos ?? []} />
         ))}
       </table>
 
@@ -78,7 +88,15 @@ export function GradeItens() {
   );
 }
 
-function BlocoSecao({ secao, indice }: { secao: Secao; indice: number }) {
+function BlocoSecao({
+  secao,
+  indice,
+  servicos,
+}: {
+  secao: Secao;
+  indice: number;
+  servicos: readonly ServicoSugerido[];
+}) {
   const alterarSecao = useEditor((e) => e.alterarSecao);
   const novaLinha = useEditor((e) => e.novaLinha);
   const removerSecao = useEditor((e) => e.removerSecao);
@@ -134,8 +152,7 @@ function BlocoSecao({ secao, indice }: { secao: Secao; indice: number }) {
           secao={indice}
           indice={l}
           blocoFechado={fechado}
-          primeiraDoBloco={l === 0}
-          alturaDoBloco={secao.linhas.length}
+          servicos={servicos}
         />
       ))}
 
@@ -180,11 +197,10 @@ interface PropsLinha {
   secao: number;
   indice: number;
   blocoFechado: boolean;
-  primeiraDoBloco: boolean;
-  alturaDoBloco: number;
+  servicos: readonly ServicoSugerido[];
 }
 
-function LinhaItem({ linha, secao, indice, blocoFechado }: PropsLinha) {
+function LinhaItem({ linha, secao, indice, blocoFechado, servicos }: PropsLinha) {
   const alterarLinha = useEditor((e) => e.alterarLinha);
   const removerLinha = useEditor((e) => e.removerLinha);
   const podeRemover = useEditor((e) => (e.orcamento?.secoes[secao]?.linhas.length ?? 0) > 1);
@@ -193,14 +209,13 @@ function LinhaItem({ linha, secao, indice, blocoFechado }: PropsLinha) {
   return (
     <tr>
       <td className="cel-item">{numeroDoItem(secao, indice)}</td>
-      <td>
-        <CelulaTexto
-          valor={linha.descricao}
-          multilinha
-          rotulo={`Descrição do item ${numeroDoItem(secao, indice)}`}
-          posicao={{ secao, linha: indice, coluna: 'descricao' }}
-          placeholder="Ex.: pergolado garagem com dobras em chapa 16 (1,5 mm)"
-          aoConfirmar={(texto) => alterarLinha(secao, indice, { descricao: texto })}
+      <td className="cel-com-sugestao">
+        <Descricao
+          linha={linha}
+          secao={secao}
+          indice={indice}
+          servicos={servicos}
+          aoAlterar={(patch) => alterarLinha(secao, indice, patch)}
         />
       </td>
       <td className="num">
@@ -260,6 +275,58 @@ function LinhaItem({ linha, secao, indice, blocoFechado }: PropsLinha) {
         </button>
       </td>
     </tr>
+  );
+}
+
+/**
+ * Junta o combobox de sugestões com o teclado e o foco da grade.
+ *
+ * Escolher um serviço preenche a descrição sempre, e a unidade e o valor
+ * **só quando estiverem vazios** — quem acabou de digitar um preço não quer
+ * vê-lo sobrescrito por um preço antigo.
+ */
+function Descricao({
+  linha,
+  secao,
+  indice,
+  servicos,
+  aoAlterar,
+}: {
+  linha: Linha;
+  secao: number;
+  indice: number;
+  servicos: readonly ServicoSugerido[];
+  aoAlterar: (patch: Partial<Linha>) => void;
+}) {
+  const posicao: Posicao = { secao, linha: indice, coluna: 'descricao' };
+  const { aoTeclar, aoColar } = useTeclado(posicao, () => undefined);
+  const ref = useFocoAutomatico(posicao);
+  const focar = useEditor((e) => e.focar);
+
+  return (
+    <CelulaDescricao
+      valor={linha.descricao}
+      rotulo={`Descrição do item ${numeroDoItem(secao, indice)}`}
+      placeholder="Ex.: pergolado garagem com dobras em chapa 16 (1,5 mm)"
+      servicos={servicos}
+      aoTeclar={aoTeclar}
+      aoColar={aoColar}
+      aoFocar={() => focar(posicao)}
+      refCampo={ref}
+      aoDigitar={(texto) => aoAlterar({ descricao: texto })}
+      aoEscolher={(servico) => {
+        aoAlterar({
+          descricao: servico.descricao,
+          ...(linha.unidade === undefined && servico.unidade !== undefined
+            ? { unidade: servico.unidade }
+            : {}),
+          ...(linha.valorUnitario === undefined && servico.valorReferencia !== undefined
+            ? { valorUnitario: servico.valorReferencia }
+            : {}),
+          ...(linha.quantidade === undefined ? { quantidade: 1 } : {}),
+        });
+      }}
+    />
   );
 }
 

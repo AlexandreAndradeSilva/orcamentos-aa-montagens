@@ -177,6 +177,66 @@
   padding: var(--e-1) var(--celula-pad-x);
 }
 
+/* ---- sugestoes do catalogo de servicos ---- */
+.cel-com-sugestao {
+  position: relative;
+}
+
+.sugestao-envolve {
+  position: relative;
+}
+
+.sugestoes {
+  position: absolute;
+  z-index: 5;
+  top: 100%;
+  left: 0;
+  right: 0;
+  min-width: 320px;
+  margin: 0;
+  padding: var(--e-1) 0;
+  list-style: none;
+  background: var(--cor-papel);
+  border: var(--borda) solid var(--cor-linha);
+  border-radius: var(--raio-lg);
+  box-shadow: var(--sombra-flutuante);
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.sugestao {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--e-3);
+  padding: var(--e-1) var(--e-3);
+  cursor: pointer;
+  font-size: var(--txt-sm);
+  line-height: var(--lh-sm);
+}
+
+.sugestao--ativa {
+  background: var(--cor-acao-fraca);
+}
+
+.sugestao__descricao {
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sugestao__meta {
+  flex: 0 0 auto;
+  font-variant-numeric: tabular-nums;
+  font-size: var(--txt-xs);
+  color: var(--cor-tinta-fraca);
+}
+
+.sugestao--ativa .sugestao__meta {
+  color: var(--cor-tinta-media);
+}
+
 .cel-acoes {
   padding: var(--celula-pad-y) var(--e-1);
   text-align: center;
