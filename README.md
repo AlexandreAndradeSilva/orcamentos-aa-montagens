@@ -4,6 +4,10 @@ App de orçamentos da **AA MONTAGENS** (Birigui/SP), feito a partir da planilha 
 
 Funciona no navegador, **sem servidor e sem internet**. Tudo fica gravado no computador onde o app é aberto.
 
+**No ar:** https://alexandreandradesilva.github.io/orcamentos-aa-montagens/
+
+Publica sozinho a cada alteração na `main` (GitHub Actions → GitHub Pages). O app é público; os dados de cada pessoa ficam só no navegador dela — ver [`docs/publicar.md`](docs/publicar.md).
+
 ---
 
 ## Como rodar
