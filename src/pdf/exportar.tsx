@@ -17,7 +17,7 @@ export function nomeDoArquivo(orcamento: Orcamento): string {
 }
 
 export async function gerarBlob(props: PropsDocumento): Promise<Blob> {
-  registrarFontes('/fontes');
+  registrarFontes(`${import.meta.env.BASE_URL}fontes`);
   return pdf(<DocumentoOrcamento {...props} />).toBlob();
 }
 

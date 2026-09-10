@@ -22,7 +22,7 @@ export function App() {
       </a>
       <header className="barra">
         <span className="barra__marca">
-          <img src="/logo-simbolo.svg" alt="" />
+          <img src={`${import.meta.env.BASE_URL}logo-simbolo.svg`} alt="" />
           AA Montagens
         </span>
         <nav aria-label="Seções">

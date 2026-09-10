@@ -36,6 +36,16 @@ Se isso for aceitável, publicar aberto é defensável. Se não for, siga para a
 
 Qualquer hospedagem de arquivos estáticos serve. `npm run build` gera a pasta `dist/`, e é ela inteira que sobe.
 
+### GitHub Pages (já configurado)
+
+`.github/workflows/publicar.yml` publica sozinho a cada push na `main`: instala, copia as fontes, roda typecheck, lint e testes, faz o build no subcaminho do repositório e sobe para o Pages. Falhou um teste, não publica.
+
+O endereço fica `https://<usuário>.github.io/<repositório>/`. Como é um **subcaminho**, o app é construído com `BASE_PATH=/<repositório>/` — o router, a logo, as fontes do PDF e o manifest respeitam essa base. Localmente nada muda: a base é `/`.
+
+O Pages não tem regra de rewrite; o workflow copia `index.html` para `404.html`, que é como se faz fallback de rota lá.
+
+**Limitação do plano gratuito:** Pages só funciona em repositório **público**. O código fica visível — nenhum segredo está nele (a consulta de CNPJ não usa chave), mas é o código-fonte inteiro.
+
 **Duas coisas já estão resolvidas no projeto:**
 
 - `public/_redirects` manda toda rota para o `index.html`. Sem isso, recarregar a página em `/clientes` daria **404** — as rotas só existem dentro do navegador. Netlify e Cloudflare Pages leem esse arquivo.
