@@ -25,6 +25,8 @@ npm run preview    # abre a versão final para conferir
 
 A pasta `dist/` é o app inteiro. Pode ser copiada para um pendrive, para uma pasta na rede ou para qualquer hospedagem de arquivos estáticos. Não precisa de banco de dados nem de servidor.
 
+**Para publicar na internet e restringir o acesso**, veja [`docs/publicar.md`](docs/publicar.md). Resumo: nenhum dado de cliente vai para o servidor — só o código —, e a proteção certa é no servidor (Cloudflare Access, grátis), nunca uma tela de login dentro do app, que num app só de navegador é teatro.
+
 ---
 
 ## O básico do dia a dia
@@ -196,6 +198,7 @@ docs/         a auditoria da planilha e as decisões, fase por fase
 | [`docs/arquitetura.md`](docs/arquitetura.md)             | as camadas e por quê                       |
 | [`docs/paridade.md`](docs/paridade.md)                   | a conferência contra a planilha            |
 | [`docs/pdf.md`](docs/pdf.md)                             | o PDF e o WhatsApp                         |
+| [`docs/publicar.md`](docs/publicar.md)                   | hospedar e controlar quem acessa           |
 
 ---
 

@@ -1,0 +1,17 @@
+{
+  "name": "Orçamentos — AA Montagens",
+  "short_name": "Orçamentos",
+  "description": "Orçamentos da AA Montagens. Funciona sem internet.",
+  "lang": "pt-BR",
+  "start_url": "/orcamentos",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#F1EEE9",
+  "theme_color": "#135885",
+  "icons": [
+    { "src": "/icone-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icone-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icone-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
