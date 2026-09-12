@@ -8,7 +8,8 @@ import { BlocoTotais } from './BlocoTotais';
 import { lerCentavos } from '../domain/dinheiro';
 import { linhasIncompletas, numeroCompleto, numeroDoItem } from '../domain/orcamento';
 import { STATUS, type Status } from '../domain/esquemas';
-import { linkWhatsApp } from '../whatsapp';
+import { linkWhatsApp, paraWaMe } from '../whatsapp';
+import { useLiveQuery } from 'dexie-react-hooks';
 import * as fmt from '../formato';
 import './editor.css';
 
@@ -33,6 +34,11 @@ export function EditorOrcamento() {
   const [naoEncontrado, setNaoEncontrado] = useState(false);
   const [gerando, setGerando] = useState(false);
   const [falha, setFalha] = useState<string | null>(null);
+
+  const cliente = useLiveQuery(
+    () => (orcamento ? db.clientes.get(orcamento.clienteId) : undefined),
+    [orcamento?.clienteId],
+  );
 
   useEffect(() => {
     let ativo = true;
@@ -70,6 +76,10 @@ export function EditorOrcamento() {
   }
 
   const pendencias = linhasIncompletas(orcamento.secoes);
+  // O WhatsApp vai para o CLIENTE deste orçamento, não para a AA Montagens —
+  // os números da empresa são os do rodapé do PDF, para o cliente ligar.
+  const telefoneCliente = cliente?.telefone;
+  const temWhatsApp = telefoneCliente !== undefined && paraWaMe(telefoneCliente) !== null;
 
   return (
     <div className="pagina">
@@ -117,11 +127,16 @@ export function EditorOrcamento() {
           </button>
           <a
             className="botao"
-            href={linkWhatsApp(orcamento, config, config.empresa.whatsapp[0])}
+            href={linkWhatsApp(orcamento, config, telefoneCliente)}
             target="_blank"
             rel="noreferrer"
+            title={
+              temWhatsApp
+                ? `Abre a conversa com ${orcamento.clienteNome} (${telefoneCliente})`
+                : 'O cliente não tem telefone cadastrado — o WhatsApp vai pedir para escolher o contato'
+            }
           >
-            Enviar no WhatsApp
+            {temWhatsApp ? 'Enviar no WhatsApp' : 'WhatsApp (escolher contato)'}
           </a>
           <button
             type="button"

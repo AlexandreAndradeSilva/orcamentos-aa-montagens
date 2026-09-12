@@ -209,7 +209,7 @@ function LinhaItem({ linha, secao, indice, blocoFechado, servicos }: PropsLinha)
   const total = totalDaLinha(linha);
 
   return (
-    <tr>
+    <tr className="linha-item">
       <td className="cel-item" data-rotulo="Item">
         {numeroDoItem(secao, indice)}
       </td>

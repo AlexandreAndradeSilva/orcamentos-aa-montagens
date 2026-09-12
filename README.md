@@ -97,7 +97,7 @@ Uma linha com descrição mas sem quantidade ou sem valor mostra `——` na col
 ### Exportar
 
 - **Exportar PDF** — na tela do orçamento e na lista. Gera `orcamento-001-2026-nome-do-cliente.pdf`, com texto selecionável e leve (~32 KB).
-- **Enviar no WhatsApp** — abre a conversa com o resumo pronto. **O PDF precisa ser anexado à mão**: o link do WhatsApp só carrega texto.
+- **Enviar no WhatsApp** — abre a conversa **com o cliente do orçamento**, no telefone cadastrado dele, com o resumo pronto. Sem telefone cadastrado, o WhatsApp pede para escolher o contato. **O PDF precisa ser anexado à mão**: o link do WhatsApp só carrega texto.
 
 ---
 

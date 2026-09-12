@@ -36,6 +36,26 @@
     min-height: 44px;
   }
 
+  /* Safari do iPhone: o input de data tem largura intrinseca e ignora o
+     width: 100% se nao se tira a aparencia nativa e o min-width automatico.
+     Foi o "DE" e o "EMISSAO" vazando pela lateral. */
+  input[type='date'] {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  /* item de grid nao encolhe abaixo do conteudo por padrao; aqui precisa */
+  .campos > *,
+  .filtros > *,
+  .campo-envolve {
+    min-width: 0;
+  }
+
   /* Sem `overflow-x: hidden` em html/body de proposito: com `height: 100%`
      no body, isso vira um container de rolagem interno e a pagina "nao rola"
      — o documento fica com 700px e o conteudo com 3000. O jeito certo de nao
@@ -227,7 +247,7 @@
      numero + remover / descricao inteira / quant | unid | valor / total.
      Tres colunas iguais: nada de `auto`, que crescia para caber um campo
      e espremia a descricao num terco da tela. */
-  .grade tbody > tr:not(.linha-secao):not(.linha-acao):not(.linha-preco-fechado) {
+  .grade tr.linha-item {
     display: grid;
     grid-template-columns: 1fr 1fr 1.3fr;
     grid-template-areas:
@@ -240,30 +260,30 @@
     border-bottom: var(--borda) solid var(--cor-linha-forte);
   }
 
-  .grade td.cel-item {
+  .grade tr.linha-item td.cel-item {
     grid-area: item;
     padding: var(--e-1) 0 0;
     align-self: center;
     font-size: var(--txt-sm);
   }
 
-  .grade td.cel-com-sugestao {
+  .grade tr.linha-item td.cel-com-sugestao {
     grid-area: descricao;
   }
 
-  .grade td[data-rotulo='Quant.'] {
+  .grade tr.linha-item td[data-rotulo='Quant.'] {
     grid-area: quant;
   }
 
-  .grade td[data-rotulo='Unid.'] {
+  .grade tr.linha-item td[data-rotulo='Unid.'] {
     grid-area: unid;
   }
 
-  .grade td[data-rotulo='Valor'] {
+  .grade tr.linha-item td[data-rotulo='Valor'] {
     grid-area: valor;
   }
 
-  .grade td.cel-total {
+  .grade tr.linha-item td.cel-total {
     grid-area: total;
     display: flex;
     justify-content: space-between;
@@ -272,7 +292,7 @@
     font-weight: 600;
   }
 
-  .grade td.cel-acoes {
+  .grade tr.linha-item td.cel-acoes {
     grid-area: acoes;
     padding: 0;
     display: flex;
@@ -281,18 +301,18 @@
   }
 
   /* o total fecha o cartao: rotulo a esquerda, valor a direita, sem × */
-  .grade td.cel-total::before {
+  .grade tr.linha-item td.cel-total::before {
     display: inline;
     padding: 0;
   }
 
   /* rotulo pequeno acima das celulas numericas e do total */
-  .grade td[data-rotulo='Quant.']::before,
-  .grade td[data-rotulo='Unid.']::before,
-  .grade td[data-rotulo='Valor']::before,
-  .grade td.cel-total::before,
-  .grade td[data-rotulo='Preço do bloco']::before,
-  .grade td[data-rotulo='Total do bloco']::before {
+  .grade tr.linha-item td[data-rotulo='Quant.']::before,
+  .grade tr.linha-item td[data-rotulo='Unid.']::before,
+  .grade tr.linha-item td[data-rotulo='Valor']::before,
+  .grade tr.linha-item td.cel-total::before,
+  .grade tr.linha-preco-fechado td[data-rotulo='Preço do bloco']::before,
+  .grade tr.linha-preco-fechado td[data-rotulo='Total do bloco']::before {
     content: attr(data-rotulo);
     display: block;
     font-size: var(--txt-2xs);
@@ -357,12 +377,24 @@
     border-bottom: var(--borda) solid var(--cor-linha-forte);
   }
 
-  /* linha do preco fechado */
+  /* Linha do preco fechado: nota em cima, preco | total embaixo.
+     Areas proprias, pelo mesmo motivo da secao: a celula do total tem a
+     classe `cel-total`, e a regra do cartao de item vazava para ca, criando
+     uma area implicita que espremia a nota em 8px. */
   .grade tr.linha-preco-fechado {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      'nota  nota'
+      'preco total';
     gap: var(--e-2);
     padding: var(--e-2) var(--e-3);
+    background: color-mix(in srgb, var(--cor-acao-fraca) 55%, var(--cor-papel));
+    border-bottom: var(--borda) solid var(--cor-linha-forte);
+  }
+
+  .grade tr.linha-preco-fechado td {
+    background: transparent;
   }
 
   .grade tr.linha-preco-fechado td:first-child,
@@ -371,7 +403,28 @@
   }
 
   .grade tr.linha-preco-fechado td:nth-child(2) {
-    grid-column: 1 / -1;
+    grid-area: nota;
+    padding: 0;
+  }
+
+  .grade tr.linha-preco-fechado td:nth-child(3) {
+    grid-area: preco;
+  }
+
+  .grade tr.linha-preco-fechado td:nth-child(4) {
+    grid-area: total;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding: 0;
+  }
+
+  .grade tr.linha-preco-fechado td[data-rotulo='Total do bloco']::before {
+    align-self: flex-start;
+  }
+
+  .grade tr.linha-preco-fechado .dica {
     padding: 0;
   }
 
