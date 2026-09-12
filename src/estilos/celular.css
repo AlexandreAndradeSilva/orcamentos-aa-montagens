@@ -1,0 +1,435 @@
+/* Celular e telas estreitas.
+ *
+ * A tela foi desenhada para monitor: tabela densa, barra no topo, sete
+ * colunas. Abaixo de 720px isso nao cabe, e nao adianta encolher — o que
+ * funciona e mudar a forma: cada linha da grade vira um cartao, a navegacao
+ * vai para o pe da tela (onde o polegar alcanca) e tudo o que e tocavel
+ * cresce para 44px.
+ *
+ * Tudo aqui e so CSS: o DOM e o mesmo do monitor, entao os testes e o axe
+ * continuam valendo. */
+
+/* ---- toque: sem hover, o que so aparecia no hover tem de estar visivel ---- */
+@media (hover: none) {
+  .botao-remover {
+    opacity: 1;
+  }
+
+  .botao-remover:disabled {
+    opacity: 0.25;
+  }
+}
+
+@media (max-width: 720px) {
+  /* ---- iOS: input com fonte menor que 16px faz o Safari dar zoom ao focar ---- */
+  input,
+  select,
+  textarea,
+  .campo,
+  .cel-editavel {
+    font-size: 16px;
+  }
+
+  .botao,
+  .campo,
+  .cel-editavel {
+    min-height: 44px;
+  }
+
+  /* Sem `overflow-x: hidden` em html/body de proposito: com `height: 100%`
+     no body, isso vira um container de rolagem interno e a pagina "nao rola"
+     — o documento fica com 700px e o conteudo com 3000. O jeito certo de nao
+     vazar para o lado e cada bloco caber, e e isso que as regras abaixo fazem. */
+
+  .pagina {
+    padding: var(--e-3) var(--e-3) calc(var(--barra-altura) + var(--e-6));
+  }
+
+  /* ---- barra: marca em cima, navegacao fixa no pe ---- */
+  .barra {
+    height: auto;
+    padding: var(--e-2) var(--e-3);
+    justify-content: center;
+  }
+
+  .barra nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 20;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    height: calc(var(--barra-altura) + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+    background: var(--cor-papel);
+    border-top: var(--borda) solid var(--cor-linha-forte);
+  }
+
+  .barra nav a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--barra-altura);
+    padding: 0 var(--e-1);
+    border-radius: 0;
+    font-size: var(--txt-xs);
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  .barra nav a[aria-current='page'] {
+    background: transparent;
+    color: var(--cor-acao);
+    box-shadow: inset 0 3px 0 var(--cor-acao);
+  }
+
+  /* ---- cabecalho do documento e da lista: empilha ---- */
+  .lista-cabecalho,
+  .doc-cabecalho {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--e-3);
+  }
+
+  .doc-numero {
+    font-size: var(--dsp-md);
+    line-height: var(--lh-dsp-md);
+  }
+
+  .doc-acoes {
+    justify-content: flex-start;
+  }
+
+  .doc-acoes > * {
+    flex: 1 1 calc(50% - var(--e-2));
+    justify-content: center;
+  }
+
+  /* destrutivo nao ganha largura total nem destaque: fica pequeno, a direita */
+  .doc-acoes > .botao--destrutivo,
+  .doc-acoes > .excluir-confirma {
+    flex: 0 1 auto;
+    margin-left: auto;
+  }
+
+  .doc-salvo {
+    text-align: left;
+  }
+
+  .filtros {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .filtros > :first-child {
+    grid-column: 1 / -1;
+  }
+
+  /* ---- tabelas de lista viram cartoes ---- */
+  .lista thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  .lista,
+  .lista tbody,
+  .lista tr,
+  .lista td {
+    display: block;
+    width: 100%;
+  }
+
+  .lista tr {
+    padding: var(--e-2) var(--e-3);
+    border-bottom: var(--borda) solid var(--cor-linha-sutil);
+  }
+
+  .lista td {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--e-3);
+    padding: var(--e-1) 0;
+    border: none;
+    text-align: right;
+  }
+
+  .lista td[data-rotulo]::before {
+    content: attr(data-rotulo);
+    flex: 0 0 auto;
+    font-size: var(--txt-2xs);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--cor-tinta-fraca);
+    text-align: left;
+    align-self: center;
+  }
+
+  .lista td:not([data-rotulo]) {
+    justify-content: flex-end;
+  }
+
+  /* celulas de texto longo (nome, descricao): rotulo em cima, texto embaixo */
+  .lista td[data-rotulo='Nome'],
+  .lista td[data-rotulo='Descrição'],
+  .lista td[data-rotulo='Cliente'] {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    text-align: left;
+    font-weight: 500;
+  }
+
+  .lista td[data-rotulo='Nome']::before,
+  .lista td[data-rotulo='Descrição']::before,
+  .lista td[data-rotulo='Cliente']::before {
+    align-self: flex-start;
+  }
+
+  .lista__acoes {
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+
+  /* ---- a grade de itens vira cartoes ---- */
+  .grade-envolve {
+    overflow-x: visible;
+  }
+
+  .grade {
+    min-width: 0;
+  }
+
+  .grade colgroup,
+  .grade thead {
+    display: none;
+  }
+
+  .grade tbody,
+  .grade tr,
+  .grade td {
+    display: block;
+  }
+
+  .grade td {
+    border: none;
+  }
+
+  .grade tbody tr:hover td {
+    background: transparent;
+  }
+
+  /* Linha de item: cartao em quatro faixas.
+     numero + remover / descricao inteira / quant | unid | valor / total.
+     Tres colunas iguais: nada de `auto`, que crescia para caber um campo
+     e espremia a descricao num terco da tela. */
+  .grade tbody > tr:not(.linha-secao):not(.linha-acao):not(.linha-preco-fechado) {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.3fr;
+    grid-template-areas:
+      'item      item      acoes'
+      'descricao descricao descricao'
+      'quant     unid      valor'
+      'total     total     total';
+    gap: var(--e-1) var(--e-2);
+    padding: var(--e-2) var(--e-3);
+    border-bottom: var(--borda) solid var(--cor-linha-forte);
+  }
+
+  .grade td.cel-item {
+    grid-area: item;
+    padding: var(--e-1) 0 0;
+    align-self: center;
+    font-size: var(--txt-sm);
+  }
+
+  .grade td.cel-com-sugestao {
+    grid-area: descricao;
+  }
+
+  .grade td[data-rotulo='Quant.'] {
+    grid-area: quant;
+  }
+
+  .grade td[data-rotulo='Unid.'] {
+    grid-area: unid;
+  }
+
+  .grade td[data-rotulo='Valor'] {
+    grid-area: valor;
+  }
+
+  .grade td.cel-total {
+    grid-area: total;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--e-1) 0;
+    font-weight: 600;
+  }
+
+  .grade td.cel-acoes {
+    grid-area: acoes;
+    padding: 0;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  /* o total fecha o cartao: rotulo a esquerda, valor a direita, sem × */
+  .grade td.cel-total::before {
+    display: inline;
+    padding: 0;
+  }
+
+  /* rotulo pequeno acima das celulas numericas e do total */
+  .grade td[data-rotulo='Quant.']::before,
+  .grade td[data-rotulo='Unid.']::before,
+  .grade td[data-rotulo='Valor']::before,
+  .grade td.cel-total::before,
+  .grade td[data-rotulo='Preço do bloco']::before,
+  .grade td[data-rotulo='Total do bloco']::before {
+    content: attr(data-rotulo);
+    display: block;
+    font-size: var(--txt-2xs);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--cor-tinta-fraca);
+    text-align: left;
+    padding: 0 var(--e-1);
+  }
+
+  .grade td .cel-editavel {
+    border-color: var(--cor-linha-sutil);
+    border-radius: var(--raio);
+    background: var(--cor-papel);
+  }
+
+  .botao-remover {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* Linha de secao: numero | titulo, e os controles embaixo.
+     Areas proprias: a regra `td.cel-item { grid-area: item }` do cartao de
+     item tambem alcanca o numero da secao, e sem area `item` neste grid ele
+     era jogado para o canto e espremia o titulo. */
+  .grade tr.linha-secao {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      'numero    titulo'
+      'controles controles';
+    gap: var(--e-2);
+    padding: var(--e-2) var(--e-3);
+  }
+
+  .grade tr.linha-secao td {
+    background: transparent;
+    border: none;
+    padding: 0;
+  }
+
+  .grade tr.linha-secao td.cel-item {
+    grid-area: numero;
+    align-self: center;
+  }
+
+  .grade tr.linha-secao td:nth-child(2) {
+    grid-area: titulo;
+  }
+
+  .grade tr.linha-secao td.linha-secao__controles {
+    grid-area: controles;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: left;
+  }
+
+  .grade tr.linha-secao {
+    background: var(--cor-fundo);
+    border-top: var(--borda) solid var(--cor-linha-forte);
+    border-bottom: var(--borda) solid var(--cor-linha-forte);
+  }
+
+  /* linha do preco fechado */
+  .grade tr.linha-preco-fechado {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--e-2);
+    padding: var(--e-2) var(--e-3);
+  }
+
+  .grade tr.linha-preco-fechado td:first-child,
+  .grade tr.linha-preco-fechado td:last-child {
+    display: none;
+  }
+
+  .grade tr.linha-preco-fechado td:nth-child(2) {
+    grid-column: 1 / -1;
+    padding: 0;
+  }
+
+  .grade tr.linha-acao {
+    padding: var(--e-1) var(--e-2);
+  }
+
+  .grade tr.linha-acao td:first-child {
+    display: none;
+  }
+
+  /* sugestoes: ocupam a largura do cartao, nao mais que a tela */
+  .sugestoes {
+    min-width: 0;
+    max-width: calc(100vw - 2 * var(--e-3));
+  }
+
+  /* ---- totais e rodape do documento ---- */
+  .doc-rodape {
+    grid-template-columns: 1fr;
+  }
+
+  .totais__campo {
+    width: 140px;
+  }
+
+  .totais__hero {
+    font-size: var(--dsp-lg);
+    line-height: var(--lh-dsp-lg);
+  }
+
+  /* ---- formularios ---- */
+  .campos {
+    grid-template-columns: 1fr;
+  }
+
+  .formulario__acoes > * {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+
+  /* ---- confirmacao de exclusao cabe numa linha ---- */
+  .excluir-confirma {
+    flex-wrap: wrap;
+  }
+}
+
+/* Telas bem pequenas (iPhone SE, 320-360px) */
+@media (max-width: 400px) {
+  .barra nav a {
+    font-size: var(--txt-2xs);
+  }
+
+  .filtros {
+    grid-template-columns: 1fr;
+  }
+
+  .filtros > :first-child {
+    grid-column: auto;
+  }
+}

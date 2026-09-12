@@ -51,12 +51,14 @@ export function Clientes() {
                   const quantos = quantosPor.get(c.id) ?? 0;
                   return (
                     <tr key={c.id}>
-                      <td>{c.nome}</td>
-                      <td>{c.cnpjCpf ?? '——'}</td>
-                      <td>{c.cidade ?? '——'}</td>
-                      <td>{c.telefone ?? '——'}</td>
-                      <td>{c.contato ?? '——'}</td>
-                      <td className="num">{quantos === 0 ? '——' : quantos}</td>
+                      <td data-rotulo="Nome">{c.nome}</td>
+                      <td data-rotulo="CNPJ / CPF">{c.cnpjCpf ?? '——'}</td>
+                      <td data-rotulo="Cidade">{c.cidade ?? '——'}</td>
+                      <td data-rotulo="Fone">{c.telefone ?? '——'}</td>
+                      <td data-rotulo="Contato">{c.contato ?? '——'}</td>
+                      <td className="num" data-rotulo="Orçamentos">
+                        {quantos === 0 ? '——' : quantos}
+                      </td>
                       <td className="lista__acoes">
                         <button
                           type="button"

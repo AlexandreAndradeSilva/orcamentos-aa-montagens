@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db, excluirOrcamento } from '../dados/db';
+import { importarBackup } from '../dados/backup';
 import { BotaoExcluir } from './BotaoExcluir';
 import { useEditor } from '../estado/editor';
 import { calcularTotais, numeroCompleto } from '../domain/orcamento';
@@ -16,8 +17,36 @@ export function ListaOrcamentos() {
   const [status, setStatus] = useState<FiltroStatus>('todos');
   const [de, setDe] = useState('');
   const [ate, setAte] = useState('');
+  const [carregandoExemplo, setCarregandoExemplo] = useState(false);
+  const [erroExemplo, setErroExemplo] = useState<string | null>(null);
+  const [parametros, setParametros] = useSearchParams();
 
   const orcamentos = useLiveQuery(() => db.orcamentos.reverse().sortBy('alteradoEm'), []);
+
+  function carregarExemplo() {
+    setCarregandoExemplo(true);
+    setErroExemplo(null);
+    importarExemplo()
+      .catch((e: unknown) =>
+        setErroExemplo(e instanceof Error ? e.message : 'não foi possível carregar o exemplo'),
+      )
+      .finally(() => setCarregandoExemplo(false));
+  }
+
+  /**
+   * `/orcamentos?exemplo` carrega os dados de exemplo — mas só com o banco
+   * vazio, para um link de demonstração nunca atropelar orçamento de verdade.
+   */
+  useEffect(() => {
+    if (!parametros.has('exemplo') || orcamentos === undefined) return;
+    if (orcamentos.length === 0) {
+      importarExemplo()
+        .catch(() => undefined)
+        .finally(() => setParametros({}, { replace: true }));
+    } else {
+      setParametros({}, { replace: true });
+    }
+  }, [parametros, orcamentos, setParametros]);
   // A configuração vem do store: `lerConfiguracao` grava a padrão na primeira
   // execução, e liveQuery não aceita transação de escrita.
   const config = useEditor((e) => e.config);
@@ -100,9 +129,26 @@ export function ListaOrcamentos() {
       ) : filtrados.length === 0 ? (
         <div className="painel vazio">
           <p>{textoVazio(orcamentos.length, de)}</p>
-          <Link className="botao botao--primario" to="/orcamentos/novo">
-            Novo orçamento
-          </Link>
+          <div className="vazio__acoes">
+            <Link className="botao botao--primario" to="/orcamentos/novo">
+              Novo orçamento
+            </Link>
+            {orcamentos.length === 0 && (
+              <button
+                type="button"
+                className="botao"
+                disabled={carregandoExemplo}
+                onClick={carregarExemplo}
+              >
+                {carregandoExemplo ? 'Carregando…' : 'Ver com dados de exemplo'}
+              </button>
+            )}
+          </div>
+          {erroExemplo && (
+            <p className="faixa-erro" role="alert">
+              {erroExemplo}
+            </p>
+          )}
         </div>
       ) : (
         <div className="painel">
@@ -129,17 +175,19 @@ export function ListaOrcamentos() {
                 });
                 return (
                   <tr key={o.id}>
-                    <td>
+                    <td data-rotulo="Número">
                       <Link to={`/orcamentos/${o.id}`} className="lista__numero">
                         {numeroCompleto(o.numero, o.revisao)}
                       </Link>
                     </td>
-                    <td>{o.clienteNome}</td>
-                    <td>{fmt.data(o.dataEmissao)}</td>
-                    <td>
+                    <td data-rotulo="Cliente">{o.clienteNome}</td>
+                    <td data-rotulo="Emissão">{fmt.data(o.dataEmissao)}</td>
+                    <td data-rotulo="Situação">
                       <span className={`status status--${o.status}`}>{o.status}</span>
                     </td>
-                    <td className="num">{fmt.valor(totais.aPagar)}</td>
+                    <td className="num" data-rotulo="A pagar">
+                      {fmt.valor(totais.aPagar)}
+                    </td>
                     <td className="lista__acoes">
                       <BotaoPdf orcamento={o} percentualEntradaPadrao={config} />
                       <BotaoExcluir
@@ -184,6 +232,13 @@ function BotaoPdf({
       {gerando ? 'gerando…' : 'PDF'}
     </button>
   );
+}
+
+/** Importa o backup de exemplo que vai junto com o app. */
+async function importarExemplo(): Promise<void> {
+  const resposta = await fetch(`${import.meta.env.BASE_URL}backup-exemplo.json`);
+  if (!resposta.ok) throw new Error('não achei o arquivo de exemplo');
+  await importarBackup(await resposta.text());
 }
 
 function textoVazio(total: number, de: string): string {
