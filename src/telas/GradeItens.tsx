@@ -164,14 +164,16 @@ function BlocoSecao({
               Um preço para o bloco inteiro — as quantidades acima ficam informativas.
             </span>
           </td>
-          <td className="num">
+          <td className="num" data-rotulo="Preço do bloco">
             <CelulaValor
               valor={secao.precoFechado}
               rotulo={`Preço fechado da seção ${numeroDaSecao(indice)}`}
               aoConfirmar={(centavos) => definirPrecoFechado(indice, centavos ?? 0)}
             />
           </td>
-          <td className="num cel-total cel-total--forte">{fmt.valor(totalDaSecao(secao))}</td>
+          <td className="num cel-total cel-total--forte" data-rotulo="Total do bloco">
+            {fmt.valor(totalDaSecao(secao))}
+          </td>
           <td />
         </tr>
       )}
@@ -208,8 +210,10 @@ function LinhaItem({ linha, secao, indice, blocoFechado, servicos }: PropsLinha)
 
   return (
     <tr>
-      <td className="cel-item">{numeroDoItem(secao, indice)}</td>
-      <td className="cel-com-sugestao">
+      <td className="cel-item" data-rotulo="Item">
+        {numeroDoItem(secao, indice)}
+      </td>
+      <td className="cel-com-sugestao" data-rotulo="Descrição">
         <Descricao
           linha={linha}
           secao={secao}
@@ -218,7 +222,7 @@ function LinhaItem({ linha, secao, indice, blocoFechado, servicos }: PropsLinha)
           aoAlterar={(patch) => alterarLinha(secao, indice, patch)}
         />
       </td>
-      <td className="num">
+      <td className="num" data-rotulo="Quant.">
         <CelulaQuantidade
           valor={linha.quantidade}
           rotulo={`Quantidade do item ${numeroDoItem(secao, indice)}`}
@@ -226,7 +230,7 @@ function LinhaItem({ linha, secao, indice, blocoFechado, servicos }: PropsLinha)
           aoConfirmar={(q) => alterarLinha(secao, indice, { quantidade: q ?? undefined })}
         />
       </td>
-      <td>
+      <td data-rotulo="Unid.">
         <CelulaTexto
           valor={linha.unidade ?? ''}
           rotulo={`Unidade do item ${numeroDoItem(secao, indice)}`}
@@ -236,7 +240,7 @@ function LinhaItem({ linha, secao, indice, blocoFechado, servicos }: PropsLinha)
           aoConfirmar={(t) => alterarLinha(secao, indice, { unidade: t || undefined })}
         />
       </td>
-      <td className="num">
+      <td className="num" data-rotulo="Valor">
         <CelulaValor
           valor={linha.valorUnitario}
           rotulo={`Valor unitário do item ${numeroDoItem(secao, indice)}`}
@@ -245,7 +249,7 @@ function LinhaItem({ linha, secao, indice, blocoFechado, servicos }: PropsLinha)
           aoConfirmar={(c) => alterarLinha(secao, indice, { valorUnitario: c ?? undefined })}
         />
       </td>
-      <td className="num cel-total">
+      <td className="num cel-total" data-rotulo="Total">
         {blocoFechado ? (
           <span className="cel-vazia" aria-label="incluído no preço do bloco">
             ——

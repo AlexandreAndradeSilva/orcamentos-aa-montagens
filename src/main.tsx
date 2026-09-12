@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { App } from './App';
 import './estilos/tokens.css';
 import './estilos/base.css';
+import './estilos/celular.css';
 
 const raiz = document.getElementById('raiz');
 if (!raiz) throw new Error('elemento #raiz não encontrado');

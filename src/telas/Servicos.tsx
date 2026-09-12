@@ -55,13 +55,15 @@ export function Servicos() {
               <tbody>
                 {servicos.map((s) => (
                   <tr key={s.id}>
-                    <td>{s.descricao}</td>
-                    <td>{s.unidade ?? '——'}</td>
-                    <td className="num">
+                    <td data-rotulo="Descrição">{s.descricao}</td>
+                    <td data-rotulo="Unid.">{s.unidade ?? '——'}</td>
+                    <td className="num" data-rotulo="Último valor">
                       {s.valorReferencia === undefined ? '——' : fmt.valor(s.valorReferencia)}
                     </td>
-                    <td className="num">{s.usos}</td>
-                    <td>{fmt.data(s.usadoEm.slice(0, 10))}</td>
+                    <td className="num" data-rotulo="Usos">
+                      {s.usos}
+                    </td>
+                    <td data-rotulo="Usado em">{fmt.data(s.usadoEm.slice(0, 10))}</td>
                     <td className="lista__acoes">
                       <BotaoExcluir
                         compacto

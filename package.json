@@ -15,7 +15,8 @@
     "pdf:exemplo": "tsx --tsconfig tsconfig.app.json tools/gerar_exemplo.mts",
     "fontes:copiar": "node tools/copiar_fontes.mjs",
     "typecheck": "tsc -b && tsc -p tsconfig.tools.json",
-    "backup:exemplo": "tsx --tsconfig tsconfig.app.json tools/gerar_backup_exemplo.mts"
+    "backup:exemplo": "tsx --tsconfig tsconfig.app.json tools/gerar_backup_exemplo.mts",
+    "fotos": "tsx --tsconfig tsconfig.app.json tools/fotos.mts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
@@ -47,6 +48,7 @@
     "fake-indexeddb": "^6.2.5",
     "globals": "^17.12.0",
     "jsdom": "^29.1.1",
+    "playwright": "^1.63.0",
     "prettier": "^3.9.6",
     "tsx": "^4.23.13",
     "typescript": "^6.0.3",

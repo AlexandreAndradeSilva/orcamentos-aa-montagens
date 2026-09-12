@@ -53,7 +53,7 @@
 html,
 body,
 #raiz {
-  height: 100%;
+  min-height: 100%;
 }
 
 body {
@@ -279,6 +279,13 @@ textarea {
 
 .vazio p {
   margin: 0 0 var(--e-4);
+}
+
+.vazio__acoes {
+  display: flex;
+  gap: var(--e-2);
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 /* ---- status: marcador quadrado, nao pilula colorida ---- */

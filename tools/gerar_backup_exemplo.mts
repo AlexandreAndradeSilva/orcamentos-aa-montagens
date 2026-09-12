@@ -6,6 +6,7 @@
  * preço por linha, quantidade fracionada, acréscimo de nota fiscal e desconto.
  *
  * Uso: npm run backup:exemplo
+ * Saida: public/backup-exemplo.json (servido junto com o app)
  */
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
@@ -67,15 +68,13 @@ const secoesDaPlanilha: Secao[] = caso.secoes.map((s, i) => ({
   id: `s${i}`,
   titulo: s.titulo,
   ...(s.precoFechado !== null ? { precoFechado: s.precoFechado } : {}),
-  linhas: s.linhas.map(
-    (l, j): Linha => ({
-      id: `s${i}l${j}`,
-      descricao: l.descricao,
-      ...(l.quantidade !== null ? { quantidade: l.quantidade } : {}),
-      ...(l.unidade !== null ? { unidade: l.unidade } : {}),
-      ...(l.valorUnitario !== null ? { valorUnitario: l.valorUnitario } : {}),
-    }),
-  ),
+  linhas: s.linhas.map((l, j): Linha => ({
+    id: `s${i}l${j}`,
+    descricao: l.descricao,
+    ...(l.quantidade !== null ? { quantidade: l.quantidade } : {}),
+    ...(l.unidade !== null ? { unidade: l.unidade } : {}),
+    ...(l.valorUnitario !== null ? { valorUnitario: l.valorUnitario } : {}),
+  })),
 }));
 
 const igreja: Orcamento = {
@@ -184,7 +183,8 @@ if (!conferido.success) {
   throw new Error('o backup de exemplo não passou no próprio esquema');
 }
 
-const destino = resolve(RAIZ, 'exemplos', 'backup-exemplo.json');
+// vai em public/ para o proprio app poder carregar ("Ver com dados de exemplo")
+const destino = resolve(RAIZ, 'public', 'backup-exemplo.json');
 mkdirSync(dirname(destino), { recursive: true });
 writeFileSync(destino, `${JSON.stringify(backup, null, 2)}\n`, 'utf8');
 

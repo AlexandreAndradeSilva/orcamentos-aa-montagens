@@ -33,6 +33,16 @@ A pasta `dist/` é o app inteiro. Pode ser copiada para um pendrive, para uma pa
 
 ---
 
+## No celular
+
+Funciona no navegador do celular, e dá para **adicionar à tela de início** (menu do Chrome ou Safari → "Adicionar à tela de início"): abre em tela cheia, com o ícone da AA Montagens, parecendo app.
+
+Abaixo de 720px o layout muda de forma: cada item do orçamento vira um cartão (descrição inteira em cima; quantidade, unidade e valor embaixo), as listas viram cartões e a navegação vai para o pé da tela, onde o polegar alcança. Tudo o que é tocável tem no mínimo 44px.
+
+Para ver o app já com dados sem digitar nada: na lista vazia, **Ver com dados de exemplo** — ou abra `…/orcamentos?exemplo`. Só entra com o banco vazio; nunca sobrescreve orçamento de verdade.
+
+Lembre que **os dados ficam no navegador de cada aparelho**: o celular e o computador são conjuntos separados, e o backup é a ponte entre eles.
+
 ## O básico do dia a dia
 
 ### Criar um orçamento
