@@ -97,7 +97,11 @@ Uma linha com descrição mas sem quantidade ou sem valor mostra `——` na col
 ### Exportar
 
 - **Exportar PDF** — na tela do orçamento e na lista. Gera `orcamento-001-2026-nome-do-cliente.pdf`, com texto selecionável e leve (~32 KB).
-- **Enviar no WhatsApp** — abre a conversa **com o cliente do orçamento**, no telefone cadastrado dele, com o resumo pronto. Sem telefone cadastrado, o WhatsApp pede para escolher o contato. **O PDF precisa ser anexado à mão**: o link do WhatsApp só carrega texto.
+- **Enviar no WhatsApp** — gera o PDF e envia junto com o resumo:
+  - **no celular**, abre a folha de compartilhamento do aparelho: toque em WhatsApp, escolha a conversa, e o PDF vai com o resumo de legenda;
+  - **no computador**, baixa o PDF e abre a conversa com o cliente (no telefone cadastrado) já com o texto — você anexa o arquivo. O WhatsApp do computador não recebe anexo por link.
+
+  Detalhe fora do nosso controle: ao compartilhar arquivo, o WhatsApp do **iPhone** às vezes leva só o PDF e descarta o texto. É comportamento do sistema.
 
 ---
 
@@ -219,7 +223,7 @@ docs/         a auditoria da planilha e as decisões, fase por fase
 ## Limites conhecidos
 
 - **Um computador, um navegador.** Sem sincronização. Backup é manual.
-- **O PDF não vai anexado no WhatsApp** — o link `wa.me` só carrega texto.
+- **No computador, o PDF não vai anexado no WhatsApp** — o link `wa.me` só carrega texto; no celular vai pela folha de compartilhamento.
 - **A paridade tem um caso só.** Só existia um orçamento preenchido na planilha, e o mais simples possível. Ver [`docs/paridade.md`](docs/paridade.md) §6.
 - **Sem frete.** Confirmado que a AA Montagens não cobra à parte.
 - **Trocar a logo** pela tela ainda não existe; o PDF usa a logo vetorial fixa.

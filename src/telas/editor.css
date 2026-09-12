@@ -173,3 +173,10 @@
   line-height: var(--lh-dsp-xl);
   font-variant-numeric: tabular-nums;
 }
+
+.doc-recado {
+  margin: 0 0 var(--e-3);
+  padding: var(--e-2) var(--e-3);
+  font-size: var(--txt-sm);
+  color: var(--cor-tinta-media);
+}
