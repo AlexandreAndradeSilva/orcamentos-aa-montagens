@@ -8,7 +8,7 @@ import { BlocoTotais } from './BlocoTotais';
 import { lerCentavos } from '../domain/dinheiro';
 import { linhasIncompletas, numeroCompleto, numeroDoItem } from '../domain/orcamento';
 import { STATUS, type Status } from '../domain/esquemas';
-import { linkWhatsApp, paraWaMe } from '../whatsapp';
+import { linkWhatsApp, paraWaMe, textoResumo } from '../whatsapp';
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as fmt from '../formato';
 import './editor.css';
@@ -33,7 +33,9 @@ export function EditorOrcamento() {
   const salvar = useEditor((e) => e.salvar);
   const [naoEncontrado, setNaoEncontrado] = useState(false);
   const [gerando, setGerando] = useState(false);
+  const [enviando, setEnviando] = useState(false);
   const [falha, setFalha] = useState<string | null>(null);
+  const [recado, setRecado] = useState<string | null>(null);
 
   const cliente = useLiveQuery(
     () => (orcamento ? db.clientes.get(orcamento.clienteId) : undefined),
@@ -125,19 +127,43 @@ export function EditorOrcamento() {
           >
             {gerando ? 'Gerando…' : 'Exportar PDF'}
           </button>
-          <a
+          <button
+            type="button"
             className="botao"
-            href={linkWhatsApp(orcamento, config, telefoneCliente)}
-            target="_blank"
-            rel="noreferrer"
+            disabled={enviando}
             title={
               temWhatsApp
-                ? `Abre a conversa com ${orcamento.clienteNome} (${telefoneCliente})`
-                : 'O cliente não tem telefone cadastrado — o WhatsApp vai pedir para escolher o contato'
+                ? `PDF e resumo para ${orcamento.clienteNome} (${telefoneCliente})`
+                : 'O cliente não tem telefone cadastrado — você escolhe o contato no WhatsApp'
             }
+            onClick={() => {
+              setEnviando(true);
+              setFalha(null);
+              setRecado(null);
+              void import('../pdf/exportar')
+                .then((m) =>
+                  m.enviarPeloWhatsApp(
+                    orcamento,
+                    config,
+                    textoResumo(orcamento, config),
+                    linkWhatsApp(orcamento, config, telefoneCliente),
+                  ),
+                )
+                .then((resultado) => {
+                  if (resultado === 'baixado') {
+                    setRecado(
+                      'PDF baixado e conversa aberta. Anexe o arquivo na mensagem — o WhatsApp do computador não recebe anexo por link.',
+                    );
+                  }
+                })
+                .catch((e: unknown) =>
+                  setFalha(e instanceof Error ? e.message : 'não foi possível enviar'),
+                )
+                .finally(() => setEnviando(false));
+            }}
           >
-            {temWhatsApp ? 'Enviar no WhatsApp' : 'WhatsApp (escolher contato)'}
-          </a>
+            {enviando ? 'Preparando…' : 'Enviar no WhatsApp'}
+          </button>
           <button
             type="button"
             className="botao botao--primario"
@@ -173,6 +199,11 @@ export function EditorOrcamento() {
       {falha && (
         <p className="faixa-erro" role="alert">
           {falha}
+        </p>
+      )}
+      {recado && (
+        <p className="painel doc-recado" role="status">
+          {recado}
         </p>
       )}
 

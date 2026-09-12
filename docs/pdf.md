@@ -124,5 +124,5 @@ Os 19 testes novos desta fase: 6 sobre o PDF gerado de verdade (validade, ausên
 
 ## 10. O que ainda falta
 
-- **Anexar o PDF no WhatsApp automaticamente** não é possível: o `wa.me` só aceita texto. O fluxo é exportar o PDF e anexar na conversa. Não há como contornar sem API oficial do WhatsApp Business.
+- ~~Anexar o PDF no WhatsApp automaticamente~~ — **resolvido no celular** com a Web Share API (`navigator.share` com arquivo): a folha nativa do aparelho leva PDF e texto ao WhatsApp. No computador continua impossível pelo `wa.me`; lá o app baixa o PDF e abre a conversa.
 - **Logo em Configurações** — o PDF usa a logo vetorial fixa. Trocar a logo pela tela ainda não existe.

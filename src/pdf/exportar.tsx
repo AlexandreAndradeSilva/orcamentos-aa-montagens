@@ -54,3 +54,60 @@ export async function baixarPdf(orcamento: Orcamento, configuracao: Configuracao
   a.click();
   URL.revokeObjectURL(url);
 }
+
+export type ResultadoEnvio =
+  /** Folha de compartilhamento do celular: PDF + texto foram juntos. */
+  | 'compartilhado'
+  /** A pessoa fechou a folha sem escolher ninguém. */
+  | 'cancelado'
+  /** Sem folha com arquivo (computador): PDF baixado e conversa aberta. */
+  | 'baixado';
+
+/**
+ * Envia PDF e resumo pelo WhatsApp, do jeito que a plataforma permitir.
+ *
+ * No celular, `navigator.share` com arquivo abre a folha nativa: a pessoa
+ * toca no WhatsApp, escolhe a conversa, e o PDF vai com o texto de legenda.
+ * E a unica forma de anexar arquivo — o link `wa.me` so carrega texto.
+ *
+ * No computador nao ha folha com arquivo. Entao baixa o PDF e abre a conversa
+ * com o texto; a pessoa arrasta o arquivo para dentro.
+ *
+ * Detalhe que nao controlo: ao compartilhar arquivo, o WhatsApp do iPhone as
+ * vezes descarta o texto e leva so o PDF. E do sistema, nao do app.
+ */
+export async function enviarPeloWhatsApp(
+  orcamento: Orcamento,
+  configuracao: Configuracao,
+  texto: string,
+  linkSemArquivo: string,
+): Promise<ResultadoEnvio> {
+  const blob = await gerarPdf(orcamento, configuracao);
+  const arquivo = new File([blob], nomeDoArquivo(orcamento), { type: 'application/pdf' });
+  const titulo = `Orçamento ${orcamento.numero}`;
+
+  const nav = navigator as Navigator & {
+    canShare?: (dados: ShareData) => boolean;
+    share?: (dados: ShareData) => Promise<void>;
+  };
+
+  if (nav.share && nav.canShare?.({ files: [arquivo] })) {
+    try {
+      await nav.share({ files: [arquivo], text: texto, title: titulo });
+      return 'compartilhado';
+    } catch (e) {
+      // fechar a folha nao e erro
+      if (e instanceof Error && e.name === 'AbortError') return 'cancelado';
+      throw e;
+    }
+  }
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = arquivo.name;
+  a.click();
+  URL.revokeObjectURL(url);
+  window.open(linkSemArquivo, '_blank', 'noopener');
+  return 'baixado';
+}
