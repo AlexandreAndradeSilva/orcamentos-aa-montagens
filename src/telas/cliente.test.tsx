@@ -68,16 +68,21 @@ describe('novo orçamento: cadastro do cliente', () => {
     for (const rotulo of [
       /Cliente \*/,
       /CNPJ ou CPF/,
-      /Inscrição estadual/,
       /CEP/,
       /Endereço/,
       /Cidade \/ UF/,
       /Telefone/,
-      /E-mail/,
       /Pessoa de contato/,
     ]) {
       expect(screen.getByLabelText(rotulo)).toBeInTheDocument();
     }
+  });
+
+  it('não pede inscrição estadual nem e-mail — saíram do cadastro', async () => {
+    abrirNovo();
+    await screen.findByRole('heading', { name: 'Novo orçamento' });
+    expect(screen.queryByLabelText(/Inscrição estadual/)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/E-mail/)).not.toBeInTheDocument();
   });
 
   it('exige o nome', async () => {
@@ -122,6 +127,7 @@ describe('novo orçamento: cadastro do cliente', () => {
     const cliente = (await db.clientes.toArray())[0]!;
     expect(cliente.cnpjCpf).toBeUndefined();
     expect(cliente.email).toBeUndefined();
+    expect(cliente.ieRg).toBeUndefined();
   });
 });
 

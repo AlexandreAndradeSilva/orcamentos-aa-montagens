@@ -51,50 +51,59 @@ export function BlocoTotais() {
         />
       </div>
 
-      <hr className="totais__regua" />
-      <Linha rotulo="Sub-total" valor={totais.subTotal} />
-
-      <div className="totais__linha">
-        <span className="totais__rotulo">
-          Entrada
-          <span className="totais__nota">
-            {entradaSugerida
-              ? `sugerido ${fmt.percentual(config.percentualEntradaPadrao)}`
-              : `${fmt.percentual(percentualDaEntrada(totais.entrada, totais.subTotal))} do sub-total`}
-          </span>
-        </span>
-        <input
-          className="campo num totais__campo"
-          key={totais.entrada}
-          defaultValue={fmt.valor(totais.entrada)}
-          inputMode="decimal"
-          aria-label="Entrada"
-          onBlur={(ev) => {
-            try {
-              alterar({ entrada: { modo: 'manual', centavos: lerCentavos(ev.target.value) ?? 0 } });
-            } catch {
-              alterar({ entrada: { modo: 'manual', centavos: 0 } });
-            }
-          }}
-        />
-      </div>
-
-      {!entradaSugerida && (
-        <button
-          type="button"
-          className="botao botao--texto botao--mini"
-          onClick={() => alterar({ entrada: { modo: 'sugerida' } })}
-        >
-          voltar para {fmt.percentual(config.percentualEntradaPadrao)} do sub-total
-        </button>
-      )}
-
       <hr className="totais__regua totais__regua--forte" />
       <div className="totais__linha totais__linha--destaque">
-        <span className="totais__rotulo">A pagar</span>
+        <span className="totais__rotulo">Total a pagar</span>
         <output className="totais__hero num" aria-live="polite">
-          {fmt.valorComSimbolo(totais.aPagar)}
+          {fmt.valorComSimbolo(totais.subTotal)}
         </output>
+      </div>
+
+      {/* A entrada só informa: não abate do total (D5.1). Continua editável
+          porque a sugestão de 30% nem sempre é o que foi combinado. */}
+      <div className="totais__info" role="group" aria-label="Entrada, informativo">
+        <hr className="totais__regua" />
+        <div className="totais__linha">
+          <span className="totais__rotulo">
+            Entrada
+            <span className="totais__nota">
+              {entradaSugerida
+                ? `sugerida ${fmt.percentual(config.percentualEntradaPadrao)}`
+                : `${fmt.percentual(percentualDaEntrada(totais.entrada, totais.subTotal))} do total a pagar`}
+            </span>
+          </span>
+          <input
+            className="campo num totais__campo"
+            key={totais.entrada}
+            defaultValue={fmt.valor(totais.entrada)}
+            inputMode="decimal"
+            aria-label="Entrada"
+            onBlur={(ev) => {
+              try {
+                alterar({
+                  entrada: { modo: 'manual', centavos: lerCentavos(ev.target.value) ?? 0 },
+                });
+              } catch {
+                alterar({ entrada: { modo: 'manual', centavos: 0 } });
+              }
+            }}
+          />
+        </div>
+
+        {!entradaSugerida && (
+          <button
+            type="button"
+            className="botao botao--texto botao--mini"
+            onClick={() => alterar({ entrada: { modo: 'sugerida' } })}
+          >
+            voltar para a sugestão de {fmt.percentual(config.percentualEntradaPadrao)}
+          </button>
+        )}
+
+        <Linha rotulo="Restante após a entrada" valor={totais.restante} />
+        <p className="totais__info-nota">
+          A entrada é só informativa — não abate do total a pagar.
+        </p>
       </div>
 
       <Avisos totais={totais} />
@@ -104,7 +113,7 @@ export function BlocoTotais() {
 
 /**
  * Nada aqui bloqueia nem trunca: o desconto é sem teto, confirmado. O aviso
- * existe porque valor acima do total costuma ser dedo errado, e um "a pagar"
+ * existe porque valor acima do total costuma ser dedo errado, e um total
  * negativo passando batido para o PDF seria pior.
  */
 function Avisos({ totais }: { totais: Totais }) {
@@ -125,9 +134,7 @@ function textoDoAviso(aviso: AvisoTotais): string {
     case 'desconto-maior-que-total':
       return `O desconto (${fmt.valor(aviso.desconto)}) passa do total (${fmt.valor(aviso.total)}).`;
     case 'entrada-maior-que-subtotal':
-      return `A entrada (${fmt.valor(aviso.entrada)}) passa do sub-total (${fmt.valor(aviso.subTotal)}).`;
-    case 'total-negativo':
-      return 'O valor a pagar ficou negativo. Confira o desconto e a entrada.';
+      return `A entrada (${fmt.valor(aviso.entrada)}) passa do total a pagar (${fmt.valor(aviso.subTotal)}).`;
   }
 }
 

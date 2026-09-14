@@ -107,12 +107,10 @@ export function NovoOrcamento() {
                 inicial: {
                   nome: escolhido.nome,
                   cnpjCpf: escolhido.cnpjCpf ?? '',
-                  ieRg: escolhido.ieRg ?? '',
                   endereco: escolhido.endereco ?? '',
                   cidade: escolhido.cidade ?? '',
                   cep: escolhido.cep ?? '',
                   telefone: escolhido.telefone ?? '',
-                  email: escolhido.email ?? '',
                   contato: escolhido.contato ?? '',
                 },
               }

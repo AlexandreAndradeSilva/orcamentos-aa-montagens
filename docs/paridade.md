@@ -54,7 +54,7 @@ Atenção ao mapeamento: **a nomenclatura da planilha é invertida** — o "SUB-
 | `F33` ACRÉSC. NOTA FISCAL | digitado            | 0,00      | `acrescimoNotaFiscal`                | ✅   |
 | `F34` SUB-TOTAL           | `=F32+F33`          | 25.600,00 | `total` (e `subTotal`, sem desconto) | ✅   |
 | `F35` ENTRADA             | digitado            | 0,00      | `entrada`                            | ✅   |
-| `H35` A PAGAR             | `=F34-F35`          | 25.600,00 | `aPagar`                             | ✅   |
+| `H35` A PAGAR             | `=F34-F35`          | 25.600,00 | `restante` (informativo, D5.1)       | ✅   |
 
 Mais duas asserções por caso: **o total de cada linha** bate com o que a planilha mostra (incluindo os `null` das linhas cobertas por mesclagem e das observações), e **o bloco fechado entra uma vez só** na soma.
 
@@ -62,16 +62,16 @@ Mais duas asserções por caso: **o total de cada linha** bate com o que a plani
 
 Nenhuma é erro de cálculo. As duas estão em `src/domain/paridade.test.ts`, com teste próprio, para ninguém descobrir em campo.
 
-### 4.1 A entrada sugerida muda o "A PAGAR"
+### 4.1 A entrada sugerida não muda o total — muda o "restante"
 
-A planilha traz `ENTRADA = 0` digitado à mão, apesar de a condição de pagamento dizer "30% ENTRADA". A decisão **D5** mandou o app _sugerir_ 30%.
+A planilha traz `ENTRADA = 0` digitado à mão, apesar de a condição de pagamento dizer "30% ENTRADA". A decisão **D5** mandou o app _sugerir_ 30%; a **D5.1** mandou a entrada **não abater** do total — ela só informa.
 
-|                                     | Entrada  | A pagar       |
-| ----------------------------------- | -------- | ------------- |
-| Documento original                  | 0,00     | **25.600,00** |
-| Orçamento novo no app, mesmos itens | 7.680,00 | **17.920,00** |
+|                                     | Total a pagar | Entrada  | Restante (H35) |
+| ----------------------------------- | ------------- | -------- | -------------- |
+| Documento original                  | **25.600,00** | 0,00     | 25.600,00      |
+| Orçamento novo no app, mesmos itens | **25.600,00** | 7.680,00 | 17.920,00      |
 
-Reproduzir o documento original exige entrada digitada como 0 — e é assim que o caso de paridade é montado. Mas **um orçamento novo com os mesmos itens vai mostrar R$ 17.920,00**, porque a sugestão de 30% age. É a regra nova funcionando, não um erro. Se isso não for o desejado, o ajuste é em D5.
+O `H35` da planilha (`= F34 − F35`, "A PAGAR") corresponde ao **restante** do app, que sai como linha informativa. Reproduzir o documento original exige entrada digitada como 0 — e é assim que o caso de paridade é montado. Um orçamento novo com os mesmos itens mostra o **mesmo total** do papel (R$ 25.600,00) e, abaixo, "entrada sugerida 7.680,00 · restante 17.920,00". Se isso não for o desejado, o ajuste é em D5/D5.1.
 
 ### 4.2 A linha 22 defeituosa não foi reproduzida
 
@@ -104,7 +104,7 @@ Os que o escopo pediu, mais os que a auditoria sugeriu:
 
 **A planilha não tem desconto. Confirmado depois: em reais e sem teto** (`decisoes.md` D4.1).
 
-Sem teto, o cálculo **não limita nada — ele avisa**. `avisosDosTotais()` sinaliza desconto maior que o total, entrada maior que o sub-total e "a pagar" negativo. Truncar em silêncio seria inventar uma regra de negócio, e desconto acima do total é tão provável ser erro de digitação quanto decisão comercial.
+Sem teto, o cálculo **não limita nada — ele avisa**. `avisosDosTotais()` sinaliza desconto maior que o total e entrada maior que o total a pagar. Truncar em silêncio seria inventar uma regra de negócio, e desconto acima do total é tão provável ser erro de digitação quanto decisão comercial.
 
 Desconto de 100% zera o sub-total **sem** aviso: é um valor limite legítimo.
 

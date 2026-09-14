@@ -36,7 +36,7 @@ Se isso for aceitável, publicar aberto é defensável. Se não for, siga para a
 
 Qualquer hospedagem de arquivos estáticos serve. `npm run build` gera a pasta `dist/`, e é ela inteira que sobe.
 
-### GitHub Pages (já configurado)
+### GitHub Pages (onde está hoje — sem controle de acesso)
 
 `.github/workflows/publicar.yml` publica sozinho a cada push na `main`: instala, copia as fontes, roda typecheck, lint e testes, faz o build no subcaminho do repositório e sobe para o Pages. Falhou um teste, não publica.
 
@@ -44,7 +44,7 @@ O endereço fica `https://<usuário>.github.io/<repositório>/`. Como é um **su
 
 O Pages não tem regra de rewrite; o workflow copia `index.html` para `404.html`, que é como se faz fallback de rota lá.
 
-**Limitação do plano gratuito:** Pages só funciona em repositório **público**. O código fica visível — nenhum segredo está nele (a consulta de CNPJ não usa chave), mas é o código-fonte inteiro.
+**Limitação do plano gratuito:** Pages só funciona em repositório **público**, e **não tem como restringir quem acessa o site**. Para trancar o acesso, o caminho é a seção 3.
 
 **Duas coisas já estão resolvidas no projeto:**
 
@@ -67,17 +67,59 @@ A proteção precisa ser **antes dos arquivos serem entregues** — no servidor,
 
 ### Opção A — Cloudflare Pages + Cloudflare Access _(recomendada)_
 
-Gratuito até 50 pessoas, e é autenticação de verdade: o Cloudflare bloqueia no servidor dele, antes de mandar qualquer arquivo. Quem não estiver na lista recebe uma tela de login e nunca chega ao app.
+Gratuito até 50 pessoas, e é autenticação de verdade: o Cloudflare bloqueia no servidor dele, antes de mandar qualquer arquivo. Quem não estiver na lista vê uma tela de login e nunca chega ao app.
 
-1. Suba o projeto para um repositório no GitHub.
-2. Em **Cloudflare Pages**, conecte o repositório. Build: `npm run build`. Pasta de saída: `dist`.
-3. Em **Zero Trust → Access → Applications**, crie uma aplicação self-hosted apontando para o domínio do site.
-4. Na política, escolha **Emails** e liste os endereços que podem entrar (o da Roberta, o seu).
-5. Método de login: código por e-mail (não precisa criar senha) ou conta Google.
+**O repositório já está pronto** — fontes versionadas, `_redirects` para as rotas, base `/`. Não há nada a mudar no código. O que segue é feito no site da Cloudflare, com a sua conta, em três blocos de ~5 minutos.
 
-A pessoa abre o endereço, digita o e-mail, recebe um código de seis dígitos, entra. A sessão dura o tempo que você configurar. Funciona igual no celular.
+#### Bloco 1 — publicar o app na Cloudflare (o site passa a existir em `*.pages.dev`)
 
-**É a opção que eu escolheria:** custo zero, sem senha compartilhada, e você tira o acesso de alguém sem precisar avisar ninguém.
+1. Crie a conta em https://dash.cloudflare.com/sign-up (só e-mail e senha; o plano Free basta).
+2. No menu da esquerda: **Workers & Pages → Create → Pages → Connect to Git**.
+3. Autorize o GitHub e escolha o repositório `orcamentos-aa-montagens`.
+4. Em _Set up builds and deployments_:
+   - **Production branch:** `main`
+   - **Framework preset:** `Vite` (ou _None_)
+   - **Build command:** `npm run build`
+   - **Build output directory:** `dist`
+   - Variáveis de ambiente: **nenhuma** (não defina `BASE_PATH` — a Cloudflare serve na raiz)
+5. **Save and Deploy.** O primeiro build leva 1–2 min. Ao terminar, aparece o endereço, algo como `https://orcamentos-aa-montagens.pages.dev`.
+6. Abra o endereço: o app tem que aparecer igual ao do GitHub Pages. **Ainda está aberto para todo mundo** — o bloco 2 fecha.
+
+#### Bloco 2 — trancar o acesso (Cloudflare Access)
+
+7. Vá em https://one.dash.cloudflare.com (é o painel _Zero Trust_ da mesma conta). Na primeira vez ele pede um **team name** — qualquer nome, ex. `aa-montagens` — e a escolha do plano: **Free**.
+8. **Access → Applications → Add an application → Self-hosted.**
+9. Preencha:
+   - **Application name:** `Orçamentos AA Montagens`
+   - **Session duration:** `1 month` (o maior possível — a pessoa faz login uma vez por mês)
+   - **Application domain:** o endereço do bloco 1, sem `https://` — ex. `orcamentos-aa-montagens.pages.dev`
+   - **Identity providers:** deixe só **One-time PIN** marcado (login por código no e-mail, sem senha para decorar)
+10. **Next**, e na política:
+    - **Policy name:** `Quem pode entrar`
+    - **Action:** `Allow`
+    - **Include → Selector:** `Emails` → liste os e-mails, um por linha: o da Roberta e o seu
+11. **Next → Add application.**
+
+Pronto. A partir daqui, abrir o endereço mostra uma tela da Cloudflare pedindo o e-mail; ela manda um código de 6 dígitos; digitou, entra. Quem não está na lista para na tela.
+
+#### Bloco 3 — desligar o GitHub Pages (senão continua aberto por lá)
+
+12. Me avise que o bloco 2 funcionou. Eu desligo o GitHub Pages e removo o workflow dele — com o seu comando para o commit.
+
+#### Como conferir que está protegido de verdade
+
+Abra o endereço numa **janela anônima** (sem login): tem que aparecer a tela da Cloudflare, não o app. Posso conferir daqui também: um `curl` no endereço tem que devolver redirecionamento para `cloudflareaccess.com`, e não o HTML do app.
+
+#### O que muda para quem usa
+
+- **Primeira vez, e uma vez por mês:** e-mail → código → entra. No celular também.
+- **Adicionar à tela de início** continua funcionando; quando a sessão vence, o "app" abre na tela de login.
+- **Nada muda nos dados:** continuam no navegador de cada aparelho. O Access só decide quem baixa o app.
+- Tirar o acesso de alguém: remova o e-mail da política. Não precisa avisar ninguém nem trocar senha.
+
+#### Se preferir que eu faça o bloco 1 e 2 daqui
+
+Dá, mas exige me passar um **token de API** da sua conta (Workers & Pages: Edit + Access: Edit). Token é segredo — passar por aqui deixa registro na conversa. Se for por esse caminho, crie o token, me passe, e **revogue depois** que eu terminar. Pelo painel, você não expõe nada.
 
 ### Opção B — servidor próprio com senha básica
 

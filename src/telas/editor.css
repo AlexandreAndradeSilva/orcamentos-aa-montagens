@@ -174,6 +174,22 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Entrada e restante vêm DEPOIS do total, mais apagados: informam, não somam. */
+.totais__info {
+  margin-top: var(--e-2);
+}
+
+.totais__info .totais__valor {
+  color: var(--cor-tinta-media);
+}
+
+.totais__info-nota {
+  margin: var(--e-1) 0 0;
+  font-size: var(--txt-2xs);
+  line-height: var(--lh-sm);
+  color: var(--cor-tinta-fraca);
+}
+
 .doc-recado {
   margin: 0 0 var(--e-3);
   padding: var(--e-2) var(--e-3);

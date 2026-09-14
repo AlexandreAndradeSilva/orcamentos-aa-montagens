@@ -161,7 +161,7 @@ export function ListaOrcamentos() {
                 <th scope="col">Emissão</th>
                 <th scope="col">Situação</th>
                 <th scope="col" className="num">
-                  A pagar
+                  Total
                 </th>
                 <th scope="col">
                   <span className="so-leitor">Ações</span>
@@ -185,8 +185,8 @@ export function ListaOrcamentos() {
                     <td data-rotulo="Situação">
                       <span className={`status status--${o.status}`}>{o.status}</span>
                     </td>
-                    <td className="num" data-rotulo="A pagar">
-                      {fmt.valor(totais.aPagar)}
+                    <td className="num" data-rotulo="Total">
+                      {fmt.valor(totais.subTotal)}
                     </td>
                     <td className="lista__acoes">
                       <BotaoPdf orcamento={o} percentualEntradaPadrao={config} />

@@ -103,12 +103,10 @@ export function Clientes() {
                       inicial={{
                         nome: c.nome,
                         cnpjCpf: c.cnpjCpf ?? '',
-                        ieRg: c.ieRg ?? '',
                         endereco: c.endereco ?? '',
                         cidade: c.cidade ?? '',
                         cep: c.cep ?? '',
                         telefone: c.telefone ?? '',
-                        email: c.email ?? '',
                         contato: c.contato ?? '',
                       }}
                       aoSalvar={async (dados) => {

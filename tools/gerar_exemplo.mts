@@ -64,8 +64,10 @@ const orcamento: Orcamento = {
   secoes,
   acrescimoNotaFiscal: caso.esperados.acrescimoNotaFiscal,
   desconto: 0,
-  // a planilha traz ENTRADA = 0 digitado à mão (ver docs/paridade.md §4.1)
-  entrada: { modo: 'manual', centavos: caso.esperados.entrada },
+  // a planilha traz ENTRADA = 0 digitado à mão, mas como a entrada não abate
+  // do total (D5.1), a sugestão de 30% reproduz o mesmo total do papel e ainda
+  // mostra as duas linhas informativas (ver docs/paridade.md §4.1)
+  entrada: { modo: 'sugerida' },
   condicoesPagamento: '30% ENTRADA, RESTANTE A COMBINAR',
   observacoes: 'Inclusos material e mão de obra.',
   status: 'enviado',

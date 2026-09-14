@@ -192,6 +192,9 @@ export const estilos = StyleSheet.create({
     color: COR.tintaMedia,
   },
   totaisValor: { fontSize: 9, textAlign: 'right' },
+  totaisValorApagado: { fontSize: 9, textAlign: 'right', color: COR.tintaMedia },
+  // entrada e restante, abaixo da caixa: informam, nao somam
+  totaisInfo: { marginTop: 4 },
   reguaFina: { borderTopWidth: 0.5, borderColor: COR.linhaSutil, marginVertical: 2 },
   reguaForte: { borderTopWidth: 1.25, borderColor: COR.linhaForte, marginVertical: 3 },
 

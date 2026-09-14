@@ -127,7 +127,8 @@ describe('orcamento gravado', () => {
       percentualEntradaPadrao: config.percentualEntradaPadrao,
     });
     expect(totais.totalDosServicos).toBe(2_560_000);
-    expect(totais.aPagar).toBe(2_560_000 - 768_000);
+    expect(totais.subTotal).toBe(2_560_000); // a entrada nao abate (D5.1)
+    expect(totais.restante).toBe(2_560_000 - 768_000);
   });
 });
 

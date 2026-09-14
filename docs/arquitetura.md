@@ -55,8 +55,8 @@ Campo vazio devolve `null`, **não zero**: é a célula em branco da planilha (r
 totalDosServicos = Σ totais de linha e de bloco     // F28 = SUM(F18:F27)
 total            = totalDosServicos + acrescimoNF   // F32 + F33
 subTotal         = total − desconto                 // inserção D4
-entrada          = manual, ou % do subTotal          // F35 (D5)
-aPagar           = subTotal − entrada                // H35
+entrada          = manual, ou % do subTotal          // F35 (D5) — só informa
+restante         = subTotal − entrada                // H35 — só informa (D5.1)
 ```
 
 Três comportamentos vieram direto da planilha e não são detalhe:
