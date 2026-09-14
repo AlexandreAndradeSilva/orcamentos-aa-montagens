@@ -36,7 +36,8 @@ A4, margens de 36 pt nas laterais e no topo, 52 pt embaixo para o rodapé fixo.
 - **Cliente e Datas lado a lado**, em caixas com borda fina.
 - **Tabela de itens**: texto à esquerda, números à direita, seção com fundo cinza, e a linha de **preço fechado** com fundo azul-claro mostrando o valor do bloco em negrito.
 - **Totais** na ordem da planilha mais o desconto (D4). Linhas de desconto e acréscimo **só aparecem quando não são zero** — documento limpo não mostra campo vazio.
-- **A PAGAR** numa faixa azul sólida com o valor em Barlow Condensed 19 pt: é o número que o cliente procura.
+- **TOTAL A PAGAR** numa faixa azul sólida com o valor em Barlow Condensed 19 pt: é o número que o cliente procura. É o sub-total (total menos desconto): a entrada **não abate** (D5.1).
+- **Entrada e restante** vêm _depois_ da faixa, em tinta mais fraca — informam a condição de pagamento, não somam. Entrada zero não imprime as duas linhas.
 - **Aceite** com duas assinaturas e campo de data.
 - **Rodapé fixo** com os dois telefones, e-mail, cidade e "Página X de Y".
 
@@ -70,8 +71,8 @@ Emissão: 14/08/2026
 • (FACHADA ALTA) ESTRUTURA METALICA COM VIGA G CHAPA 14
 • PERGOLADO GARAGEM COM DOBRAS EM CHAPA 16 (1,5MM)
 
-*Total: R$ 17.920,00*
-Entrada: R$ 7.680,00
+*Total: R$ 25.600,00*
+Entrada sugerida: R$ 7.680,00 · restante R$ 17.920,00
 Pagamento: 30% ENTRADA, RESTANTE A COMBINAR
 Prazo de entrega: 45 dias após aprovação
 Validade: 15 dias

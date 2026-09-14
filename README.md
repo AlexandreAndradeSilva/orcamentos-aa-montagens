@@ -49,7 +49,7 @@ Lembre que **os dados ficam no navegador de cada aparelho**: o celular e o compu
 
 **Orçamentos → Novo orçamento**. Escolha um cliente já cadastrado ou preencha um novo. O número é reservado na hora, no formato `001/2026`, e reinicia a cada ano.
 
-Só o **nome** é obrigatório; o resto (CNPJ/CPF, inscrição estadual, endereço, cidade, CEP, telefone, e-mail, contato) sai no PDF e pode ser completado depois em **Clientes → Editar**.
+Só o **nome** é obrigatório; o resto (CNPJ/CPF, endereço, cidade, CEP, telefone, pessoa de contato) sai no PDF e pode ser completado depois em **Clientes → Editar**.
 
 ### Buscar o CNPJ na Receita
 
@@ -145,7 +145,7 @@ Tudo o que sai no PDF é editável em **Configurações**: razão social, CNPJ, 
 Também ficam ali:
 
 - **próximo número** do ano (para continuar de uma numeração de papel);
-- **entrada sugerida** (padrão 30% do sub-total);
+- **entrada sugerida** (padrão 30% do total a pagar — só informa, não abate);
 - **validade padrão** em dias e **prazo de entrega padrão**;
 - **condições de pagamento padrão**;
 - o **aviso de reajuste** que sai em vermelho no PDF;
@@ -162,16 +162,19 @@ TOTAL DOS SERVIÇOS  = soma dos itens e dos blocos fechados
       + ACRÉSCIMO NOTA FISCAL
 TOTAL
       − DESCONTO         (em reais, sem teto)
-SUB-TOTAL
-      − ENTRADA          (sugerida em 30% do sub-total; pode ser digitada)
-A PAGAR
+TOTAL A PAGAR                ← o número do orçamento
+
+  Entrada sugerida           (30% do total a pagar; pode ser digitada)   só informa
+  Restante após a entrada    (total a pagar − entrada)                    só informa
 ```
+
+A entrada **não abate** do total: ela e o restante aparecem abaixo do total, como informação da condição de pagamento.
 
 O desconto **não tem limite**: se passar do total, o app não corta o valor — mostra um aviso em vermelho e deixa a decisão com você.
 
 Dinheiro é sempre inteiro em centavos, nunca número quebrado, e o arredondamento é HALF_UP no total de cada linha — o mesmo resultado que aparece na tela do Excel.
 
-**Uma diferença em relação à planilha, de propósito:** a planilha trazia entrada `0` digitada à mão, e o app **sugere 30%**. Um orçamento novo com os mesmos itens mostra um "A PAGAR" menor que o do papel antigo. Detalhes em [`docs/paridade.md`](docs/paridade.md).
+**Uma diferença em relação à planilha, de propósito:** a planilha trazia entrada `0` digitada à mão e subtraía a entrada no "A PAGAR". O app **sugere 30%** e **não subtrai**: o total é o mesmo do papel, e a entrada com o restante saem como informação. Detalhes em [`docs/paridade.md`](docs/paridade.md).
 
 ---
 

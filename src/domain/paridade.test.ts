@@ -110,7 +110,7 @@ describe('paridade com a planilha', () => {
        *   F33 ACRESC. NOTA FISCAL = digitado      ->  acrescimoNotaFiscal
        *   F34 SUB-TOTAL           = F32 + F33     ->  total (e subTotal, sem desconto)
        *   F35 ENTRADA             = digitado      ->  entrada
-       *   H35 A PAGAR             = F34 - F35     ->  aPagar
+       *   H35 A PAGAR             = F34 - F35     ->  restante (informativo — D5.1)
        */
 
       it('F28 — total dos serviços', () => {
@@ -135,8 +135,8 @@ describe('paridade com a planilha', () => {
         expect(totais.entrada).toBe(caso.esperados.entrada);
       });
 
-      it('H35 — a pagar', () => {
-        expect(totais.aPagar).toBe(caso.esperados.aPagar);
+      it('H35 — a pagar (na planilha, sub-total menos entrada: o "restante" do app)', () => {
+        expect(totais.restante).toBe(caso.esperados.aPagar);
       });
 
       it('cada linha reproduz o total que a planilha mostra', () => {
@@ -164,26 +164,29 @@ describe('paridade com a planilha', () => {
 describe('divergência declarada: a entrada sugerida', () => {
   /*
    * A planilha traz ENTRADA = 0 digitado a mao, apesar de a condicao de
-   * pagamento dizer "30% ENTRADA". A decisao D5 mandou o app SUGERIR 30%.
+   * pagamento dizer "30% ENTRADA". A decisao D5 mandou o app SUGERIR 30%; a
+   * D5.1 mandou a entrada NAO abater do total — ela so informa.
    *
-   * Consequencia real: um orcamento novo com os mesmos itens NAO mostra o
-   * mesmo "A PAGAR" do documento original. Nao e erro de calculo — e a regra
-   * nova agindo. Fica registrado aqui para ninguem descobrir isso em campo.
+   * Consequencia: um orcamento novo com os mesmos itens mostra o MESMO total
+   * do documento original (R$ 25.600,00). O que a sugestao muda e o
+   * "restante", que e a conta H35 da planilha e sai como informacao.
    */
   const caso = CASOS[0]!;
 
   it('com entrada 0 digitada, reproduz o documento original', () => {
     const totais = calcularTotais(montar(caso), OPCOES);
-    expect(totais.aPagar).toBe(caso.esperados.aPagar);
-    expect(totais.aPagar).toBe(2_560_000);
+    expect(totais.subTotal).toBe(2_560_000);
+    expect(totais.restante).toBe(caso.esperados.aPagar);
+    expect(totais.restante).toBe(2_560_000);
   });
 
-  it('com a entrada sugerida de 30%, o a pagar muda — e isso é esperado', () => {
+  it('com a entrada sugerida de 30%, o total não muda — só o restante', () => {
     const comSugestao: Orcamento = { ...montar(caso), entrada: { modo: 'sugerida' } };
     const totais = calcularTotais(comSugestao, OPCOES);
+    expect(totais.subTotal).toBe(2_560_000); // o total a pagar é o do papel
     expect(totais.entrada).toBe(768_000); // 30% de R$ 25.600,00
-    expect(totais.aPagar).toBe(1_792_000); // R$ 17.920,00
-    expect(totais.aPagar).not.toBe(caso.esperados.aPagar);
+    expect(totais.restante).toBe(1_792_000); // R$ 17.920,00 — informativo
+    expect(totais.restante).not.toBe(caso.esperados.aPagar);
   });
 });
 

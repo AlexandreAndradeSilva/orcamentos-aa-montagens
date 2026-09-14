@@ -94,7 +94,8 @@ describe('avisos — sem teto, mas não em silêncio', () => {
     expect(
       screen.getByText(/O desconto \(15\.000,00\) passa do total \(10\.000,00\)/),
     ).toBeInTheDocument();
-    expect(screen.getByText(/valor a pagar ficou negativo/i)).toBeInTheDocument();
+    // sem segundo aviso de "negativo": seria o mesmo problema dito duas vezes
+    expect(screen.queryByText(/negativo/i)).not.toBeInTheDocument();
   });
 
   it('desconto igual ao total zera sem alarme', () => {
@@ -107,7 +108,7 @@ describe('avisos — sem teto, mas não em silêncio', () => {
   it('entrada acima do sub-total também avisa', () => {
     abrir({ entrada: { modo: 'manual', centavos: 1_200_000 } });
     render(<BlocoTotais />);
-    expect(screen.getByText(/A entrada .* passa do sub-total/)).toBeInTheDocument();
+    expect(screen.getByText(/A entrada .* passa do total a pagar/)).toBeInTheDocument();
   });
 
   it('o aviso é anunciado para leitor de tela', () => {
@@ -115,5 +116,39 @@ describe('avisos — sem teto, mas não em silêncio', () => {
     render(<BlocoTotais />);
     const lista = screen.getByText(/passa do total/).closest('ul');
     expect(lista).toHaveAttribute('aria-live', 'polite');
+  });
+});
+
+describe('entrada: informa, não abate (D5.1)', () => {
+  it('o total a pagar não muda com a entrada — muda o restante', () => {
+    abrir({ entrada: { modo: 'sugerida' } });
+    render(<BlocoTotais />);
+
+    // R$ 10.000,00 de serviço; a entrada sugerida de 30% não sai do total
+    expect(screen.getByText('R$ 10.000,00')).toBeInTheDocument();
+    expect(screen.getByLabelText('Entrada')).toHaveValue('3.000,00');
+    expect(screen.getByText('Restante após a entrada')).toBeInTheDocument();
+    expect(screen.getByText('7.000,00')).toBeInTheDocument();
+  });
+
+  it('digitar uma entrada mantém o total e recalcula o restante', async () => {
+    const usuario = userEvent.setup();
+    abrir({ entrada: { modo: 'sugerida' } });
+    render(<BlocoTotais />);
+
+    await usuario.clear(screen.getByLabelText('Entrada'));
+    await usuario.type(screen.getByLabelText('Entrada'), '5.000,00');
+    await usuario.tab();
+
+    expect(orcamentoAtual().entrada).toEqual({ modo: 'manual', centavos: 500_000 });
+    expect(useEditor.getState().totais()!.subTotal).toBe(1_000_000);
+    expect(useEditor.getState().totais()!.restante).toBe(500_000);
+    expect(screen.getByText('R$ 10.000,00')).toBeInTheDocument();
+    expect(screen.getByText('5.000,00')).toBeInTheDocument();
+  });
+
+  it('diz na tela que a entrada é só informativa', () => {
+    render(<BlocoTotais />);
+    expect(screen.getByText(/só informativa/)).toBeInTheDocument();
   });
 });

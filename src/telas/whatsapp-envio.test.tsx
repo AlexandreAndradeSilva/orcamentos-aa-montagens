@@ -23,6 +23,8 @@ vi.mock('@react-pdf/renderer', async (original) => ({
   }),
 }));
 
+// O primeiro clique carrega o @react-pdf por import dinamico (1,2 MB). Sob a
+// carga da suite inteira isso passa de 1 s; a folga abaixo e por isso.
 function novo() {
   return orcamentoNovo(ambientePadrao, {
     sequencial: 1,
@@ -73,7 +75,7 @@ describe('no celular (folha de compartilhamento com arquivo)', () => {
     const usuario = userEvent.setup();
     await usuario.click(await abrirEditor('(18) 99712-4455'));
 
-    await waitFor(() => expect(share).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(share).toHaveBeenCalledTimes(1), { timeout: 10_000 });
     const dados = share.mock.calls[0]![0] as ShareData;
     expect(dados.files).toHaveLength(1);
     expect(dados.files![0]!.name).toBe('orcamento-001-2026-igreja-portal-perola-2.pdf');
@@ -96,7 +98,7 @@ describe('no celular (folha de compartilhamento com arquivo)', () => {
     const botao = await abrirEditor('(18) 99712-4455');
     await usuario.click(botao);
 
-    await waitFor(() => expect(botao).toBeEnabled());
+    await waitFor(() => expect(botao).toBeEnabled(), { timeout: 10_000 });
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 });
@@ -117,7 +119,7 @@ describe('no computador (sem folha com arquivo)', () => {
     const usuario = userEvent.setup();
     await usuario.click(await abrirEditor('(18) 99712-4455'));
 
-    await waitFor(() => expect(abrir).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(abrir).toHaveBeenCalledTimes(1), { timeout: 10_000 });
     expect(clique).toHaveBeenCalled();
     const url = abrir.mock.calls[0]![0] as string;
     expect(url).toMatch(/^https:\/\/wa\.me\/5518997124455\?text=/);
@@ -133,7 +135,7 @@ describe('no computador (sem folha com arquivo)', () => {
     const usuario = userEvent.setup();
     await usuario.click(await abrirEditor());
 
-    await waitFor(() => expect(abrir).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(abrir).toHaveBeenCalledTimes(1), { timeout: 10_000 });
     expect(abrir.mock.calls[0]![0]).toMatch(/^https:\/\/wa\.me\/\?text=/);
   });
 
@@ -145,7 +147,7 @@ describe('no computador (sem folha com arquivo)', () => {
     const usuario = userEvent.setup();
     await usuario.click(await abrirEditor('(18) 99712-4455'));
 
-    await waitFor(() => expect(abrir).toHaveBeenCalled());
+    await waitFor(() => expect(abrir).toHaveBeenCalled(), { timeout: 10_000 });
     const url = abrir.mock.calls[0]![0] as string;
     expect(url).not.toContain('5518998230660');
     expect(url).not.toContain('5518997882819');

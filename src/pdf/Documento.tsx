@@ -159,14 +159,16 @@ function Blocos({
         <Text style={estilos.blocoTitulo}>CLIENTE</Text>
         <Campo rotulo="Nome" valor={orcamento.clienteNome} />
         <Campo rotulo="CNPJ / CPF" valor={cliente?.cnpjCpf} />
-        <Campo rotulo="I.E. / RG" valor={cliente?.ieRg} />
+        {/* I.E./RG e e-mail sairam do cadastro; so aparecem em cliente antigo
+            que ainda os tenha — nunca como linha vazia */}
+        {cliente?.ieRg ? <Campo rotulo="I.E. / RG" valor={cliente.ieRg} /> : null}
         <Campo rotulo="Endereço" valor={cliente?.endereco} />
         <Campo
           rotulo="Cidade / CEP"
           valor={[cliente?.cidade, cliente?.cep].filter(Boolean).join(' — ') || undefined}
         />
         <Campo rotulo="Fone" valor={cliente?.telefone} />
-        <Campo rotulo="E-mail" valor={cliente?.email} />
+        {cliente?.email ? <Campo rotulo="E-mail" valor={cliente.email} /> : null}
         <Campo rotulo="Contato" valor={cliente?.contato} />
       </View>
 
@@ -294,30 +296,46 @@ function Totais({
       <View style={estilos.reguaFina} />
       <Linha rotulo="TOTAL" valor={totais.total} />
       {temDesconto && <Linha rotulo="DESCONTO" valor={-totais.desconto} />}
-      {temDesconto && <View style={estilos.reguaFina} />}
-      <Linha rotulo="SUB-TOTAL" valor={totais.subTotal} />
-      <Linha
-        rotulo={
-          orcamento.entrada.modo === 'sugerida'
-            ? `ENTRADA ${fmt.percentual(configuracao.percentualEntradaPadrao)}`
-            : 'ENTRADA'
-        }
-        valor={-totais.entrada}
-      />
       <View style={estilos.reguaForte} />
       <View style={estilos.aPagarCaixa}>
-        <Text style={estilos.aPagarRotulo}>A PAGAR</Text>
-        <Text style={estilos.aPagarValor}>{fmt.valorComSimbolo(totais.aPagar)}</Text>
+        <Text style={estilos.aPagarRotulo}>TOTAL A PAGAR</Text>
+        <Text style={estilos.aPagarValor}>{fmt.valorComSimbolo(totais.subTotal)}</Text>
       </View>
+
+      {/* Entrada e restante vêm DEPOIS da caixa, e mais apagados: informam a
+          condição de pagamento, não somam (D5.1). Entrada zero não imprime. */}
+      {totais.entrada !== 0 && (
+        <View style={estilos.totaisInfo}>
+          <Linha
+            apagada
+            rotulo={
+              orcamento.entrada.modo === 'sugerida'
+                ? `ENTRADA SUGERIDA ${fmt.percentual(configuracao.percentualEntradaPadrao)}`
+                : 'ENTRADA'
+            }
+            valor={totais.entrada}
+          />
+          <Linha apagada rotulo="RESTANTE APÓS A ENTRADA" valor={totais.restante} />
+        </View>
+      )}
     </View>
   );
 }
 
-function Linha({ rotulo, valor }: { rotulo: string; valor: number }) {
+function Linha({
+  rotulo,
+  valor,
+  apagada = false,
+}: {
+  rotulo: string;
+  valor: number;
+  /** Linha informativa: mesma grade, tinta mais fraca. */
+  apagada?: boolean;
+}) {
   return (
     <View style={estilos.totaisLinha}>
       <Text style={estilos.totaisRotulo}>{rotulo}</Text>
-      <Text style={estilos.totaisValor}>
+      <Text style={apagada ? estilos.totaisValorApagado : estilos.totaisValor}>
         {valor < 0 ? `− ${fmt.valor(-valor)}` : fmt.valor(valor)}
       </Text>
     </View>

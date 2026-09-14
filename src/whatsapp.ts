@@ -49,10 +49,14 @@ export function textoResumo(orcamento: Orcamento, configuracao: Configuracao): s
     partes.push('', ...itens);
   }
 
-  partes.push('', `*Total: ${fmt.valorComSimbolo(totais.aPagar)}*`);
+  partes.push('', `*Total: ${fmt.valorComSimbolo(totais.subTotal)}*`);
 
+  // a entrada informa, nao abate do total (D5.1): vai com o restante ao lado
   if (totais.entrada > 0) {
-    partes.push(`Entrada: ${fmt.valorComSimbolo(totais.entrada)}`);
+    const rotulo = orcamento.entrada.modo === 'sugerida' ? 'Entrada sugerida' : 'Entrada';
+    partes.push(
+      `${rotulo}: ${fmt.valorComSimbolo(totais.entrada)} · restante ${fmt.valorComSimbolo(totais.restante)}`,
+    );
   }
   if (orcamento.condicoesPagamento.trim() !== '') {
     partes.push(`Pagamento: ${orcamento.condicoesPagamento}`);

@@ -68,14 +68,14 @@ describe('textoResumo', () => {
   const texto = semNbsp(textoResumo(orcamento, configuracao));
 
   it('usa espaço não separável no valor, para não quebrar linha', () => {
-    expect(textoResumo(orcamento, configuracao)).toContain('R$\u00A017.920,00');
+    expect(textoResumo(orcamento, configuracao)).toContain('R$\u00A025.600,00');
   });
 
   it('traz número, cliente e total', () => {
     expect(texto).toContain('Orçamento 001/2026');
     expect(texto).toContain('Igreja Portal Pérola 2');
-    // 25.600,00 − 30% de entrada = 17.920,00
-    expect(texto).toContain('R$ 17.920,00');
+    // a entrada sugerida não abate: o total é o do orçamento (D5.1)
+    expect(texto).toContain('*Total: R$ 25.600,00*');
   });
 
   it('lista os itens, sem repetir a tabela inteira', () => {
@@ -84,7 +84,8 @@ describe('textoResumo', () => {
   });
 
   it('traz entrada, pagamento, prazo e validade', () => {
-    expect(texto).toContain('Entrada: R$ 7.680,00');
+    // 30% de 25.600,00, com o restante ao lado: os dois só informam (D5.1)
+    expect(texto).toContain('Entrada sugerida: R$ 7.680,00 · restante R$ 17.920,00');
     expect(texto).toContain('Pagamento: 30% ENTRADA, RESTANTE A COMBINAR');
     expect(texto).toContain('Prazo de entrega: 45 dias após aprovação');
     expect(texto).toContain('Validade: 15 dias');
@@ -116,7 +117,8 @@ describe('textoResumo', () => {
     const semEntrada = semNbsp(
       textoResumo({ ...orcamento, entrada: { modo: 'manual', centavos: 0 } }, configuracao),
     );
-    expect(semEntrada).not.toContain('Entrada:');
+    expect(semEntrada).not.toMatch(/^Entrada/m);
+    expect(semEntrada).not.toContain('restante');
   });
 });
 

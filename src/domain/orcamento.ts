@@ -6,9 +6,13 @@
  *
  *   totalDosServicos = soma dos totais de linha e de bloco   // F28 = SUM(F18:F27)
  *   total            = totalDosServicos + acrescimoNF        // F32 + F33
- *   subTotal         = total - desconto                      // insercao D4
- *   entrada          = manual, ou percentual do subTotal      // F35 (D5)
- *   aPagar           = subTotal - entrada                     // H35
+ *   subTotal         = total - desconto                      // insercao D4 — e o valor do orcamento
+ *   entrada          = manual, ou percentual do subTotal      // F35 (D5) — so informa
+ *   restante         = subTotal - entrada                     // H35 — so informa
+ *
+ * A entrada NAO abate do total (D5.1): o que o cliente paga e `subTotal`.
+ * `entrada` e `restante` sao informativos — mostram quanto seria a entrada
+ * sugerida e quanto sobra depois dela.
  */
 import {
   arredondarHalfUp,
@@ -25,9 +29,12 @@ export interface Totais {
   acrescimoNotaFiscal: Centavos;
   total: Centavos;
   desconto: Centavos;
+  /** Total a pagar: total menos desconto. E este o numero do orcamento. */
   subTotal: Centavos;
+  /** Informativo: nao abate do `subTotal`. */
   entrada: Centavos;
-  aPagar: Centavos;
+  /** Informativo: o que sobra depois da entrada. */
+  restante: Centavos;
 }
 
 /**
@@ -95,7 +102,8 @@ export function calcularTotais(
   const desconto = assegurarCentavos(orcamento.desconto, 'desconto');
   const subTotal = assegurarCentavos(total - desconto, 'sub-total');
   const entrada = valorDaEntrada(orcamento.entrada, subTotal, opcoes.percentualEntradaPadrao);
-  const aPagar = assegurarCentavos(subTotal - entrada, 'a pagar');
+  // informativo: a entrada nao abate do total (D5.1)
+  const restante = assegurarCentavos(subTotal - entrada, 'restante');
   return {
     totalDosServicos: servicos,
     acrescimoNotaFiscal: acrescimo,
@@ -103,7 +111,7 @@ export function calcularTotais(
     desconto,
     subTotal,
     entrada,
-    aPagar,
+    restante,
   };
 }
 
@@ -164,8 +172,7 @@ export function linhasIncompletas(
 
 export type AvisoTotais =
   | { tipo: 'desconto-maior-que-total'; desconto: Centavos; total: Centavos }
-  | { tipo: 'entrada-maior-que-subtotal'; entrada: Centavos; subTotal: Centavos }
-  | { tipo: 'total-negativo'; aPagar: Centavos };
+  | { tipo: 'entrada-maior-que-subtotal'; entrada: Centavos; subTotal: Centavos };
 
 /**
  * Avisos sobre a cadeia de totais.
@@ -174,6 +181,10 @@ export type AvisoTotais =
  * limita nada: ele avisa. Truncar em silencio seria inventar uma regra que a
  * AA Montagens nao tem, e desconto acima do total pode ser dedo errado tanto
  * quanto decisao comercial — quem decide e quem esta orcando.
+ *
+ * Total negativo nao tem aviso proprio: so acontece com desconto acima do
+ * total, que ja e o primeiro aviso. A entrada nao abate (D5.1), entao nao
+ * consegue deixar o total negativo — no maximo o `restante`, que e o segundo.
  */
 export function avisosDosTotais(totais: Totais): AvisoTotais[] {
   const avisos: AvisoTotais[] = [];
@@ -184,15 +195,14 @@ export function avisosDosTotais(totais: Totais): AvisoTotais[] {
       total: totais.total,
     });
   }
-  if (totais.entrada > totais.subTotal) {
+  // com o total ja negativo, o culpado e o desconto (aviso acima), nao a
+  // entrada — "entrada de 0,00 passa do total de -5.000,00" seria ruido
+  if (totais.subTotal >= 0 && totais.entrada > totais.subTotal) {
     avisos.push({
       tipo: 'entrada-maior-que-subtotal',
       entrada: totais.entrada,
       subTotal: totais.subTotal,
     });
-  }
-  if (totais.aPagar < 0) {
-    avisos.push({ tipo: 'total-negativo', aPagar: totais.aPagar });
   }
   return avisos;
 }

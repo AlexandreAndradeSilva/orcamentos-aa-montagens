@@ -22,15 +22,18 @@ import './formulario.css';
 
 export type DadosCliente = Omit<Cliente, 'id' | 'criadoEm'>;
 
+/**
+ * Sem `ieRg` nem `email`: saíram do cadastro a pedido da AA Montagens.
+ * Continuam no esquema (cadastros antigos e backups podem tê-los), só não
+ * se preenchem mais por aqui — e o PDF só os imprime quando existem.
+ */
 const VAZIO: DadosCliente = {
   nome: '',
   cnpjCpf: '',
-  ieRg: '',
   endereco: '',
   cidade: '',
   cep: '',
   telefone: '',
-  email: '',
   contato: '',
 };
 
@@ -93,7 +96,8 @@ export function FormularioCliente({
     preencherSeVazio('cidade', [d.cidade, d.uf].filter(Boolean).join('/'));
     preencherSeVazio('cep', mascararCep(d.cep));
     preencherSeVazio('telefone', mascararTelefone(d.telefone));
-    preencherSeVazio('email', d.email);
+    // e-mail nao entra: o campo saiu do cadastro, e preencher o que a pessoa
+    // nao ve seria gravar dado escondido
 
     const alerta =
       d.situacao !== '' && d.situacao !== 'ATIVA' ? ` Atenção: situação ${d.situacao}.` : '';
@@ -193,11 +197,6 @@ export function FormularioCliente({
         </label>
 
         <label className="campo-envolve">
-          <span className="rotulo">Inscrição estadual / RG</span>
-          <input className="campo" {...register('ieRg')} />
-        </label>
-
-        <label className="campo-envolve">
           <span className="rotulo">CEP</span>
           <span className="campo-com-botao">
             <input
@@ -242,11 +241,6 @@ export function FormularioCliente({
                 setValue('telefone', mascararTelefone(ev.target.value)),
             })}
           />
-        </label>
-
-        <label className="campo-envolve">
-          <span className="rotulo">E-mail</span>
-          <input className="campo" type="email" {...register('email')} />
         </label>
 
         <label className="campo-envolve">

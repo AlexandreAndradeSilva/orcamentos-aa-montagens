@@ -30,12 +30,12 @@ Um desconto por orçamento (não por item), aplicado como última etapa antes do
 ```
 totalDosServicos = Σ totais das linhas e dos blocos
 total            = totalDosServicos + acrescimoNotaFiscal
-subTotal         = total − desconto
-entrada          = valor (sugerido 30% de subTotal, editável)
-aPagar           = subTotal − entrada
+subTotal         = total − desconto                          ← é o TOTAL A PAGAR
+entrada          = valor (sugerido 30% de subTotal, editável)   informativo (D5.1)
+restante         = subTotal − entrada                           informativo (D5.1)
 ```
 
-Comparado à planilha, a única inserção é `− desconto`; o resto do encadeamento é idêntico (`R4`).
+Comparado à planilha, a única inserção é `− desconto`; o resto do encadeamento é idêntico (`R4`) — com a ressalva de D5.1: o `H35` da planilha (sub-total menos entrada) virou o "restante", que só informa.
 
 > Nota: com o desconto depois do acréscimo, o acréscimo incide sobre o valor cheio. Se um dia a AA Montagens quiser o contrário, é a troca de uma linha em `src/domain/`.
 
@@ -45,7 +45,7 @@ O desconto é digitado **em reais** — o modo percentual foi removido do domín
 
 Sem teto significa que o cálculo **não trunca**: um desconto acima do total produz sub-total negativo e o valor entra inteiro. Truncar em silêncio seria inventar uma regra que a AA Montagens não tem, e desconto acima do total é tão provável ser dedo errado quanto decisão comercial.
 
-Mas também não passa calado: `avisosDosTotais()` sinaliza desconto acima do total, entrada acima do sub-total e "a pagar" negativo, e o bloco de totais mostra isso numa faixa vermelha com `aria-live`. Quem decide é quem está orçando.
+Mas também não passa calado: `avisosDosTotais()` sinaliza desconto acima do total e entrada acima do total a pagar, e o bloco de totais mostra isso numa faixa vermelha com `aria-live`. Quem decide é quem está orçando. (Total negativo não tem aviso próprio: só acontece com desconto acima do total, que já é o primeiro aviso.)
 
 Consequência técnica: o campo saiu de `{ modo, centavos | percentual }` para `Centavos` puro. A **migration v2** do IndexedDB converte o que já estiver gravado — um desconto percentual é resolvido contra o total daquele orçamento, para o valor não mudar.
 
@@ -54,6 +54,16 @@ Consequência técnica: o campo saiu de `{ modo, centavos | percentual }` para `
 Ao abrir um orçamento novo, o campo ENTRADA vem pré-preenchido com **30% do sub-total** (arredondado HALF_UP para centavos), acompanhando a condição de pagamento padrão. O usuário pode sobrescrever a qualquer momento; se sobrescrever, o app **para de recalcular** aquele campo — a sugestão não volta a atropelar o valor digitado.
 
 Entrada `0` explícita é um valor válido e significa "sem entrada", não "não negociada".
+
+### D5.1 · A entrada **não abate** do total: só informa _(pedido em 14/09/2026)_
+
+O total do orçamento — o número grande na tela, a caixa azul do PDF, o `*Total*` do WhatsApp — é o **sub-total** (total menos desconto). A entrada aparece **depois** dele, como informação: "entrada sugerida 30%: X" e "restante após a entrada: Y", com `Y = subTotal − entrada`.
+
+Antes, o app fazia como a planilha (`H35 = F34 − F35`): a entrada era subtraída e o "A PAGAR" mostrava só o saldo. Isso dava a impressão de que o orçamento valia menos do que vale. Agora o cliente lê o valor cheio e, ao lado, quanto seria a entrada e quanto sobra.
+
+O campo continua editável (D5 vale): trocar a entrada muda o restante, nunca o total. Entrada zero não imprime as duas linhas no PDF nem no WhatsApp.
+
+Consequência técnica: `Totais` perdeu `aPagar` e ganhou `restante`; quem precisa do total lê `subTotal`.
 
 ## D6 · Numeração: `001/2026`, reiniciando a cada ano _(fecha L7 / P8)_
 

@@ -201,7 +201,7 @@ describe('cadeia de totais (R4 + D4)', () => {
     expect(r.success).toBe(false);
   });
 
-  it('entrada sugerida é 30% do sub-total', () => {
+  it('entrada sugerida é 30% do total a pagar', () => {
     const t = calcularTotais(
       orcamento([secao([{ quantidade: 1, valorUnitario: 2_560_000 }])], {
         entrada: { modo: 'sugerida' },
@@ -209,7 +209,30 @@ describe('cadeia de totais (R4 + D4)', () => {
       OPCOES,
     );
     expect(t.entrada).toBe(768_000);
-    expect(t.aPagar).toBe(1_792_000);
+    expect(t.restante).toBe(1_792_000);
+  });
+
+  it('a entrada não abate do total: só informa (D5.1)', () => {
+    const itens = [secao([{ quantidade: 1, valorUnitario: 2_560_000 }])];
+    const semEntrada = calcularTotais(
+      orcamento(itens, { entrada: { modo: 'manual', centavos: 0 } }),
+      OPCOES,
+    );
+    const sugerida = calcularTotais(orcamento(itens, { entrada: { modo: 'sugerida' } }), OPCOES);
+    const manual = calcularTotais(
+      orcamento(itens, { entrada: { modo: 'manual', centavos: 1_000_000 } }),
+      OPCOES,
+    );
+
+    // o total a pagar é o mesmo nos três casos
+    expect(semEntrada.subTotal).toBe(2_560_000);
+    expect(sugerida.subTotal).toBe(2_560_000);
+    expect(manual.subTotal).toBe(2_560_000);
+
+    // o que muda é só o restante, que é informativo
+    expect(semEntrada.restante).toBe(2_560_000);
+    expect(sugerida.restante).toBe(1_792_000);
+    expect(manual.restante).toBe(1_560_000);
   });
 
   it('entrada manual manda, mesmo que seja zero', () => {
@@ -218,12 +241,12 @@ describe('cadeia de totais (R4 + D4)', () => {
       OPCOES,
     );
     expect(t.entrada).toBe(0);
-    expect(t.aPagar).toBe(1_000_000);
+    expect(t.restante).toBe(1_000_000);
   });
 
   it('orçamento vazio dá tudo zero, sem estourar', () => {
     const t = calcularTotais(orcamento([secao([{}])]), OPCOES);
-    expect(t).toMatchObject({ totalDosServicos: 0, total: 0, subTotal: 0, aPagar: 0 });
+    expect(t).toMatchObject({ totalDosServicos: 0, total: 0, subTotal: 0, restante: 0 });
   });
 });
 
@@ -247,9 +270,10 @@ describe('desconto máximo', () => {
     });
   });
 
-  it('avisa quando o a pagar fica negativo', () => {
+  it('total negativo não ganha aviso próprio: é o mesmo caso do desconto acima do total', () => {
     const t = calcularTotais(orcamento([base], { desconto: 1_500_000 }), OPCOES);
-    expect(avisosDosTotais(t).some((a) => a.tipo === 'total-negativo')).toBe(true);
+    expect(t.subTotal).toBeLessThan(0);
+    expect(avisosDosTotais(t).map((a) => a.tipo)).toEqual(['desconto-maior-que-total']);
   });
 
   it('desconto igual ao total zera o sub-total, sem aviso', () => {
