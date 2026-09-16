@@ -7,7 +7,7 @@
 import { pdf } from '@react-pdf/renderer';
 import { DocumentoOrcamento, type PropsDocumento } from './Documento';
 import { registrarFontes } from './fontes';
-import { db } from '../dados/db';
+import { repositorio } from '../dados/repositorio';
 import type { Configuracao, Orcamento } from '../domain/esquemas';
 import * as fmt from '../formato';
 
@@ -23,7 +23,7 @@ export async function gerarBlob(props: PropsDocumento): Promise<Blob> {
 
 /** Busca o cliente e gera o PDF do orçamento. */
 export async function gerarPdf(orcamento: Orcamento, configuracao: Configuracao): Promise<Blob> {
-  const cliente = await db.clientes.get(orcamento.clienteId);
+  const cliente = await repositorio.lerCliente(orcamento.clienteId);
   return gerarBlob({
     orcamento,
     configuracao,

@@ -1,13 +1,14 @@
 import { useState } from 'react';
-import { useLiveQuery } from 'dexie-react-hooks';
-import { db, excluirCliente } from '../dados/db';
+import { repositorio } from '../dados/repositorio';
+import { useClientes, useOrcamentos } from '../dados/hooks';
+import type { Cliente } from '../domain/esquemas';
 import { BotaoExcluir } from './BotaoExcluir';
 import { FormularioCliente } from './FormularioCliente';
 import * as fmt from '../formato';
 
 export function Clientes() {
-  const clientes = useLiveQuery(() => db.clientes.orderBy('nome').toArray(), []);
-  const orcamentos = useLiveQuery(() => db.orcamentos.toArray(), []);
+  const clientes = useClientes();
+  const orcamentos = useOrcamentos();
   const [editando, setEditando] = useState<string | null>(null);
 
   if (!clientes || !orcamentos) return <p className="vazio">Carregando…</p>;
@@ -76,7 +77,7 @@ export function Clientes() {
                               ? `o cliente ${c.nome}`
                               : `o cliente ${c.nome}, que tem ${quantos} orçamento(s)`
                           }
-                          aoConfirmar={() => excluirCliente(c.id)}
+                          aoConfirmar={() => repositorio.excluirCliente(c.id)}
                         />
                       </td>
                     </tr>
@@ -110,13 +111,17 @@ export function Clientes() {
                         contato: c.contato ?? '',
                       }}
                       aoSalvar={async (dados) => {
+                        // campo em branco vira `undefined`, e o repositorio remove
                         const limpo = Object.fromEntries(
                           Object.entries(dados).map(([k, v]) => [
                             k,
                             typeof v === 'string' && v.trim() === '' ? undefined : v,
                           ]),
-                        );
-                        await db.clientes.update(c.id, { ...limpo, nome: dados.nome.trim() });
+                        ) as Partial<Omit<Cliente, 'id'>>;
+                        await repositorio.atualizarCliente(c.id, {
+                          ...limpo,
+                          nome: dados.nome.trim(),
+                        });
                         setEditando(null);
                       }}
                       aoCancelar={() => setEditando(null)}

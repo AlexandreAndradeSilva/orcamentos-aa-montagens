@@ -13,7 +13,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import casos from '../src/teste/casos-planilha.json' with { type: 'json' };
-import { configuracaoPadrao } from '../src/dados/db';
+import { configuracaoPadrao } from '../src/dados/configuracao';
 import { VERSAO_BACKUP, zBackup } from '../src/domain/esquemas';
 import type { Backup, Cliente, Linha, Orcamento, Secao } from '../src/domain/esquemas';
 

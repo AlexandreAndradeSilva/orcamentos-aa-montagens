@@ -2,11 +2,11 @@
 
 App de orçamentos da **AA MONTAGENS** (Birigui/SP), feito a partir da planilha que a empresa usava.
 
-Funciona no navegador, **sem servidor e sem internet**. Tudo fica gravado no computador onde o app é aberto.
+Funciona no navegador, no computador ou no celular. **Os dados ficam na nuvem da AA Montagens** (Firebase — Firestore, na conta Google da empresa) e aparecem em qualquer aparelho em que você entrar com o e-mail e a senha da oficina. Precisa de internet.
 
 **No ar:** https://alexandreandradesilva.github.io/orcamentos-aa-montagens/
 
-Publica sozinho a cada alteração na `main` (GitHub Actions → GitHub Pages). O app é público; os dados de cada pessoa ficam só no navegador dela — ver [`docs/publicar.md`](docs/publicar.md).
+Publica sozinho a cada alteração na `main` (GitHub Actions → GitHub Pages). O endereço é público, mas sem login só existe a tela de entrar: quem pode ler e gravar é decidido no servidor, por `firestore.rules`. Como o projeto na nuvem foi montado, e como dar acesso a mais alguém: [`docs/nuvem.md`](docs/nuvem.md).
 
 ---
 
@@ -41,7 +41,7 @@ Abaixo de 720px o layout muda de forma: cada item do orçamento vira um cartão 
 
 Para ver o app já com dados sem digitar nada: na lista vazia, **Ver com dados de exemplo** — ou abra `…/orcamentos?exemplo`. Só entra com o banco vazio; nunca sobrescreve orçamento de verdade.
 
-Lembre que **os dados ficam no navegador de cada aparelho**: o celular e o computador são conjuntos separados, e o backup é a ponte entre eles.
+No celular e no computador você vê **os mesmos orçamentos**: é a mesma conta, o mesmo banco. Se cair a internet, o app avisa numa faixa no topo e não finge que salvou — quando voltar, salve de novo.
 
 ## O básico do dia a dia
 
@@ -105,24 +105,23 @@ Uma linha com descrição mas sem quantidade ou sem valor mostra `——` na col
 
 ---
 
-## Backup — leia isto
+## Backup
 
-> **Os dados ficam só neste computador, neste navegador.** Não há cópia na nuvem.
-> Limpar os dados do navegador apaga tudo. Trocar de computador não leva nada junto.
->
-> **O backup é a única cópia fora daqui.**
+Os dados vivem na nuvem, então limpar o navegador ou trocar de aparelho não perde nada. O backup continua existindo como **cópia extra em arquivo** — para guardar por garantia, ou para levar os dados para outro sistema um dia.
+
+### Vindo da versão anterior
+
+A versão anterior guardava tudo no navegador do aparelho. Na primeira vez que você entrar com a nuvem ainda vazia, a lista mostra **"Encontrei orçamentos guardados neste aparelho"** com um botão **Trazer para a nuvem** — um clique e vem tudo (orçamentos, clientes, catálogo e a numeração). Se a nuvem já tiver dados, a oferta não aparece; aí o caminho é exportar o backup na versão antiga e importar aqui.
 
 ### Fazer backup
 
 **Configurações → Backup → Exportar backup**. Baixa um arquivo `backup-aa-montagens-2026-09-09.json` com **tudo**: configurações, clientes, serviços e orçamentos.
 
-Guarde num pendrive, no Google Drive ou onde for. Faça isso toda semana, ou depois de um dia cheio de orçamentos.
-
 ### Restaurar
 
 **Configurações → Backup → Importar backup** e escolha o arquivo. O conteúdo é conferido antes de entrar — arquivo estragado é recusado inteiro, e não pela metade.
 
-Por padrão o backup é **mesclado** com o que já existe (o arquivo vence em caso de conflito de id). É assim que se leva os dados para outro computador.
+Por padrão o backup é **mesclado** com o que já existe (o arquivo vence em caso de conflito de id).
 
 ---
 
@@ -197,7 +196,7 @@ npm run build      # sem warnings
 
 ```
 src/domain/   cálculo puro — zero React, zero I/O. É onde a regra mora.
-src/dados/    IndexedDB (Dexie) com migrations, e o backup
+src/dados/    a interface Repositorio, as implementações (memória, Dexie) e o backup
 src/estado/   zustand: o orçamento em edição
 src/telas/    as rotas e a grade densa
 src/pdf/      o documento em @react-pdf/renderer
@@ -225,7 +224,7 @@ docs/         a auditoria da planilha e as decisões, fase por fase
 
 ## Limites conhecidos
 
-- **Um computador, um navegador.** Sem sincronização. Backup é manual.
+- **Precisa de internet.** Sem rede, o app avisa e não salva; não há modo offline.
 - **No computador, o PDF não vai anexado no WhatsApp** — o link `wa.me` só carrega texto; no celular vai pela folha de compartilhamento.
 - **A paridade tem um caso só.** Só existia um orçamento preenchido na planilha, e o mais simples possível. Ver [`docs/paridade.md`](docs/paridade.md) §6.
 - **Sem frete.** Confirmado que a AA Montagens não cobra à parte.

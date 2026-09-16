@@ -70,3 +70,14 @@
   justify-content: flex-end;
   white-space: nowrap;
 }
+
+/* ---- oferta de trazer os dados da versao anterior ---- */
+.oferta-migracao {
+  margin-bottom: var(--e-4);
+  border-left: 4px solid var(--cor-acao);
+}
+
+.oferta-migracao p {
+  color: var(--cor-tinta-media);
+  margin-top: var(--e-2);
+}

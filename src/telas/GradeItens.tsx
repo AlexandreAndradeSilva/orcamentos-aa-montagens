@@ -4,13 +4,12 @@
  * Quem usa vem do Excel: edicao inline na celula, Tab avanca, Enter cria
  * linha, Ctrl+D duplica, setas navegam, Ctrl+V cola bloco de planilha.
  */
-import { useEffect, useRef, type KeyboardEvent, type ClipboardEvent } from 'react';
+import { useEffect, useMemo, useRef, type KeyboardEvent, type ClipboardEvent } from 'react';
 import { COLUNAS, useEditor, type Coluna } from '../estado/editor';
 import { lerCentavos, lerQuantidade } from '../domain/dinheiro';
-import { useLiveQuery } from 'dexie-react-hooks';
 import { numeroDaSecao, numeroDoItem, totalDaLinha, totalDaSecao } from '../domain/orcamento';
 import type { Linha, Secao } from '../domain/esquemas';
-import { db } from '../dados/db';
+import { useServicos } from '../dados/hooks';
 import { CelulaDescricao } from './CelulaDescricao';
 import type { ServicoSugerido } from './sugestoes';
 import * as fmt from '../formato';
@@ -24,11 +23,9 @@ export function GradeItens() {
   const novaSecao = useEditor((e) => e.novaSecao);
   const unidades = useEditor((e) => e.config?.unidades ?? []);
   // O catálogo alimenta as sugestões da descrição. Carrega uma vez aqui, em
-  // vez de uma consulta por célula.
-  const servicos = useLiveQuery(
-    () => db.servicos.orderBy('usos').reverse().limit(300).toArray(),
-    [],
-  );
+  // vez de uma consulta por célula. Os 300 mais usados bastam para sugerir.
+  const catalogo = useServicos();
+  const servicos = useMemo(() => catalogo?.slice(0, 300), [catalogo]);
 
   if (!orcamento) return null;
 

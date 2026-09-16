@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useEditor } from '../estado/editor';
-import { db, excluirOrcamento } from '../dados/db';
+import { repositorio } from '../dados/repositorio';
+import { useCliente } from '../dados/hooks';
 import { BotaoExcluir } from './BotaoExcluir';
 import { GradeItens } from './GradeItens';
 import { BlocoTotais } from './BlocoTotais';
@@ -9,7 +10,6 @@ import { lerCentavos } from '../domain/dinheiro';
 import { linhasIncompletas, numeroCompleto, numeroDoItem } from '../domain/orcamento';
 import { STATUS, type Status } from '../domain/esquemas';
 import { linkWhatsApp, paraWaMe, textoResumo } from '../whatsapp';
-import { useLiveQuery } from 'dexie-react-hooks';
 import * as fmt from '../formato';
 import './editor.css';
 
@@ -37,16 +37,13 @@ export function EditorOrcamento() {
   const [falha, setFalha] = useState<string | null>(null);
   const [recado, setRecado] = useState<string | null>(null);
 
-  const cliente = useLiveQuery(
-    () => (orcamento ? db.clientes.get(orcamento.clienteId) : undefined),
-    [orcamento?.clienteId],
-  );
+  const cliente = useCliente(orcamento?.clienteId);
 
   useEffect(() => {
     let ativo = true;
     void (async () => {
       if (!id) return;
-      const achado = await db.orcamentos.get(id);
+      const achado = await repositorio.lerOrcamento(id);
       if (!ativo) return;
       if (achado) abrir(achado);
       else setNaoEncontrado(true);
@@ -176,7 +173,7 @@ export function EditorOrcamento() {
             rotulo="Excluir"
             descricao={`o orçamento ${numeroCompleto(orcamento.numero, orcamento.revisao)}`}
             aoConfirmar={async () => {
-              await excluirOrcamento(orcamento.id);
+              await repositorio.excluirOrcamento(orcamento.id);
               navegar('/orcamentos', { replace: true });
             }}
           />

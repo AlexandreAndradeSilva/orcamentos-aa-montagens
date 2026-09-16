@@ -8,7 +8,7 @@ import { renderToBuffer } from '@react-pdf/renderer';
 import { describe, expect, it } from 'vitest';
 import { DocumentoOrcamento } from './Documento';
 import { registrarFontes } from './fontes';
-import { configuracaoPadrao } from '../dados/db';
+import { configuracaoPadrao } from '../dados/configuracao';
 import { nomeDoArquivo } from './exportar';
 import type { Linha, Orcamento, Secao } from '../domain/esquemas';
 

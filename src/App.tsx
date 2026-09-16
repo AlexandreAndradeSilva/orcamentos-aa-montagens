@@ -7,16 +7,35 @@ import { NovoOrcamento } from './telas/NovoOrcamento';
 import { Clientes } from './telas/Clientes';
 import { Servicos } from './telas/Servicos';
 import { Configuracoes } from './telas/Configuracoes';
+import { Entrar } from './telas/Entrar';
+import { SemAcesso } from './telas/SemAcesso';
+import { useSessao } from './dados/sessao';
+import { useOnline } from './dados/rede';
 
 export function App() {
+  const sessao = useSessao();
+  const online = useOnline();
   const carregarConfig = useEditor((e) => e.carregarConfig);
+  const dentro = sessao.estado === 'dentro';
 
   useEffect(() => {
-    void carregarConfig();
-  }, [carregarConfig]);
+    if (dentro) void carregarConfig();
+  }, [dentro, carregarConfig]);
+
+  // A porta: sem sessao nao existe app, so a tela de entrar. A protecao de
+  // verdade esta nas regras do servidor; isto aqui e so para nao mostrar uma
+  // tela vazia esperando dados que nunca vao chegar.
+  if (sessao.estado === 'carregando') return <p className="vazio">Carregando…</p>;
+  if (sessao.estado === 'fora') return <Entrar />;
+  if (sessao.estado === 'sem-acesso') return <SemAcesso email={sessao.email} />;
 
   return (
     <>
+      {!online && (
+        <p className="faixa-rede" role="status">
+          Sem conexão — nada está sendo salvo. Quando a internet voltar, continue de onde parou.
+        </p>
+      )}
       <a className="pular" href="#conteudo">
         Pular para o conteúdo
       </a>

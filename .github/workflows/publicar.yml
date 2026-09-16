@@ -1,6 +1,7 @@
 # Publica o app no GitHub Pages a cada push na main.
 #
-# O app é só arquivos estáticos: nenhum dado de cliente vai para o servidor.
+# O app é só arquivos estáticos; os dados vivem no Firestore da AA Montagens,
+# protegidos por firestore.rules (publicadas à mão, não daqui — ver docs/nuvem.md).
 # Ver docs/publicar.md.
 name: Publicar no GitHub Pages
 
@@ -56,8 +57,28 @@ jobs:
         with:
           path: dist
 
+  emulador:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - run: npm ci
+
+      - name: Contrato e regras no emulador do Firebase
+        run: npm run test:emulador
+
   publicar:
-    needs: construir
+    needs: [construir, emulador]
     runs-on: ubuntu-latest
     environment:
       name: github-pages

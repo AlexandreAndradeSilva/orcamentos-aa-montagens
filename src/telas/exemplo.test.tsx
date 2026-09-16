@@ -12,9 +12,17 @@ import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { App } from '../App';
-import { db } from '../dados/db';
+import { repositorio } from '../dados/repositorio';
 import { useEditor } from '../estado/editor';
 import { ambientePadrao, orcamentoNovo } from '../domain/fabrica';
+
+// A porta do app: nestes testes a sessao ja esta aberta. O login tem teste
+// proprio (entrar.test.tsx); as regras, o emulador.
+vi.mock('../dados/sessao', async (original) => ({
+  ...(await original<typeof import('../dados/sessao')>()),
+  useSessao: () => ({ estado: 'dentro', email: 'aamontagens@hotmail.com' }),
+  sair: vi.fn(),
+}));
 
 const BACKUP = readFileSync(resolve(process.cwd(), 'public/backup-exemplo.json'), 'utf8');
 
@@ -30,13 +38,7 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-beforeEach(async () => {
-  await Promise.all([
-    db.configuracao.clear(),
-    db.clientes.clear(),
-    db.servicos.clear(),
-    db.orcamentos.clear(),
-  ]);
+beforeEach(() => {
   useEditor.setState({ config: null, orcamento: null, foco: null, pedidoDeFoco: null });
 });
 
@@ -53,7 +55,7 @@ describe('dados de exemplo', () => {
     await usuario.click(await screen.findByRole('button', { name: 'Ver com dados de exemplo' }));
 
     expect(await screen.findByText('Igreja Portal Pérola 2')).toBeInTheDocument();
-    expect(await db.orcamentos.count()).toBe(2);
+    expect((await repositorio.listarOrcamentos()).length).toBe(2);
   });
 
   it('?exemplo carrega quando o banco está vazio', async () => {
@@ -65,7 +67,7 @@ describe('dados de exemplo', () => {
     );
 
     expect(await screen.findByText('Oficina Vale Verde')).toBeInTheDocument();
-    expect(await db.orcamentos.count()).toBe(2);
+    expect((await repositorio.listarOrcamentos()).length).toBe(2);
   });
 
   it('?exemplo NÃO mexe em nada quando já há orçamentos', async () => {
@@ -79,7 +81,7 @@ describe('dados de exemplo', () => {
       dataEmissao: '2026-09-12',
       condicoesPagamento: 'à vista',
     });
-    await db.orcamentos.put(meu);
+    await repositorio.gravarOrcamento(meu);
 
     render(
       <MemoryRouter initialEntries={['/orcamentos?exemplo']}>
@@ -88,13 +90,13 @@ describe('dados de exemplo', () => {
     );
 
     await screen.findByText('Cliente de verdade');
-    await waitFor(async () => expect(await db.orcamentos.count()).toBe(1));
+    await waitFor(async () => expect((await repositorio.listarOrcamentos()).length).toBe(1));
     expect(espiao).not.toHaveBeenCalled();
     expect(screen.queryByText('Oficina Vale Verde')).not.toBeInTheDocument();
   });
 
   it('o botão de exemplo só aparece com o banco vazio', async () => {
-    await db.orcamentos.put(
+    await repositorio.gravarOrcamento(
       orcamentoNovo(ambientePadrao, {
         sequencial: 1,
         ano: 2026,

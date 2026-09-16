@@ -2,15 +2,24 @@
 /**
  * Remover linha, excluir orçamento e autocompletar de unidade.
  */
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { GradeItens } from './GradeItens';
 import { App } from '../App';
 import { useEditor } from '../estado/editor';
-import { configuracaoPadrao, db } from '../dados/db';
+import { configuracaoPadrao } from '../dados/configuracao';
+import { repositorio } from '../dados/repositorio';
 import { ambientePadrao, orcamentoNovo } from '../domain/fabrica';
+
+// A porta do app: nestes testes a sessao ja esta aberta. O login tem teste
+// proprio (entrar.test.tsx); as regras, o emulador.
+vi.mock('../dados/sessao', async (original) => ({
+  ...(await original<typeof import('../dados/sessao')>()),
+  useSessao: () => ({ estado: 'dentro', email: 'aamontagens@hotmail.com' }),
+  sair: vi.fn(),
+}));
 
 afterEach(cleanup);
 
@@ -25,13 +34,7 @@ function novo() {
   });
 }
 
-beforeEach(async () => {
-  await Promise.all([
-    db.configuracao.clear(),
-    db.clientes.clear(),
-    db.servicos.clear(),
-    db.orcamentos.clear(),
-  ]);
+beforeEach(() => {
   useEditor.setState({
     orcamento: novo(),
     config: configuracaoPadrao(2026),
@@ -116,7 +119,7 @@ describe('excluir orçamento', () => {
   it('pede confirmação antes de excluir', async () => {
     const usuario = userEvent.setup();
     const orcamento = novo();
-    await db.orcamentos.put(orcamento);
+    await repositorio.gravarOrcamento(orcamento);
 
     render(
       <MemoryRouter initialEntries={[`/orcamentos/${orcamento.id}`]}>
@@ -129,13 +132,13 @@ describe('excluir orçamento', () => {
 
     // ainda não excluiu: só perguntou
     expect(await screen.findByText('Excluir mesmo?')).toBeInTheDocument();
-    expect(await db.orcamentos.count()).toBe(1);
+    expect((await repositorio.listarOrcamentos()).length).toBe(1);
   });
 
   it('cancelar não exclui', async () => {
     const usuario = userEvent.setup();
     const orcamento = novo();
-    await db.orcamentos.put(orcamento);
+    await repositorio.gravarOrcamento(orcamento);
 
     render(
       <MemoryRouter initialEntries={[`/orcamentos/${orcamento.id}`]}>
@@ -148,13 +151,13 @@ describe('excluir orçamento', () => {
     await usuario.click(screen.getByRole('button', { name: 'Cancelar' }));
 
     expect(screen.queryByText('Excluir mesmo?')).not.toBeInTheDocument();
-    expect(await db.orcamentos.count()).toBe(1);
+    expect((await repositorio.listarOrcamentos()).length).toBe(1);
   });
 
   it('confirmar exclui e volta para a lista', async () => {
     const usuario = userEvent.setup();
     const orcamento = novo();
-    await db.orcamentos.put(orcamento);
+    await repositorio.gravarOrcamento(orcamento);
 
     render(
       <MemoryRouter initialEntries={[`/orcamentos/${orcamento.id}`]}>
@@ -166,13 +169,13 @@ describe('excluir orçamento', () => {
     await usuario.click(screen.getByRole('button', { name: /Excluir o orçamento 001\/2026/ }));
     await usuario.click(screen.getByRole('button', { name: 'Confirmar' }));
 
-    await waitFor(async () => expect(await db.orcamentos.count()).toBe(0));
+    await waitFor(async () => expect((await repositorio.listarOrcamentos()).length).toBe(0));
     expect(await screen.findByRole('heading', { name: 'Orçamentos' })).toBeInTheDocument();
   });
 
   it('dá para excluir direto da lista', async () => {
     const usuario = userEvent.setup();
-    await db.orcamentos.put(novo());
+    await repositorio.gravarOrcamento(novo());
 
     render(
       <MemoryRouter initialEntries={['/orcamentos']}>
@@ -184,6 +187,6 @@ describe('excluir orçamento', () => {
     await usuario.click(screen.getByRole('button', { name: /Excluir o orçamento 001\/2026 de/ }));
     await usuario.click(screen.getByRole('button', { name: 'Confirmar' }));
 
-    await waitFor(async () => expect(await db.orcamentos.count()).toBe(0));
+    await waitFor(async () => expect((await repositorio.listarOrcamentos()).length).toBe(0));
   });
 });

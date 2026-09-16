@@ -100,3 +100,15 @@ A planilha não tem `ROUND`; o Excel calcula em float e só exibe 2 casas. Adota
 - somas, desconto, acréscimo e entrada operam sobre inteiros em centavos, sem novo arredondamento
 
 Com quantidades inteiras — o caso de todos os itens da planilha — o resultado é idêntico ao do Excel. Divergências só podem aparecer com quantidade fracionada, e aí o comportamento arredondado é o correto.
+
+## D10 · Dados na nuvem (Firebase), login por e-mail e senha _(15/09/2026)_
+
+Os orçamentos saem do navegador e vão para o **Firestore**, num projeto Firebase na conta Google da AA Montagens. Entra quem tem **e-mail e senha** criados no painel (cadastro público desligado) **e** está na lista de `firestore.rules` — a regra é verificada no servidor, antes de qualquer dado sair. Sem sessão, o app é só a tela de entrar.
+
+Por que Firebase e não Supabase: o plano gratuito do Supabase pausa o projeto após uma semana sem uso, e uma oficina pode passar uma semana sem orçar. Por que e-mail e senha e não "entrar com Google": login por janela/redirecionamento falha no app instalado na tela de início do iPhone; senha funciona em todo lugar e "esqueci a senha" já vem pronto.
+
+**Só com internet.** Sem cache offline: sem rede, o app avisa numa faixa e o salvar dá erro em vez de fingir. Ativar o cache do SDK é uma linha, se um dia fizer falta.
+
+O código continua sem backend próprio: o Firestore é acessado direto do navegador, com a chave pública restrita ao domínio do site. Toda a persistência passa pela interface `Repositorio` (`src/dados/repositorio.ts`); os testes de tela rodam em memória, e a implementação Firestore e as regras são testadas no emulador (`npm run test:emulador`).
+
+Spec completa: `docs/superpowers/specs/2026-09-15-nuvem-firebase-design.md`. Passo a passo do painel: `docs/nuvem.md`.

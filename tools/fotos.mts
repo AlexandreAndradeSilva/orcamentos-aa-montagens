@@ -22,16 +22,33 @@ const contexto = await navegador.newContext({
 });
 const pagina = await contexto.newPage();
 
+// 'load' e nao 'networkidle': o Firestore mantem uma conexao aberta o tempo
+// todo, entao a rede nunca fica ociosa. A espera curta e para os dados chegarem.
 async function foto(nome: string, caminho: string, opcoes: { inteira?: boolean } = {}) {
-  await pagina.goto(`${BASE}${caminho}`, { waitUntil: 'networkidle' });
-  await pagina.waitForTimeout(400);
+  await pagina.goto(`${BASE}${caminho}`, { waitUntil: 'load' });
+  await pagina.waitForTimeout(900);
   const arquivo = resolve(SAIDA, `${nome}.png`);
   await pagina.screenshot({ path: arquivo, fullPage: opcoes.inteira ?? true });
   console.log('  ', arquivo.replace(RAIZ, '.'));
 }
 
+// A porta: com FOTOS_EMAIL/FOTOS_SENHA no ambiente, entra pela tela de login
+// (no emulador: `node tools/semear_emulador.mjs` cria a usuaria). Sem as
+// variaveis, assume que o app abre direto — o que so acontece com sessao viva.
+const email = process.env['FOTOS_EMAIL'];
+const senha = process.env['FOTOS_SENHA'];
+if (email && senha) {
+  await pagina.goto(`${BASE}/orcamentos`, { waitUntil: 'load' });
+  await pagina.getByLabel('E-mail').fill(email);
+  await pagina.getByLabel('Senha').fill(senha);
+  await pagina.screenshot({ path: resolve(SAIDA, 'celular-entrar.png') });
+  console.log('   ./exemplos/fotos/celular-entrar.png');
+  await pagina.getByRole('button', { name: 'Entrar' }).click();
+  await pagina.waitForSelector('text=Orçamentos', { timeout: 15_000 });
+}
+
 // carrega o exemplo uma vez (so entra se o banco estiver vazio)
-await pagina.goto(`${BASE}/orcamentos?exemplo`, { waitUntil: 'networkidle' });
+await pagina.goto(`${BASE}/orcamentos?exemplo`, { waitUntil: 'load' });
 await pagina.waitForSelector('text=Igreja Portal Pérola 2', { timeout: 15_000 });
 
 await foto('celular-lista', '/orcamentos');
@@ -39,13 +56,13 @@ await foto('celular-editor', '/orcamentos/orc-oficina');
 await foto('celular-editor-topo', '/orcamentos/orc-oficina', { inteira: false });
 
 // a grade, rolada até ela: é a parte que mais muda no celular
-await pagina.goto(`${BASE}/orcamentos/orc-oficina`, { waitUntil: 'networkidle' });
+await pagina.goto(`${BASE}/orcamentos/orc-oficina`, { waitUntil: 'load' });
 await pagina.locator('.grade').scrollIntoViewIfNeeded();
-await pagina.waitForTimeout(300);
+await pagina.waitForTimeout(900);
 await pagina.screenshot({ path: resolve(SAIDA, 'celular-grade.png') });
 console.log('   ./exemplos/fotos/celular-grade.png');
 await pagina.locator('.totais').scrollIntoViewIfNeeded();
-await pagina.waitForTimeout(300);
+await pagina.waitForTimeout(900);
 await pagina.screenshot({ path: resolve(SAIDA, 'celular-totais.png') });
 console.log('   ./exemplos/fotos/celular-totais.png');
 await foto('celular-novo', '/orcamentos/novo');

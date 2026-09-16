@@ -10,7 +10,7 @@ import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { GradeItens } from './GradeItens';
 import { useEditor } from '../estado/editor';
-import { configuracaoPadrao } from '../dados/db';
+import { configuracaoPadrao } from '../dados/configuracao';
 import { ambientePadrao, orcamentoNovo } from '../domain/fabrica';
 
 afterEach(cleanup);

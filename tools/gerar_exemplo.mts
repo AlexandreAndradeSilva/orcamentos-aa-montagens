@@ -13,7 +13,7 @@ import { renderToFile } from '@react-pdf/renderer';
 import casos from '../src/teste/casos-planilha.json' with { type: 'json' };
 import { DocumentoOrcamento } from '../src/pdf/Documento';
 import { registrarFontes } from '../src/pdf/fontes';
-import { configuracaoPadrao } from '../src/dados/db';
+import { configuracaoPadrao } from '../src/dados/configuracao';
 import * as fmt from '../src/formato';
 import type { Linha, Orcamento, Secao } from '../src/domain/esquemas';
 

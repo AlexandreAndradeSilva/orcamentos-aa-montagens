@@ -8,8 +8,16 @@ import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { App } from '../App';
-import { db } from '../dados/db';
+import { repositorio } from '../dados/repositorio';
 import { useEditor } from '../estado/editor';
+
+// A porta do app: nestes testes a sessao ja esta aberta. O login tem teste
+// proprio (entrar.test.tsx); as regras, o emulador.
+vi.mock('../dados/sessao', async (original) => ({
+  ...(await original<typeof import('../dados/sessao')>()),
+  useSessao: () => ({ estado: 'dentro', email: 'aamontagens@hotmail.com' }),
+  sair: vi.fn(),
+}));
 
 const RESPOSTA_AA = {
   razao_social: '66.612.836 ANDRE LUIS DE ABREU',
@@ -42,13 +50,7 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-beforeEach(async () => {
-  await Promise.all([
-    db.configuracao.clear(),
-    db.clientes.clear(),
-    db.servicos.clear(),
-    db.orcamentos.clear(),
-  ]);
+beforeEach(() => {
   useEditor.setState({ config: null, orcamento: null, foco: null, pedidoDeFoco: null });
 });
 
@@ -93,7 +95,7 @@ describe('novo orçamento: cadastro do cliente', () => {
     await usuario.click(screen.getByRole('button', { name: 'Criar orçamento' }));
 
     expect(await screen.findByText('Informe o nome do cliente.')).toBeInTheDocument();
-    expect(await db.orcamentos.count()).toBe(0);
+    expect((await repositorio.listarOrcamentos()).length).toBe(0);
   });
 
   it('grava os dados do cliente junto com o orçamento', async () => {
@@ -107,8 +109,8 @@ describe('novo orçamento: cadastro do cliente', () => {
     await usuario.type(screen.getByLabelText(/Pessoa de contato/), 'Pastor Marcelo');
     await usuario.click(screen.getByRole('button', { name: 'Criar orçamento' }));
 
-    await waitFor(async () => expect(await db.clientes.count()).toBe(1));
-    const cliente = (await db.clientes.toArray())[0]!;
+    await waitFor(async () => expect((await repositorio.listarClientes()).length).toBe(1));
+    const cliente = (await repositorio.listarClientes())[0]!;
     expect(cliente.nome).toBe('Igreja Portal Pérola 2');
     expect(cliente.cnpjCpf).toBe('111.444.777-35');
     expect(cliente.endereco).toBe('Rua das Flores, 200');
@@ -123,8 +125,8 @@ describe('novo orçamento: cadastro do cliente', () => {
     await usuario.type(screen.getByLabelText(/Cliente \*/), 'Só o nome');
     await usuario.click(screen.getByRole('button', { name: 'Criar orçamento' }));
 
-    await waitFor(async () => expect(await db.clientes.count()).toBe(1));
-    const cliente = (await db.clientes.toArray())[0]!;
+    await waitFor(async () => expect((await repositorio.listarClientes()).length).toBe(1));
+    const cliente = (await repositorio.listarClientes())[0]!;
     expect(cliente.cnpjCpf).toBeUndefined();
     expect(cliente.email).toBeUndefined();
     expect(cliente.ieRg).toBeUndefined();
@@ -156,7 +158,7 @@ describe('máscara e validação', () => {
     await usuario.click(screen.getByRole('button', { name: 'Criar orçamento' }));
 
     expect(await screen.findByText(/Número inválido/)).toBeInTheDocument();
-    expect(await db.orcamentos.count()).toBe(0);
+    expect((await repositorio.listarOrcamentos()).length).toBe(0);
   });
 });
 
@@ -245,7 +247,7 @@ describe('busca na Receita', () => {
 describe('clientes: editar cadastro', () => {
   it('abre o formulário e grava a alteração', async () => {
     const usuario = userEvent.setup();
-    await db.clientes.put({
+    await repositorio.gravarCliente({
       id: 'c1',
       nome: 'Oficina Vale Verde',
       criadoEm: '2026-09-09T12:00:00.000Z',
@@ -264,6 +266,8 @@ describe('clientes: editar cadastro', () => {
     await usuario.type(contato, 'Dona Regina');
     await usuario.click(screen.getByRole('button', { name: 'Salvar cliente' }));
 
-    await waitFor(async () => expect((await db.clientes.get('c1'))?.contato).toBe('Dona Regina'));
+    await waitFor(async () =>
+      expect((await repositorio.lerCliente('c1'))?.contato).toBe('Dona Regina'),
+    );
   });
 });

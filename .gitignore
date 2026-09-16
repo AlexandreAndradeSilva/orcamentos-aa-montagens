@@ -5,3 +5,10 @@ node_modules/
 .vite/
 .vitest/
 coverage/
+
+# emuladores do Firebase
+*-debug.log
+.firebase/
+
+# credenciais locais do usuario — nunca versionar
+ACESSOS/

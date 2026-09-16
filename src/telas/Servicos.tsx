@@ -1,5 +1,5 @@
-import { useLiveQuery } from 'dexie-react-hooks';
-import { db, excluirServico } from '../dados/db';
+import { repositorio } from '../dados/repositorio';
+import { useServicos } from '../dados/hooks';
 import { BotaoExcluir } from './BotaoExcluir';
 import * as fmt from '../formato';
 
@@ -12,7 +12,7 @@ import * as fmt from '../formato';
  * viram sugestões enquanto se digita.
  */
 export function Servicos() {
-  const servicos = useLiveQuery(() => db.servicos.orderBy('usos').reverse().toArray(), []);
+  const servicos = useServicos();
 
   if (!servicos) return <p className="vazio">Carregando…</p>;
 
@@ -69,7 +69,7 @@ export function Servicos() {
                         compacto
                         rotulo="Excluir"
                         descricao={`o serviço ${s.descricao.slice(0, 60)}`}
-                        aoConfirmar={() => excluirServico(s.id)}
+                        aoConfirmar={() => repositorio.excluirServico(s.id)}
                       />
                     </td>
                   </tr>
