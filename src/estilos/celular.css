@@ -62,7 +62,13 @@
      vazar para o lado e cada bloco caber, e e isso que as regras abaixo fazem. */
 
   .pagina {
-    padding: var(--e-3) var(--e-3) calc(var(--barra-altura) + var(--e-6));
+    padding: var(--e-3) var(--e-3) var(--e-5);
+  }
+
+  /* o rodape fica acima da navegacao fixa do pe */
+  .rodape-app {
+    padding: var(--e-3) var(--e-3)
+      calc(var(--barra-altura) + env(safe-area-inset-bottom) + var(--e-4));
   }
 
   /* ---- barra: marca em cima, navegacao fixa no pe ---- */

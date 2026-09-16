@@ -10,6 +10,7 @@
  */
 import { useState, type ReactNode } from 'react';
 import { entrar, mensagemDoErro, pedirNovaSenha } from '../dados/sessao';
+import { Rodape } from './Rodape';
 import './formulario.css';
 import './entrar.css';
 
@@ -29,7 +30,10 @@ export function MolduraEntrar({ children }: { children: ReactNode }) {
         </div>
         <p className="entrar__rodape">Sistema interno · acesso restrito</p>
       </aside>
-      <main className="entrar__painel">{children}</main>
+      <main className="entrar__painel">
+        <div className="entrar__centro">{children}</div>
+        <Rodape />
+      </main>
     </div>
   );
 }

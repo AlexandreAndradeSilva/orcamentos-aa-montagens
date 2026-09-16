@@ -18,6 +18,7 @@ import {
   totalDaSecao,
 } from '../domain/orcamento';
 import * as fmt from '../formato';
+import { creditos } from '../creditos';
 
 export interface PropsDocumento {
   orcamento: Orcamento;
@@ -351,14 +352,27 @@ function Rodape({ empresa }: { empresa: Configuracao['empresa'] }) {
     .filter(Boolean)
     .join('  ·  ');
 
+  // Cada peca e um elemento `fixed` proprio, posicionado em absoluto. Um View
+  // fixo com Text dentro nao aparecia no @react-pdf 4.9 (nem a borda) — so
+  // Text fixo solto rende. O fio de cima e um View vazio, so borda. E o
+  // numero da pagina e ancorado pelo `top`, nao pelo `bottom`: com `render`,
+  // o `bottom` sai da pagina (foi parar em y = -2331).
   return (
-    <View style={estilos.rodape} fixed>
-      <Text style={estilos.rodapeTexto}>{contato}</Text>
+    <>
+      <View style={estilos.rodapeFio} fixed />
+      <Text style={[estilos.rodapeTexto, estilos.rodapeEsquerda]} fixed>
+        {contato}
+      </Text>
       <Text
-        style={estilos.rodapeTexto}
+        style={estilos.rodapeDireita}
+        fixed
         render={({ pageNumber, totalPages }) => `Página ${pageNumber} de ${totalPages}`}
       />
-    </View>
+      {/* sem link: papel nao clica */}
+      <Text style={estilos.rodapeCreditos} fixed>
+        {creditos()}
+      </Text>
+    </>
   );
 }
 
