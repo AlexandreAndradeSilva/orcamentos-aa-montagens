@@ -4,24 +4,26 @@
  *
  * Roda o axe-core sobre cada tela montada de verdade, no perfil WCAG 2.1 AA.
  */
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import axe, { type Result } from 'axe-core';
 import { App } from './App';
-import { db } from './dados/db';
+import { repositorio } from './dados/repositorio';
 import { useEditor } from './estado/editor';
 import { orcamentoNovo, ambientePadrao } from './domain/fabrica';
 
+// A porta do app: nestes testes a sessao ja esta aberta. O login tem teste
+// proprio (entrar.test.tsx); as regras, o emulador.
+vi.mock('./dados/sessao', async (original) => ({
+  ...(await original<typeof import('./dados/sessao')>()),
+  useSessao: () => ({ estado: 'dentro', email: 'aamontagens@hotmail.com' }),
+  sair: vi.fn(),
+}));
+
 afterEach(cleanup);
 
-beforeEach(async () => {
-  await Promise.all([
-    db.configuracao.clear(),
-    db.clientes.clear(),
-    db.servicos.clear(),
-    db.orcamentos.clear(),
-  ]);
+beforeEach(() => {
   useEditor.setState({ config: null, orcamento: null, foco: null, sujo: false });
 });
 
@@ -70,7 +72,7 @@ describe('acessibilidade (axe-core, WCAG 2.1 AA)', () => {
       dataEmissao: '2026-08-14',
       condicoesPagamento: '30% ENTRADA, RESTANTE A COMBINAR',
     });
-    await db.orcamentos.put(o);
+    await repositorio.gravarOrcamento(o);
 
     const { container } = montar('/orcamentos');
     await screen.findByText('Igreja Portal Pérola 2');
@@ -87,7 +89,7 @@ describe('acessibilidade (axe-core, WCAG 2.1 AA)', () => {
       dataEmissao: '2026-08-14',
       condicoesPagamento: '30% ENTRADA, RESTANTE A COMBINAR',
     });
-    await db.orcamentos.put(o);
+    await repositorio.gravarOrcamento(o);
 
     const { container } = montar(`/orcamentos/${o.id}`);
     await screen.findByRole('heading', { name: /Orçamento 001\/2026/ });

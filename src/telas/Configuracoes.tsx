@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import { gravarConfiguracao, lerConfiguracao, type ConfiguracaoGuardada } from '../dados/db';
+import { repositorio } from '../dados/repositorio';
+import type { ConfiguracaoGuardada } from '../dados/configuracao';
 import { baixarBackup, exportarBackup, importarBackup } from '../dados/backup';
 import { useEditor } from '../estado/editor';
+import { sair, useSessao } from '../dados/sessao';
 import { lerCentavos } from '../domain/dinheiro';
 import * as fmt from '../formato';
 
@@ -11,9 +13,10 @@ export function Configuracoes() {
   const [erro, setErro] = useState<string | null>(null);
   const arquivo = useRef<HTMLInputElement>(null);
   const recarregarConfig = useEditor((e) => e.carregarConfig);
+  const sessao = useSessao();
 
   useEffect(() => {
-    void lerConfiguracao().then(setConfig);
+    void repositorio.lerConfiguracao().then(setConfig);
   }, []);
 
   if (!config) return <p className="vazio">Carregando…</p>;
@@ -28,7 +31,7 @@ export function Configuracoes() {
 
   async function gravar() {
     if (!config) return;
-    await gravarConfiguracao(config);
+    await repositorio.gravarConfiguracao(config);
     await recarregarConfig();
     setAviso('Configurações salvas.');
     setErro(null);
@@ -220,8 +223,9 @@ export function Configuracoes() {
       <section className="painel doc-bloco" style={{ marginTop: 'var(--e-5)' }}>
         <h2>Backup</h2>
         <p style={{ color: 'var(--cor-tinta-media)' }}>
-          Tudo fica gravado neste computador, neste navegador. O backup é a única cópia fora daqui —
-          guarde num pendrive ou na nuvem.
+          Os orçamentos ficam na nuvem da AA Montagens e aparecem em qualquer aparelho em que você
+          entrar. O backup é uma cópia extra em arquivo — para guardar, ou para levar para outro
+          sistema.
         </p>
         <div
           style={{ display: 'flex', gap: 'var(--e-2)', marginTop: 'var(--e-3)', flexWrap: 'wrap' }}
@@ -265,7 +269,7 @@ export function Configuracoes() {
                     `Importado: ${r.orcamentos} orçamento(s), ${r.clientes} cliente(s), ${r.servicos} serviço(s).`,
                   );
                   setErro(null);
-                  setConfig(await lerConfiguracao());
+                  setConfig(await repositorio.lerConfiguracao());
                   await recarregarConfig();
                 } catch (e) {
                   setErro(e instanceof Error ? e.message : 'falha ao importar');
@@ -275,6 +279,24 @@ export function Configuracoes() {
               })();
             }}
           />
+        </div>
+      </section>
+
+      <section className="painel doc-bloco" style={{ marginTop: 'var(--e-5)' }}>
+        <h2>Conta</h2>
+        <p style={{ color: 'var(--cor-tinta-media)' }}>
+          {sessao.estado === 'dentro' ? (
+            <>
+              Você entrou como <strong>{sessao.email}</strong>.
+            </>
+          ) : (
+            'Sessão encerrada.'
+          )}
+        </p>
+        <div style={{ marginTop: 'var(--e-3)' }}>
+          <button type="button" className="botao" onClick={() => void sair()}>
+            Sair
+          </button>
         </div>
       </section>
     </div>

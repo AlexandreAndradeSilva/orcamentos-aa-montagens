@@ -1,0 +1,14 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Quem entra. Para acrescentar alguem, acrescente o e-mail aqui e publique:
+    //   npx firebase deploy --only firestore:rules
+    function autorizado() {
+      return request.auth != null
+        && request.auth.token.email in ['aamontagens@hotmail.com'];
+    }
+    match /{document=**} {
+      allow read, write: if autorizado();
+    }
+  }
+}

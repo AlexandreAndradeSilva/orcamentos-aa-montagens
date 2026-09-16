@@ -1,0 +1,32 @@
+/* A tela de entrar: um cartão no meio, nada mais. */
+.entrar {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: var(--e-4);
+  background: var(--cor-fundo);
+}
+
+.entrar__cartao {
+  width: min(100%, 400px);
+  padding: var(--e-5);
+  display: grid;
+  gap: var(--e-3);
+}
+
+.entrar__logo {
+  width: 56px;
+  height: 56px;
+}
+
+.entrar__nota {
+  color: var(--cor-tinta-media);
+  margin: 0;
+}
+
+.entrar__acoes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--e-2);
+  margin-top: var(--e-2);
+}

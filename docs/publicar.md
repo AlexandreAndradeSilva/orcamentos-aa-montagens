@@ -1,5 +1,7 @@
 # Publicar e controlar o acesso
 
+> **Atualizado em 15/09/2026 (D10).** Os dados deixaram de viver no navegador: estão no Firestore da AA Montagens, e o app só abre com login verificado no servidor. As seções 1, 3 e 4 abaixo descrevem a situação **anterior** e ficam como registro do raciocínio; o que vale hoje está em [`nuvem.md`](nuvem.md). O Cloudflare Access (opção A da seção 3) virou **opcional** — só se um dia se quiser esconder até a tela de login.
+
 ---
 
 ## 1. Antes de tudo: o que exatamente vai para a internet
@@ -154,9 +156,9 @@ O mais seguro é não colocar na internet.
 
 ---
 
-## 4. O que a publicação **não** resolve
+## 4. O que a publicação **não** resolve _(resolvido pela D10 — ver `nuvem.md`)_
 
-Vale deixar explícito, porque é a fonte de confusão mais provável:
+Vale deixar explícito, porque era a fonte de confusão mais provável antes da nuvem:
 
 **Publicar na web não sincroniza nada.** Os dados continuam presos ao navegador de cada aparelho. Se a Roberta usar no computador e no celular, são **dois conjuntos separados de orçamentos** — a numeração de cada um segue seu próprio caminho e um não enxerga o outro.
 

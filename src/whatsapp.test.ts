@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { linkWhatsApp, paraWaMe, textoResumo } from './whatsapp';
-import { configuracaoPadrao } from './dados/db';
+import { configuracaoPadrao } from './dados/configuracao';
 import type { Orcamento } from './domain/esquemas';
 
 const { id: _id, ...configuracao } = configuracaoPadrao(2026);

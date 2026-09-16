@@ -15,7 +15,8 @@ import {
   type Ambiente,
 } from '../domain/fabrica';
 import { lerCentavos, lerQuantidade } from '../domain/dinheiro';
-import { db, lerConfiguracao, registrarUso, type ConfiguracaoGuardada } from '../dados/db';
+import { repositorio } from '../dados/repositorio';
+import type { ConfiguracaoGuardada } from '../dados/configuracao';
 
 /** Coluna focada na grade, para a navegacao por teclado. */
 export type Coluna = 'descricao' | 'quantidade' | 'unidade' | 'valor';
@@ -80,6 +81,19 @@ function comSecao(secoes: Secao[], indice: number, fn: (s: Secao) => Secao): Sec
   return secoes.map((s, i) => (i === indice ? fn(s) : s));
 }
 
+const LIMITE_MS = 8_000;
+
+/** Rejeita se a promessa nao resolver a tempo. */
+function comLimite<T>(promessa: Promise<T>): Promise<T> {
+  return new Promise((resolver, rejeitar) => {
+    const t = setTimeout(
+      () => rejeitar(new Error('Sem resposta do servidor. Confira a internet e salve de novo.')),
+      LIMITE_MS,
+    );
+    promessa.then(resolver, rejeitar).finally(() => clearTimeout(t));
+  });
+}
+
 export const useEditor = create<Estado>((set, get) => ({
   orcamento: null,
   config: null,
@@ -90,7 +104,7 @@ export const useEditor = create<Estado>((set, get) => ({
   erro: null,
 
   carregarConfig: async () => {
-    set({ config: await lerConfiguracao() });
+    set({ config: await repositorio.lerConfiguracao() });
   },
 
   abrir: (orcamento) => set({ orcamento, sujo: false, erro: null, foco: null, pedidoDeFoco: null }),
@@ -316,12 +330,14 @@ export const useEditor = create<Estado>((set, get) => ({
     const agora = new Date().toISOString();
     const gravado: Orcamento = { ...orcamento, alteradoEm: agora };
     try {
-      await db.orcamentos.put(gravado);
+      // sem rede o Firestore segura a escrita em silencio; o limite e o que
+      // transforma isso em erro visivel (spec §3.6)
+      await comLimite(repositorio.gravarOrcamento(gravado));
       // alimenta o catalogo com o que foi realmente usado
       for (const secao of gravado.secoes) {
         for (const linha of secao.linhas) {
           if (linha.descricao.trim() !== '') {
-            await registrarUso(linha.descricao, linha.unidade, linha.valorUnitario);
+            await repositorio.registrarUso(linha.descricao, linha.unidade, linha.valorUnitario);
           }
         }
       }

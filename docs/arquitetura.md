@@ -13,8 +13,14 @@ src/
     esquemas.ts    zod: Empresa, Configuração, Cliente, Serviço, Orçamento, Backup
     orcamento.ts   a cadeia de cálculo e a numeração
     fabrica.ts     orçamento novo, duplicar, revisar, interpretar colagem
-  dados/       persistência
-    db.ts          Dexie (IndexedDB), migrations versionadas, catálogo por uso
+  dados/       persistência, atrás de uma interface
+    repositorio.ts a interface `Repositorio` e o singleton trocável
+    memoria.ts     implementação em memória (testes)
+    dexie.ts       implementação sobre o IndexedDB (produção até o PR 2 da nuvem)
+    db.ts          a classe Dexie e as migrations versionadas
+    hooks.ts       useOrcamentos / useClientes / useServicos / useCliente
+    contrato.ts    a suíte que toda implementação tem de passar
+    configuracao.ts o documento único e o padrão da AA Montagens
     backup.ts      exportar / validar / importar JSON
   estado/
     editor.ts      zustand — o orçamento em edição e as ações da grade
@@ -67,7 +73,11 @@ Três comportamentos vieram direto da planilha e não são detalhe:
 
 ## 4. Persistência
 
-Dexie sobre IndexedDB, quatro tabelas: `configuracao` (linha única), `clientes`, `servicos`, `orcamentos`.
+As telas, o estado e o PDF só conhecem a interface **`Repositorio`** (`src/dados/repositorio.ts`): observar/ler/gravar cada coleção, numeração, catálogo, backup. Quem a implementa decide onde os dados vivem — e é assim que a versão em nuvem (Firestore) entra sem encostar em tela: `docs/superpowers/specs/2026-09-15-nuvem-firebase-design.md`.
+
+Duas implementações hoje: **`memoria.ts`** (os testes de tela rodam nela — rápidos, sem IndexedDB) e **`dexie.ts`** (produção). A suíte em **`contrato.ts`** roda igual nas duas; o que passa ali é o que as telas podem esperar. A leitura reativa chega às telas pelos hooks de `hooks.ts`.
+
+A implementação Dexie usa quatro tabelas: `configuracao` (linha única), `clientes`, `servicos`, `orcamentos`.
 
 Migrations versionadas: cada `version()` é um degrau permanente; degrau publicado não se edita, acrescenta-se o próximo.
 

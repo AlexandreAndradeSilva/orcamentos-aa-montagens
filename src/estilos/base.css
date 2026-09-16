@@ -331,6 +331,19 @@ textarea {
   margin: 0;
 }
 
+/* Sem rede: fica colada no topo ate a internet voltar. */
+.faixa-rede {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  margin: 0;
+  padding: var(--e-2) var(--e-4);
+  background: var(--cor-alerta-fraca);
+  border-bottom: var(--borda) solid var(--cor-alerta);
+  color: var(--cor-alerta);
+  font-size: var(--txt-sm);
+}
+
 .faixa-erro {
   background: var(--cor-alerta-fraca);
   color: var(--cor-alerta);

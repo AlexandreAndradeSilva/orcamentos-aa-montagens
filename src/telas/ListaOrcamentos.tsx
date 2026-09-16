@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { useLiveQuery } from 'dexie-react-hooks';
-import { db, excluirOrcamento } from '../dados/db';
+import { repositorio } from '../dados/repositorio';
+import { useOrcamentos } from '../dados/hooks';
+import { OfertaMigracao } from './OfertaMigracao';
 import { importarBackup } from '../dados/backup';
 import { BotaoExcluir } from './BotaoExcluir';
 import { useEditor } from '../estado/editor';
@@ -21,7 +22,7 @@ export function ListaOrcamentos() {
   const [erroExemplo, setErroExemplo] = useState<string | null>(null);
   const [parametros, setParametros] = useSearchParams();
 
-  const orcamentos = useLiveQuery(() => db.orcamentos.reverse().sortBy('alteradoEm'), []);
+  const orcamentos = useOrcamentos();
 
   function carregarExemplo() {
     setCarregandoExemplo(true);
@@ -124,6 +125,8 @@ export function ListaOrcamentos() {
         </label>
       </div>
 
+      {orcamentos !== undefined && <OfertaMigracao nuvemVazia={orcamentos.length === 0} />}
+
       {carregando ? (
         <p className="vazio">Carregando…</p>
       ) : filtrados.length === 0 ? (
@@ -194,7 +197,7 @@ export function ListaOrcamentos() {
                         compacto
                         rotulo="Excluir"
                         descricao={`o orçamento ${numeroCompleto(o.numero, o.revisao)} de ${o.clienteNome}`}
-                        aoConfirmar={() => excluirOrcamento(o.id)}
+                        aoConfirmar={() => repositorio.excluirOrcamento(o.id)}
                       />
                     </td>
                   </tr>

@@ -16,6 +16,8 @@ export default defineConfig({
     // padrão node (mais rápido); telas declaram jsdom no topo do arquivo
     environment: 'node',
     include: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
+    // os do emulador precisam do Firebase no ar: `npm run test:emulador`
+    exclude: ['**/node_modules/**', 'src/**/*.emulador.test.ts'],
     setupFiles: ['./src/teste/preparo.ts'],
   },
 });

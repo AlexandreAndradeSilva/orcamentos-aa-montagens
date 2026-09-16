@@ -8,7 +8,8 @@ import userEvent from '@testing-library/user-event';
 import { GradeItens } from './GradeItens';
 import { filtrarServicos, type ServicoSugerido } from './sugestoes';
 import { useEditor } from '../estado/editor';
-import { configuracaoPadrao, db } from '../dados/db';
+import { configuracaoPadrao } from '../dados/configuracao';
+import { repositorio } from '../dados/repositorio';
 import { ambientePadrao, orcamentoNovo } from '../domain/fabrica';
 
 afterEach(cleanup);
@@ -40,8 +41,7 @@ const CATALOGO = [
 ];
 
 beforeEach(async () => {
-  await db.servicos.clear();
-  await db.servicos.bulkPut(CATALOGO);
+  for (const s of CATALOGO) await repositorio.gravarServico(s);
   useEditor.setState({
     orcamento: orcamentoNovo(ambientePadrao, {
       sequencial: 1,

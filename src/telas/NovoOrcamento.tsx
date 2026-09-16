@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useLiveQuery } from 'dexie-react-hooks';
-import { db, lerConfiguracao, reservarNumero } from '../dados/db';
+import { repositorio } from '../dados/repositorio';
+import { useClientes } from '../dados/hooks';
 import { ambientePadrao, orcamentoNovo } from '../domain/fabrica';
 import { calcularValidade } from '../domain/orcamento';
 import { FormularioCliente, type DadosCliente } from './FormularioCliente';
@@ -9,7 +9,7 @@ import * as fmt from '../formato';
 
 export function NovoOrcamento() {
   const navegar = useNavigate();
-  const clientes = useLiveQuery(() => db.clientes.orderBy('nome').toArray(), []);
+  const clientes = useClientes();
   const [clienteId, setClienteId] = useState('');
   const [erro, setErro] = useState<string | null>(null);
 
@@ -23,7 +23,7 @@ export function NovoOrcamento() {
       return;
     }
     try {
-      const config = await lerConfiguracao();
+      const config = await repositorio.lerConfiguracao();
       const hoje = fmt.hojeISO();
       const ano = Number(hoje.slice(0, 4));
 
@@ -35,13 +35,13 @@ export function NovoOrcamento() {
       let id = clienteId;
       if (novoCliente) {
         id = ambientePadrao.novoId();
-        await db.clientes.add({ ...limpo, id, nome, criadoEm: ambientePadrao.agora() });
+        await repositorio.gravarCliente({ ...limpo, id, nome, criadoEm: ambientePadrao.agora() });
       } else {
         // editar aqui atualiza o cadastro: os dados vão para o PDF
-        await db.clientes.update(id, { ...limpo, nome });
+        await repositorio.atualizarCliente(id, { ...limpo, nome });
       }
 
-      const { sequencial } = await reservarNumero(ano);
+      const { sequencial } = await repositorio.reservarNumero(ano);
       const novo = orcamentoNovo(ambientePadrao, {
         sequencial,
         ano,
@@ -56,7 +56,7 @@ export function NovoOrcamento() {
           ? { prazoEntrega: config.prazoEntregaPadrao }
           : {}),
       });
-      await db.orcamentos.add(novo);
+      await repositorio.gravarOrcamento(novo);
       navegar(`/orcamentos/${novo.id}`, { replace: true });
     } catch (e) {
       setErro(e instanceof Error ? e.message : 'não foi possível criar o orçamento');

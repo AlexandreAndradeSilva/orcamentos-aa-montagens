@@ -10,9 +10,17 @@ import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { App } from '../App';
-import { db } from '../dados/db';
+import { repositorio } from '../dados/repositorio';
 import { useEditor } from '../estado/editor';
 import { ambientePadrao, orcamentoNovo } from '../domain/fabrica';
+
+// A porta do app: nestes testes a sessao ja esta aberta. O login tem teste
+// proprio (entrar.test.tsx); as regras, o emulador.
+vi.mock('../dados/sessao', async (original) => ({
+  ...(await original<typeof import('../dados/sessao')>()),
+  useSessao: () => ({ estado: 'dentro', email: 'aamontagens@hotmail.com' }),
+  sair: vi.fn(),
+}));
 
 // O PDF de verdade precisa das fontes por HTTP, que o jsdom não serve.
 // Aqui só importa que um Blob de PDF chegue ao compartilhamento.
@@ -38,13 +46,13 @@ function novo() {
 
 async function abrirEditor(telefone?: string) {
   const o = novo();
-  await db.clientes.put({
+  await repositorio.gravarCliente({
     id: o.clienteId,
     nome: o.clienteNome,
     ...(telefone ? { telefone } : {}),
     criadoEm: '2026-09-09T12:00:00.000Z',
   });
-  await db.orcamentos.put(o);
+  await repositorio.gravarOrcamento(o);
   render(
     <MemoryRouter initialEntries={[`/orcamentos/${o.id}`]}>
       <App />
@@ -59,8 +67,7 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-beforeEach(async () => {
-  await Promise.all([db.configuracao.clear(), db.clientes.clear(), db.orcamentos.clear()]);
+beforeEach(() => {
   useEditor.setState({ config: null, orcamento: null, foco: null, pedidoDeFoco: null });
   URL.createObjectURL = vi.fn(() => 'blob:falso');
   URL.revokeObjectURL = vi.fn();
