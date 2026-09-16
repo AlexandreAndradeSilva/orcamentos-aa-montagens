@@ -3,11 +3,36 @@
  *
  * E-mail + senha (spec §2): funciona no navegador e no app instalado na tela
  * de inicio do celular, onde login por janela/redirecionamento falha.
+ *
+ * Duas metades: a marca, no azul da AA Montagens, e o formulario, no papel.
+ * No celular a marca vira a faixa de cima. `MolduraEntrar` e compartilhada
+ * com a tela de "sem acesso", para as duas serem a mesma porta.
  */
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { entrar, mensagemDoErro, pedirNovaSenha } from '../dados/sessao';
 import './formulario.css';
 import './entrar.css';
+
+export function MolduraEntrar({ children }: { children: ReactNode }) {
+  return (
+    <div className="entrar">
+      <aside className="entrar__marca" aria-hidden="true">
+        {/* mascara CSS, e nao <img>: a logo mono usa currentColor, que <img> nao herda */}
+        <div
+          className="entrar__logo"
+          style={{ ['--logo' as string]: `url(${import.meta.env.BASE_URL}logo-mono.svg)` }}
+        />
+        <div className="entrar__marca-texto">
+          <p className="entrar__sobrelinha">AA Montagens</p>
+          <p className="entrar__titulo-marca">Orçamentos</p>
+          <p className="entrar__descricao">Estruturas metálicas · Birigui, SP</p>
+        </div>
+        <p className="entrar__rodape">Sistema interno · acesso restrito</p>
+      </aside>
+      <main className="entrar__painel">{children}</main>
+    </div>
+  );
+}
 
 export function Entrar() {
   const [email, setEmail] = useState('');
@@ -48,22 +73,21 @@ export function Entrar() {
   }
 
   return (
-    <div className="entrar">
+    <MolduraEntrar>
       <form
-        className="entrar__cartao painel"
+        className="entrar__form"
         onSubmit={(ev) => {
           ev.preventDefault();
           void enviar();
         }}
       >
-        <img className="entrar__logo" src={`${import.meta.env.BASE_URL}logo-simbolo.svg`} alt="" />
-        <h1>Orçamentos AA Montagens</h1>
-        <p className="entrar__nota">Entre com o e-mail e a senha da oficina.</p>
+        <h1 className="entrar__titulo">Entrar</h1>
+        <p className="entrar__nota">Use o e-mail e a senha cadastrados.</p>
 
         <label className="campo-envolve">
           <span className="rotulo">E-mail</span>
           <input
-            className="campo"
+            className="campo entrar__campo"
             type="email"
             autoComplete="username"
             inputMode="email"
@@ -75,7 +99,7 @@ export function Entrar() {
         <label className="campo-envolve">
           <span className="rotulo">Senha</span>
           <input
-            className="campo"
+            className="campo entrar__campo"
             type="password"
             autoComplete="current-password"
             value={senha}
@@ -94,20 +118,18 @@ export function Entrar() {
           </p>
         )}
 
-        <div className="entrar__acoes">
-          <button type="submit" className="botao botao--primario" disabled={ocupado}>
-            {ocupado ? 'Entrando…' : 'Entrar'}
-          </button>
-          <button
-            type="button"
-            className="botao botao--texto"
-            disabled={ocupado}
-            onClick={() => void esqueci()}
-          >
-            Esqueci a senha
-          </button>
-        </div>
+        <button type="submit" className="botao botao--primario entrar__botao" disabled={ocupado}>
+          {ocupado ? 'Entrando…' : 'Entrar'}
+        </button>
+        <button
+          type="button"
+          className="botao botao--texto entrar__esqueci"
+          disabled={ocupado}
+          onClick={() => void esqueci()}
+        >
+          Esqueci a senha
+        </button>
       </form>
-    </div>
+    </MolduraEntrar>
   );
 }

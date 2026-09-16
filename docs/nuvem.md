@@ -86,6 +86,7 @@ Por garantia, antes da troca: **Configurações → Backup → Exportar backup**
 No Google Cloud (mesmo projeto): _APIs e serviços → Credenciais → "Browser key (auto created by Firebase)"_ → _Restrições de aplicativo: Sites_ → adicionar:
 
 - `alexandreandradesilva.github.io/*`
+- `aamontagens.vercel.app/*` (se o site estiver na Vercel)
 - `localhost:5173/*` e `localhost:4173/*` (desenvolvimento)
 
 Sem isso, a chave funciona de qualquer site — não dá acesso aos dados (as regras seguram), mas permite gastar a cota do projeto.

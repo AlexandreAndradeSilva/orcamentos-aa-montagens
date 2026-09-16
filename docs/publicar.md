@@ -38,6 +38,10 @@ Se isso for aceitável, publicar aberto é defensável. Se não for, siga para a
 
 Qualquer hospedagem de arquivos estáticos serve. `npm run build` gera a pasta `dist/`, e é ela inteira que sobe.
 
+### Vercel
+
+Funciona igual (arquivos estáticos), com um detalhe obrigatório: o `vercel.json` na raiz tem a regra de _rewrite_ que manda toda rota para o `index.html` — sem ela, recarregar `/orcamentos` dá **404 NOT_FOUND** da Vercel, porque a rota só existe no navegador. O `_redirects` é sintaxe da Netlify/Cloudflare; a Vercel não lê. Base `/` (sem `BASE_PATH`). Depois de publicar, acrescente o domínio (`aamontagens.vercel.app`) em _Authentication → Configurações → Domínios autorizados_ no Firebase e na restrição da chave (`nuvem.md` §6).
+
 ### GitHub Pages (onde está hoje — sem controle de acesso)
 
 `.github/workflows/publicar.yml` publica sozinho a cada push na `main`: instala, copia as fontes, roda typecheck, lint e testes, faz o build no subcaminho do repositório e sobe para o Pages. Falhou um teste, não publica.

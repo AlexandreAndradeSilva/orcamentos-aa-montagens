@@ -1,32 +1,191 @@
-/* A tela de entrar: um cartão no meio, nada mais. */
+/* ---- a porta: marca no azul, formulário no papel ---- */
 .entrar {
   min-height: 100dvh;
   display: grid;
-  place-items: center;
-  padding: var(--e-4);
+  grid-template-columns: minmax(320px, 5fr) minmax(0, 7fr);
   background: var(--cor-fundo);
 }
 
-.entrar__cartao {
-  width: min(100%, 400px);
-  padding: var(--e-5);
+/* a metade da marca: azul da AA Montagens, com um trançado fino de fundo
+   (as linhas diagonais lembram chapa e treliça sem virar ilustração) */
+.entrar__marca {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--e-6);
+  padding: clamp(var(--e-5), 5vw, var(--e-8));
+  color: var(--cor-branco);
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      rgb(255 255 255 / 0%) 0 22px,
+      rgb(255 255 255 / 4%) 22px 23px
+    ),
+    linear-gradient(160deg, var(--cor-acao) 0%, var(--cor-acao-forte) 100%);
+  overflow: hidden;
+}
+
+/* uma faixa clara na base, como um friso de aço */
+.entrar__marca::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 6px;
+  background: linear-gradient(90deg, rgb(255 255 255 / 55%), rgb(255 255 255 / 10%));
+}
+
+.entrar__logo {
+  width: min(240px, 60%);
+  aspect-ratio: 1000 / 651.2;
+  background: var(--cor-branco);
+  mask: var(--logo) no-repeat center / contain;
+  -webkit-mask: var(--logo) no-repeat center / contain;
+}
+
+.entrar__marca-texto {
+  display: grid;
+  gap: var(--e-1);
+}
+
+.entrar__sobrelinha {
+  margin: 0;
+  font-family: var(--fonte-display);
+  font-weight: 600;
+  font-size: var(--dsp-xs);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 72%);
+}
+
+.entrar__titulo-marca {
+  margin: 0;
+  font-family: var(--fonte-display);
+  font-weight: 700;
+  font-size: clamp(40px, 6vw, 64px);
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+.entrar__descricao {
+  margin: var(--e-2) 0 0;
+  font-size: var(--txt-md);
+  color: rgb(255 255 255 / 78%);
+}
+
+.entrar__rodape {
+  margin: 0;
+  font-family: var(--fonte-display);
+  font-size: var(--dsp-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 55%);
+}
+
+/* a metade do formulário */
+.entrar__painel {
+  display: grid;
+  place-items: center;
+  padding: clamp(var(--e-5), 6vw, var(--e-8));
+}
+
+.entrar__form {
+  width: min(100%, 380px);
+  display: grid;
+  gap: var(--e-4);
+}
+
+.entrar__titulo {
+  margin: 0;
+  font-family: var(--fonte-display);
+  font-weight: 700;
+  font-size: var(--dsp-lg);
+  line-height: var(--lh-dsp-lg);
+}
+
+.entrar__nota {
+  margin: calc(-1 * var(--e-2)) 0 var(--e-2);
+  color: var(--cor-tinta-media);
+}
+
+/* campos mais altos que os da grade: aqui é dedo, não teclado em série */
+.entrar__campo {
+  height: 46px;
+  padding: 0 var(--e-3);
+  font-size: var(--txt-lg);
+  background: var(--cor-papel);
+}
+
+.entrar__botao {
+  height: 46px;
+  margin-top: var(--e-2);
+  font-size: var(--txt-lg);
+  justify-content: center;
+}
+
+.entrar__form .entrar__esqueci {
+  justify-self: start;
+  padding: 0;
+  color: var(--cor-acao);
+}
+
+/* sem acesso: o mesmo painel, com o aviso no lugar do formulário */
+.entrar__aviso {
+  width: min(100%, 420px);
   display: grid;
   gap: var(--e-3);
 }
 
-.entrar__logo {
-  width: 56px;
-  height: 56px;
-}
-
-.entrar__nota {
-  color: var(--cor-tinta-media);
+.entrar__aviso h1 {
   margin: 0;
+  font-family: var(--fonte-display);
+  font-weight: 700;
+  font-size: var(--dsp-lg);
+  line-height: var(--lh-dsp-lg);
 }
 
-.entrar__acoes {
-  display: flex;
-  flex-direction: column;
-  gap: var(--e-2);
-  margin-top: var(--e-2);
+.entrar__aviso p {
+  margin: 0;
+  color: var(--cor-tinta-media);
+}
+
+/* ---- celular: a marca vira a faixa de cima ---- */
+@media (max-width: 720px) {
+  .entrar {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  .entrar__marca {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--e-4);
+    padding: var(--e-5) var(--e-4) calc(var(--e-5) + 6px);
+  }
+
+  .entrar__logo {
+    width: 104px;
+    flex: 0 0 auto;
+  }
+
+  .entrar__titulo-marca {
+    font-size: var(--dsp-lg);
+  }
+
+  .entrar__descricao {
+    margin-top: var(--e-1);
+    font-size: var(--txt-sm);
+  }
+
+  .entrar__rodape {
+    display: none;
+  }
+
+  .entrar__painel {
+    align-items: start;
+    padding-top: var(--e-6);
+  }
 }
