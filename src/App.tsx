@@ -9,6 +9,7 @@ import { Servicos } from './telas/Servicos';
 import { Configuracoes } from './telas/Configuracoes';
 import { Entrar } from './telas/Entrar';
 import { SemAcesso } from './telas/SemAcesso';
+import { Rodape } from './telas/Rodape';
 import { useSessao } from './dados/sessao';
 import { useOnline } from './dados/rede';
 
@@ -65,6 +66,7 @@ export function App() {
           <Route path="*" element={<Navigate to="/orcamentos" replace />} />
         </Routes>
       </main>
+      <Rodape />
     </>
   );
 }

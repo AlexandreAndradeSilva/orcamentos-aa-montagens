@@ -39,7 +39,7 @@ A4, margens de 36 pt nas laterais e no topo, 52 pt embaixo para o rodapé fixo.
 - **TOTAL A PAGAR** numa faixa azul sólida com o valor em Barlow Condensed 19 pt: é o número que o cliente procura. É o sub-total (total menos desconto): a entrada **não abate** (D5.1).
 - **Entrada e restante** vêm _depois_ da faixa, em tinta mais fraca — informam a condição de pagamento, não somam. Entrada zero não imprime as duas linhas.
 - **Aceite** com duas assinaturas e campo de data.
-- **Rodapé fixo** com os dois telefones, e-mail, cidade e "Página X de Y".
+- **Rodapé fixo** com os dois telefones, e-mail, cidade e "Página X de Y", e abaixo os créditos ("© ano AA MONTAGENS - FEITO POR RAAVON TECH", de `src/creditos.ts`, o mesmo texto do rodapé das telas). Cada peça é um elemento `fixed` próprio: um `View` fixo com `Text` dentro não aparecia no @react-pdf 4.9, e o número da página com `render` só fica no lugar ancorado pelo `top`.
 
 ### Cinco defeitos que só apareceram ao olhar o PDF renderizado
 

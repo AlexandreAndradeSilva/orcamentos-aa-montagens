@@ -22,6 +22,7 @@ export const COR = {
 } as const;
 
 export const MARGEM = { topo: 36, lado: 36, base: 52 } as const;
+export const ALTURA_A4 = 841.89;
 export const LARGURA_UTIL = 595.28 - MARGEM.lado * 2;
 
 /** Larguras da tabela de itens, em pontos. Somam LARGURA_UTIL. */
@@ -249,16 +250,38 @@ export const estilos = StyleSheet.create({
   aceiteNota: { fontSize: 6.5, color: COR.tintaFraca, textAlign: 'center', marginTop: 1 },
 
   // ---- rodapé fixo ----
-  rodape: {
+  rodapeFio: {
     position: 'absolute',
-    bottom: 22,
+    bottom: 34,
     left: MARGEM.lado,
     right: MARGEM.lado,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    borderTopWidth: 0.5,
-    borderColor: COR.linhaSutil,
-    paddingTop: 4,
+    height: 0.5,
+    backgroundColor: COR.linhaSutil,
   },
   rodapeTexto: { fontSize: 6.5, color: COR.tintaFraca },
+  rodapeEsquerda: { position: 'absolute', bottom: 24, left: MARGEM.lado },
+  // largura inteira + alinhado a direita: com `render`, o texto so existe na
+  // hora de desenhar, e uma caixa sem largura fixa fica com zero
+  rodapeDireita: {
+    position: 'absolute',
+    // mesma linha do texto da esquerda (bottom 24), so que ancorada pelo topo;
+    // os 3 pt a mais foram medidos no PDF gerado (o `render` mede diferente)
+    top: ALTURA_A4 - 24 - 6.5 * 1.35 - 3,
+    left: MARGEM.lado,
+    right: MARGEM.lado,
+    textAlign: 'right',
+    fontSize: 6.5,
+    color: COR.tintaFraca,
+  },
+  rodapeCreditos: {
+    position: 'absolute',
+    bottom: 13,
+    left: MARGEM.lado,
+    right: MARGEM.lado,
+    fontFamily: DISPLAY,
+    fontSize: 6,
+    letterSpacing: 0.6,
+    color: COR.tintaFraca,
+    textAlign: 'center',
+  },
 });
